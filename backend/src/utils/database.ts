@@ -63,7 +63,17 @@ export interface Program {
 
 // Mock database class
 class MockDatabase {
-  private users: User[] = [];
+  private users: User[] = [
+    {
+      id: 'admin_123',
+      name: 'Admin User',
+      email: 'admin@sajanshah.com',
+      // The bcrypt hash for 'admin123'
+      passwordHash: '$2b$12$DJ1vPHiXVqGFE9OGbS65semkxaFDfpT39x.HI0VPizdYvZ23XgHu2',
+      role: 'SUPER_ADMIN',
+      createdAt: new Date(),
+    }
+  ];
   private products: Product[] = [];
   private events: Event[] = [];
   private programs: Program[] = [];

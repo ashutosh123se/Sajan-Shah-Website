@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -63,29 +64,85 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0C0C0C] text-white font-sans">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Get in Touch
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              We'd love to hear from you and discuss how we can help
-            </p>
-          </div>
+      <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+            Get in Touch.
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto font-light">
+            Whether you're looking to book a workshop, inquire about coaching, or just say hello—we're here.
+          </p>
         </div>
       </section>
 
-      {/* Contact Form and Info */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      {/* Contact Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            
+            {/* Contact Information */}
+            <div className="order-2 lg:order-1 flex flex-col justify-center">
+              <h2 className="text-3xl font-bold mb-10 tracking-wide">
+                Direct Contact
+              </h2>
+              
+              <div className="space-y-10">
+                <div className="flex items-start space-x-5 group">
+                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">Email Us</h3>
+                    <p className="text-gray-400 font-light">
+                      <a href="mailto:info@sajanshah.com" className="hover:text-white transition-colors">
+                        info@sajanshah.com
+                      </a>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-5 group">
+                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502.817l-2.462 2.462a1 1 0 01-.817.502l-4.493-1.498A1 1 0 015 13.28V5z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">Call Us</h3>
+                    <p className="text-gray-400 font-light">
+                      <a href="tel:+919876543210" className="hover:text-white transition-colors">
+                        +91 98765 43210
+                      </a>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-5 group">
+                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-1.414 0l-5.586-5.586a1 1 0 01-.707-.293l-3.75-3.75a1 1 0 00-1.414 1.414l2.336 2.336V8a2 2 0 012-2h8a2 2 0 012 2v8.828l2.336-2.336a1 1 0 001.414 1.414l-5.586 5.586a1 1 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">Office Location</h3>
+                    <p className="text-gray-400 font-light leading-relaxed">
+                      Sajan Shah Headquarters<br />
+                      Mumbai, Maharashtra<br />
+                      India
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Contact Form */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Send us a Message
+            <div className="order-1 lg:order-2 bg-[#141414] p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
+              <h2 className="text-3xl font-bold mb-8">
+                Send a Message
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -102,7 +159,7 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">
                       Full Name *
                     </label>
                     <input
@@ -112,13 +169,13 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Your full name"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                      placeholder="John Doe"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
                       Email Address *
                     </label>
                     <input
@@ -128,15 +185,15 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="your.email@example.com"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                      placeholder="john@example.com"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">
                       Phone Number
                     </label>
                     <input
@@ -145,13 +202,13 @@ export default function ContactPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
                       placeholder="+91 98765 43210"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-400 mb-2">
                       Subject
                     </label>
                     <input
@@ -160,14 +217,14 @@ export default function ContactPage() {
                       name="subject"
                       value={formData.subject}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="How can we help you?"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                      placeholder="Speaking Inquiry"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">
                     Message *
                   </label>
                   <textarea
@@ -176,126 +233,22 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
-                    rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Tell us more about your inquiry..."
+                    rows={5}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all resize-none"
+                    placeholder="How can we help you?"
                   />
                 </div>
 
-                <Button
+                <button
                   type="submit"
                   disabled={loading}
-                  className="w-full"
+                  className="w-full flex justify-center items-center py-4 px-8 border border-transparent rounded-lg shadow-sm text-base font-semibold text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-[#141414] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Sending...' : 'Send Message'}
-                </Button>
+                  {loading ? 'Sending Message...' : 'Send Message'}
+                </button>
               </form>
             </div>
-
-            {/* Contact Information */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Contact Information
-              </h2>
-              
-              <div className="space-y-8">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      Email
-                    </h3>
-                    <p className="text-gray-600">
-                      info@sajanshah.com
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502.817l-2.462 2.462a1 1 0 01-.817.502l-4.493-1.498A1 1 0 015 13.28V5z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      Phone
-                    </h3>
-                    <p className="text-gray-600">
-                      +91 98765 43210
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-1.414 0l-5.586-5.586a1 1 0 01-.707-.293l-3.75-3.75a1 1 0 00-1.414 1.414l2.336 2.336V8a2 2 0 012-2h8a2 2 0 012 2v8.828l2.336-2.336a1 1 0 001.414 1.414l-5.586 5.586a1 1 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      Address
-                    </h3>
-                    <p className="text-gray-600">
-                      123 Business Avenue<br />
-                      Delhi, India 110001
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364 0L12 3.636l-7.682 7.682a4.5 4.5 0 000 6.364L12 20.364z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      Social Media
-                    </h3>
-                    <div className="flex space-x-4">
-                      <a
-                        href="https://facebook.com/sajanshah"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700"
-                      >
-                        Facebook
-                      </a>
-                      <a
-                        href="https://twitter.com/sajanshah"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-500"
-                      >
-                        Twitter
-                      </a>
-                      <a
-                        href="https://linkedin.com/in/sajanshah"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-700 hover:text-blue-800"
-                      >
-                        LinkedIn
-                      </a>
-                      <a
-                        href="https://instagram.com/sajanshah"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-pink-600 hover:text-pink-700"
-                      >
-                        Instagram
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </section>

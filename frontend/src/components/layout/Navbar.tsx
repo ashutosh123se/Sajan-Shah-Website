@@ -92,7 +92,7 @@ export const Navbar: React.FC = () => {
                 <Link href="/login">
                   <Button variant="outline" size="sm">Login</Button>
                 </Link>
-                <Link href="/register">
+                <Link href="/signup">
                   <Button size="sm">Register</Button>
                 </Link>
               </div>
@@ -160,7 +160,7 @@ export const Navbar: React.FC = () => {
                   <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="outline" size="sm" className="w-full">Login</Button>
                   </Link>
-                  <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button size="sm" className="w-full">Register</Button>
                   </Link>
                 </div>

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About Sajan Shah - Memory Man of India',
@@ -7,31 +8,29 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <div className="bg-white">
+    <div className="min-h-screen bg-[#0C0C0C] text-white font-sans">
+      <div className="bg-[#0C0C0C]">
         {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                About Sajan Shah
-              </h1>
-              <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-                Memory Man of India • Global Youth Speaker • Neuroscience-Backed Educator
-              </p>
-            </div>
+        <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+              About Sajan Shah.
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed">
+              Memory Man of India • Global Youth Speaker • Neuroscience-Backed Educator
+            </p>
           </div>
         </section>
 
         {/* Journey Section */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-wide">
                   The Journey
                 </h2>
-                <div className="space-y-4 text-lg text-gray-600 leading-relaxed">
+                <div className="space-y-6 text-lg text-gray-400 font-light leading-relaxed">
                   <p>
                     From a curious student fascinated by the workings of the human mind to becoming 
                     India's recognized Memory Man, Sajan Shah's journey is a testament to dedication, 
@@ -50,11 +49,12 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-              <div className="relative">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-white/10 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                 <img
                   src="/about-journey.jpg"
                   alt="Sajan Shah's journey"
-                  className="rounded-lg shadow-xl"
+                  className="relative rounded-2xl shadow-2xl border border-white/10 object-cover w-full h-[500px]"
                 />
               </div>
             </div>
@@ -62,10 +62,10 @@ export default function AboutPage() {
         </section>
 
         {/* Achievements Section */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-24 bg-[#141414] border-y border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-wide">
                 Achievements & Recognition
               </h2>
             </div>
@@ -103,12 +103,12 @@ export default function AboutPage() {
                   icon: '🔬',
                 },
               ].map((achievement, index) => (
-                <div key={index} className="bg-white p-8 rounded-lg shadow-lg text-center">
-                  <div className="text-4xl mb-4">{achievement.icon}</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <div key={index} className="bg-[#0C0C0C] p-8 rounded-2xl border border-white/10 hover:border-white/30 transition-colors duration-300">
+                  <div className="text-4xl mb-6">{achievement.icon}</div>
+                  <h3 className="text-xl font-semibold text-white mb-3 tracking-wide">
                     {achievement.title}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-400 font-light leading-relaxed">
                     {achievement.description}
                   </p>
                 </div>
@@ -118,48 +118,49 @@ export default function AboutPage() {
         </section>
 
         {/* Philosophy Section */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold mb-10 tracking-wide">
                   Educational Philosophy
                 </h2>
-                <div className="space-y-6">
+                <div className="space-y-10">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold mb-3 tracking-wide">
                       Science-Based Learning
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-400 font-light leading-relaxed">
                       Every technique and methodology is grounded in cognitive science research, 
                       ensuring effective and sustainable learning outcomes.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold mb-3 tracking-wide">
                       Practical Application
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-400 font-light leading-relaxed">
                       Theory meets practice with real-world applications that students can use 
                       immediately in their academic and professional lives.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold mb-3 tracking-wide">
                       Personalized Approach
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-400 font-light leading-relaxed">
                       Recognizing that every mind is unique, programs are designed to adapt 
                       to individual learning styles and cognitive patterns.
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-lg">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              
+              <div className="bg-[#141414] p-10 md:p-12 rounded-3xl border border-white/10 flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-8 tracking-wide">
                   Core Values
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {[
                     'Excellence in Education',
                     'Scientific Integrity',
@@ -168,13 +169,13 @@ export default function AboutPage() {
                     'Global Impact',
                     'Community Building',
                   ].map((value, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="w-8 h-8 bg-white/10 border border-white/20 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
                       </div>
-                      <span className="text-gray-700 font-medium">{value}</span>
+                      <span className="text-gray-300 font-medium tracking-wide">{value}</span>
                     </div>
                   ))}
                 </div>
@@ -184,28 +185,28 @@ export default function AboutPage() {
         </section>
 
         {/* Mission Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <section className="py-24 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 tracking-wide">
               Our Mission
             </h2>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto mb-8">
+            <p className="text-xl text-gray-400 max-w-4xl mx-auto mb-12 font-light leading-relaxed">
               To revolutionize education through neuroscience-backed memory techniques, 
               empowering individuals to unlock their full cognitive potential and achieve extraordinary success.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => window.location.href = '/programs'}
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link 
+                href="/programs"
+                className="bg-white text-black px-10 py-4 rounded-xl font-semibold tracking-wide hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl"
               >
                 Explore Programs
-              </button>
-              <button
-                onClick={() => window.location.href = '/contact'}
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+              </Link>
+              <Link 
+                href="/contact"
+                className="bg-transparent border border-white/30 text-white px-10 py-4 rounded-xl font-semibold tracking-wide hover:bg-white/5 transition-all shadow-lg"
               >
                 Get in Touch
-              </button>
+              </Link>
             </div>
           </div>
         </section>

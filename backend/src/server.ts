@@ -5,6 +5,21 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
+// Import routes
+import authRoutes from './routes/auth';
+import productsRoutes from './routes/products';
+import eventsRoutes from './routes/events';
+import programsRoutes from './routes/programs';
+import contactRoutes from './routes/contact';
+import membersRoutes from './routes/members';
+import newsletterRoutes from './routes/newsletter';
+import ordersRoutes from './routes/orders';
+import contributorsRoutes from './routes/contributors';
+import initiativesRoutes from './routes/initiatives';
+import testimonialsRoutes from './routes/testimonials';
+import usersRoutes from './routes/users';
+import legalRoutes from './routes/legal';
+
 // Load environment variables
 dotenv.config();
 
@@ -14,15 +29,27 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] 
-    : ['http://localhost:3000'],
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
-app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan('dev'));
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/programs', programsRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/members', membersRoutes);
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/contributors', contributorsRoutes);
+app.use('/api/initiatives', initiativesRoutes);
+app.use('/api/testimonials', testimonialsRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/legal', legalRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
