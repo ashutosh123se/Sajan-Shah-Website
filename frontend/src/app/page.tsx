@@ -1,4 +1,5 @@
 import { HeroSlider } from '@/components/sections/home/HeroSlider';
+import { InfluenceBanner } from '@/components/sections/home/InfluenceBanner';
 import { IntroVideo } from '@/components/sections/home/IntroVideo';
 import { BrandWriteUp } from '@/components/sections/home/BrandWriteUp';
 import { StatsStrip } from '@/components/sections/home/StatsStrip';
@@ -13,8 +14,9 @@ import { FreeMasterclassFunnel } from '@/components/sections/home/FreeMasterclas
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <HeroSlider />
+      <InfluenceBanner />
       <IntroVideo />
       <BrandWriteUp />
       <StatsStrip />

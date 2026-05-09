@@ -1,11 +1,21 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins, Open_Sans } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const poppins = Poppins({ 
+  weight: ['400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  variable: '--font-poppins',
+});
+
+const openSans = Open_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -68,7 +78,7 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'} />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${poppins.variable} ${openSans.variable} font-body antialiased`}>
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-1">

@@ -11,7 +11,17 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        brand: {
+          orange: "#EF6F0F",
+          orangeHover: "#EFA80E",
+          dark: "#0C0C0C",
+          light: "#FFFFFF"
+        }
       },
+      fontFamily: {
+        sans: ['var(--font-poppins)', 'sans-serif'],
+        body: ['var(--font-open-sans)', 'sans-serif'],
+      }
     },
   },
   plugins: [],

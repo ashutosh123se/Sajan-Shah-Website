@@ -16,32 +16,33 @@ export const SpeakerShowreel: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-900 text-white">
+    <section className="py-24 bg-brand-dark text-white border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tight">
             Speaker Showreel
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <div className="w-24 h-1 bg-brand-orange mx-auto mb-8"></div>
+          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-medium">
             Experience the energy and impact of Sajan Shah's live presentations
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Video Section */}
           <div className="relative">
-            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <div className="relative aspect-video bg-black overflow-hidden border-2 border-white/20 shadow-2xl group">
               {/* Video Thumbnail with Play Button */}
               <div 
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 style={{ backgroundImage: 'url(/showreel-thumbnail.jpg)' }}
               >
-                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-dark bg-opacity-60 group-hover:bg-opacity-40 transition-all flex items-center justify-center">
                   <button
                     onClick={openModal}
-                    className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-900 p-6 rounded-full transition-all group"
+                    className="bg-brand-orange text-white p-6 rounded-none transition-all hover:bg-brand-orangeHover group-hover:scale-110 shadow-xl"
                   >
-                    <svg className="w-12 h-12 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-10 h-10 ml-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </button>
@@ -51,12 +52,12 @@ export const SpeakerShowreel: React.FC = () => {
           </div>
 
           {/* Content Section */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+              <h3 className="text-3xl md:text-4xl font-black mb-6 uppercase tracking-wide">
                 Inspiring Audiences Worldwide
               </h3>
-              <p className="text-lg text-gray-300 leading-relaxed mb-6">
+              <p className="text-xl text-gray-300 leading-relaxed mb-6 font-medium">
                 From corporate boardrooms to educational institutions, Sajan Shah delivers 
                 transformative keynotes that combine cutting-edge memory science with practical applications 
                 for real-world success.
@@ -64,30 +65,30 @@ export const SpeakerShowreel: React.FC = () => {
             </div>
 
             {/* Key Outcomes */}
-            <div className="space-y-4">
-              <h4 className="text-xl font-semibold text-blue-400 mb-4">
+            <div className="space-y-6 bg-white/5 p-8 border border-white/10">
+              <h4 className="text-xl font-bold text-brand-orange uppercase tracking-widest mb-6">
                 Key Outcomes:
               </h4>
               {outcomes.map((outcome, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div key={index} className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-brand-orange/20 rounded-none flex items-center justify-center border border-brand-orange/50 mt-1">
+                    <svg className="w-4 h-4 text-brand-orange" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div>
-                    <p className="text-gray-300 font-medium">{outcome}</p>
+                    <p className="text-gray-300 font-medium text-lg">{outcome}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* CTA */}
-            <div className="pt-6">
+            <div className="pt-4">
               <Button 
                 size="lg"
                 onClick={() => window.location.href = '/contact'}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full sm:w-auto px-10 py-5 text-lg"
               >
                 Invite Sajan to Speak
               </Button>
@@ -99,18 +100,18 @@ export const SpeakerShowreel: React.FC = () => {
       {/* Video Modal */}
       {isModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-sm"
           onClick={closeModal}
         >
           <div 
-            className="relative w-full max-w-5xl mx-4 aspect-video bg-black rounded-lg"
+            className="relative w-full max-w-5xl mx-4 aspect-video bg-black border-2 border-white/10 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+              className="absolute -top-12 right-0 text-white hover:text-brand-orange transition-colors"
             >
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>

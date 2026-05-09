@@ -46,99 +46,101 @@ export const CommunityJoin: React.FC = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+    <section className="py-24 bg-brand-dark text-white border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tight">
             Join Our Global Community
           </h2>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100">
+          <div className="w-24 h-1 bg-brand-orange mx-auto mb-8"></div>
+          <p className="text-xl md:text-2xl mb-8 text-gray-300 font-medium">
             Get exclusive content, early access to programs, and connect with thousands of learners
           </p>
-          
-          {/* Lead Form */}
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {/* Name Field */}
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-blue-100 mb-2">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-white bg-opacity-80 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-blue-900 placeholder-blue-200"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-blue-100 mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-white bg-opacity-80 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-blue-900 placeholder-blue-200"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {/* Phone Field */}
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-blue-100 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white bg-opacity-80 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-blue-900 placeholder-blue-200"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-
-                {/* WhatsApp Opt-in */}
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="whatsappOptIn"
-                    name="whatsappOptIn"
-                    checked={formData.whatsappOptIn}
-                    onChange={handleInputChange}
-                    className="w-4 h-4 text-blue-600 bg-white bg-opacity-80 border-blue-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="whatsappOptIn" className="ml-2 text-sm text-blue-100">
-                    Send me updates on WhatsApp
-                  </label>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-white text-blue-600 hover:bg-blue-50 disabled:bg-blue-300 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Joining...' : 'Join Community'}
-              </Button>
-            </div>
-          </form>
         </div>
+        
+        {/* Lead Form */}
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+          <div className="bg-white/5 border border-white/10 p-10 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
+                  placeholder="ENTER YOUR FULL NAME"
+                />
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
+                  placeholder="YOUR.EMAIL@EXAMPLE.COM"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+              {/* Phone Field */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+
+              {/* WhatsApp Opt-in */}
+              <div className="flex items-center pt-8">
+                <input
+                  type="checkbox"
+                  id="whatsappOptIn"
+                  name="whatsappOptIn"
+                  checked={formData.whatsappOptIn}
+                  onChange={handleInputChange}
+                  className="w-6 h-6 text-brand-orange bg-brand-dark border-white/20 rounded-none focus:ring-brand-orange accent-brand-orange cursor-pointer"
+                />
+                <label htmlFor="whatsappOptIn" className="ml-4 text-sm font-bold text-white uppercase tracking-wider cursor-pointer">
+                  Send me updates on WhatsApp
+                </label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={loading}
+              size="lg"
+              className="w-full py-6 text-xl"
+            >
+              {loading ? 'JOINING...' : 'JOIN COMMUNITY NOW'}
+            </Button>
+          </div>
+        </form>
       </div>
     </section>
   );

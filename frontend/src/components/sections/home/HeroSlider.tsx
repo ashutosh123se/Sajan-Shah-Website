@@ -21,40 +21,30 @@ export const HeroSlider: React.FC = () => {
   const slides: Slide[] = [
     {
       id: 1,
-      title: 'Transform Your Memory',
-      subtitle: 'Unlock Your Brain\'s Full Potential',
-      description: 'Join 200,000+ students who have revolutionized their learning with proven memory techniques.',
+      title: 'NEUROSCIENCE DRIVES DRIVEN SUCCESS™',
+      subtitle: 'shift your story. shape your success.',
+      description: 'Join the premier SOL Event to transform your life.',
       image: '/hero-1.jpg',
-      primaryCta: { text: 'Explore Programs', href: '/programs' },
-      secondaryCta: { text: 'Shop Now', href: '/products' },
-    },
-    {
-      id: 2,
-      title: 'Global Youth Speaker',
-      subtitle: 'Inspiring Millions Worldwide',
-      description: 'From classrooms to corporate boardrooms, empowering the next generation of leaders.',
-      image: '/hero-2.jpg',
-      primaryCta: { text: 'Book Sajan', href: '/contact' },
+      primaryCta: { text: 'Join SOL Event', href: '/events/sol' },
       secondaryCta: { text: 'Learn More', href: '/about' },
     },
     {
-      id: 3,
-      title: 'Neuroscience-Backed Education',
-      subtitle: 'Science Meets Learning',
-      description: 'Cutting-edge research combined with practical, real-world applications.',
-      image: '/hero-3.jpg',
-      primaryCta: { text: 'View Programs', href: '/programs' },
+      id: 2,
+      title: 'NEUROSCIENCE DRIVES DRIVEN SUCCESS™',
+      subtitle: 'Master Your Mind. Master Your Life.',
+      description: 'Attend our exclusive webinars and unlock your true potential.',
+      image: '/hero-2.jpg',
+      primaryCta: { text: 'Register for Webinars', href: '/events/webinars' },
       secondaryCta: { text: 'Free Resources', href: '/contributions' },
     },
     {
-      id: 4,
-      title: 'Corporate Excellence',
-      subtitle: 'Elevate Your Team',
-      description: 'Customized training programs that drive measurable results for organizations.',
-      image: '/hero-4.jpg',
-      video: '/hero-video.mp4',
-      primaryCta: { text: 'Corporate Training', href: '/contact' },
-      secondaryCta: { text: 'View Events', href: '/events' },
+      id: 3,
+      title: 'NEUROSCIENCE DRIVES DRIVEN SUCCESS™',
+      subtitle: 'The Humanity Initiative',
+      description: 'Inspiring 1.2 billion young minds to create a better tomorrow.',
+      image: '/hero-3.jpg',
+      primaryCta: { text: 'Get Involved', href: '/contributions' },
+      secondaryCta: { text: 'Our Mission', href: '/about' },
     },
   ];
 
@@ -88,7 +78,7 @@ export const HeroSlider: React.FC = () => {
   return (
     <section className="relative h-screen overflow-hidden">
       {/* Slide Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 transition-opacity duration-1000 ease-in-out">
         {currentSlideData.video ? (
           <video
             className="w-full h-full object-cover"
@@ -106,20 +96,25 @@ export const HeroSlider: React.FC = () => {
           />
         )}
         
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
+        {/* Dark Overlay for high contrast text */}
+        <div className="absolute inset-0 bg-black bg-opacity-70" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 h-full flex items-center justify-center">
-        <div className="text-center text-white max-w-4xl mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-            {currentSlideData.title}
+        <div className="text-center text-white max-w-5xl mx-auto px-4">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight uppercase">
+            {currentSlideData.title.split('DRIVEN SUCCESS™').map((part, i) => (
+              <React.Fragment key={i}>
+                {part}
+                {i === 0 && <span className="text-brand-orange">DRIVEN SUCCESS™</span>}
+              </React.Fragment>
+            ))}
           </h1>
-          <p className="text-2xl md:text-3xl font-semibold mb-4 text-blue-200">
+          <p className="text-2xl md:text-4xl font-bold mb-6 text-gray-300 italic">
             {currentSlideData.subtitle}
           </p>
-          <p className="text-lg md:text-xl mb-8 text-gray-200 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl mb-10 text-gray-400 max-w-2xl mx-auto">
             {currentSlideData.description}
           </p>
           
@@ -127,6 +122,7 @@ export const HeroSlider: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
+              className="font-bold uppercase tracking-wider px-8 py-4"
               onClick={() => window.location.href = currentSlideData.primaryCta.href}
             >
               {currentSlideData.primaryCta.text}
@@ -134,6 +130,7 @@ export const HeroSlider: React.FC = () => {
             <Button
               variant="outline"
               size="lg"
+              className="font-bold uppercase tracking-wider px-8 py-4 text-white border-white hover:bg-white hover:text-black"
               onClick={() => window.location.href = currentSlideData.secondaryCta.href}
             >
               {currentSlideData.secondaryCta.text}
