@@ -10,8 +10,8 @@ router.get('/:id', getMemberById);
 router.post('/apply', applyForMember);
 
 // Protected routes
-router.post('/', verifyToken, requireRole('ADMIN', 'EDITOR'), createMember);
-router.put('/:id', verifyToken, requireRole('ADMIN', 'EDITOR'), updateMember);
+router.post('/', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), createMember);
+router.put('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), updateMember);
 router.delete('/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), deleteMember);
 
 export default router;

@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.user.upsert({
-    where: { email: 'admin@sajanshah.com' }, update: {},
-    create: { name: 'Super Admin', email: 'admin@sajanshah.com', passwordHash: await bcrypt.hash('ChangeMe@123!', 12), role: 'SUPER_ADMIN' }
+    where: { email: 'ashutoshshekhar37@gmail.com' }, update: {},
+    create: { name: 'Super Admin', email: 'ashutoshshekhar37@gmail.com', passwordHash: await bcrypt.hash('ashutosh@1234sa', 12), role: 'SUPER_ADMIN' }
   });
 
   const programs = [

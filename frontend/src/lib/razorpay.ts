@@ -1,5 +1,7 @@
 declare global {
-  Razorpay: any;
+  interface Window {
+    Razorpay: any;
+  }
 }
 
 interface RazorpayOrder {
@@ -51,7 +53,7 @@ interface RazorpayResponse {
 }
 
 export class RazorpayService {
-  private static instance: Razorpay;
+  private static instance: any;
 
   static loadScript(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -101,7 +103,7 @@ export class RazorpayService {
 
       return data.data.order;
     } catch (error) {
-      throw new Error(error.message || 'Failed to create order');
+      throw new Error((error as Error).message || 'Failed to create order');
     }
   }
 
@@ -121,7 +123,7 @@ export class RazorpayService {
 
       return await response.json();
     } catch (error) {
-      throw new Error(error.message || 'Payment verification failed');
+      throw new Error((error as Error).message || 'Payment verification failed');
     }
   }
 
@@ -130,7 +132,7 @@ export class RazorpayService {
       await this.loadScript();
       
       return new Promise<void>((resolve, reject) => {
-        this.instance = new (window as any).Razorpay({
+        this.instance = new window.Razorpay({
           ...options,
           handler: (response: RazorpayResponse) => {
             options.handler(response);
@@ -147,7 +149,7 @@ export class RazorpayService {
         this.instance.open();
       });
     } catch (error) {
-      throw new Error(error.message || 'Failed to open Razorpay checkout');
+      throw new Error((error as Error).message || 'Failed to open Razorpay checkout');
     }
   }
 

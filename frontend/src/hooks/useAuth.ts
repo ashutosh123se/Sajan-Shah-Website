@@ -3,14 +3,20 @@ import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';
 
 export const useAuth = () => {
-  const { user, accessToken, isAuthenticated, setAuth, clearAuth, setLoading } = useAuthStore();
+  const { user, accessToken, isAuthenticated, setAuth, clearAuth, setLoading, isAdmin, isSuperAdmin, isEditor, isShopManager, isSubscriber, isCustomer } = useAuthStore();
 
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('accessToken');
+      const savedUser = localStorage.getItem('user');
       
       if (token) {
         try {
+          // If we have both, set them immediately for a faster UI
+          if (savedUser) {
+            setAuth(JSON.parse(savedUser), token);
+          }
+
           setLoading(true);
           const response = await api.get('/auth/me');
           setAuth(response.data.data.user, token);
@@ -77,5 +83,11 @@ export const useAuth = () => {
     login,
     register,
     logout,
+    isAdmin: isAdmin(),
+    isSuperAdmin: isSuperAdmin(),
+    isEditor: isEditor(),
+    isShopManager: isShopManager(),
+    isSubscriber: isSubscriber(),
+    isCustomer: isCustomer(),
   };
 };

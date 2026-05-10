@@ -21,6 +21,8 @@ interface AuthState {
   isSuperAdmin: () => boolean;
   isEditor: () => boolean;
   isShopManager: () => boolean;
+  isSubscriber: () => boolean;
+  isCustomer: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -31,11 +33,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setAuth: (user: User, token: string) => {
     localStorage.setItem('accessToken', token);
+    localStorage.setItem('user', JSON.stringify(user));
     set({ user, accessToken: token, isAuthenticated: true, isLoading: false });
   },
 
   clearAuth: () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
     set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   },
 
@@ -61,5 +65,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isShopManager: () => {
     const { user } = get();
     return user?.role === 'SHOP_MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  },
+
+  isSubscriber: () => {
+    const { user } = get();
+    return user?.role === 'SUBSCRIBER' || user?.role === 'MEMBER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  },
+
+  isCustomer: () => {
+    const { user } = get();
+    return user?.role === 'CUSTOMER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'SHOP_MANAGER';
   },
 }));

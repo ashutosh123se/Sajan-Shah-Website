@@ -1,32 +1,12 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
+import { db } from '../utils/database';
 
 export const getInitiatives = async (req: Request, res: Response) => {
   try {
-    // This would normally fetch from database
-    const initiatives = [
-      {
-        id: '1',
-        title: 'United First Festival',
-        slug: 'united-first-festival',
-        description: 'Uniting youth from across communities',
-        imageUrl: 'https://via.placeholder.com/300',
-        stats: '10,000+ participants',
-        order: 1,
-        isActive: true
-      },
-      {
-        id: '2',
-        title: 'YMF – Youth Motivation Forum',
-        slug: 'ymf',
-        description: 'Annual forum empowering thousands of youth',
-        imageUrl: 'https://via.placeholder.com/300',
-        stats: '50+ schools reached',
-        order: 2,
-        isActive: true
-      }
-    ];
-    
+    const initiatives = await db.initiative.findMany({
+      orderBy: { order: 'asc' }
+    });
     sendSuccess(res, { initiatives });
   } catch (error) {
     console.error('Get initiatives error:', error);
@@ -37,7 +17,8 @@ export const getInitiatives = async (req: Request, res: Response) => {
 export const createInitiative = async (req: Request, res: Response) => {
   try {
     const initiativeData = req.body;
-    sendSuccess(res, { initiative: { ...initiativeData, id: Math.random().toString(36).substr(2, 9) } }, 'Initiative created successfully');
+    const initiative = await db.initiative.create({ data: initiativeData });
+    sendSuccess(res, { initiative }, 'Initiative created successfully');
   } catch (error) {
     console.error('Create initiative error:', error);
     sendError(res, 'Internal server error', 500);
@@ -46,9 +27,10 @@ export const createInitiative = async (req: Request, res: Response) => {
 
 export const updateInitiative = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const updateData = req.body;
-    sendSuccess(res, { initiative: { ...updateData, id } }, 'Initiative updated successfully');
+    const initiative = await db.initiative.update({ where: { id }, data: updateData });
+    sendSuccess(res, { initiative }, 'Initiative updated successfully');
   } catch (error) {
     console.error('Update initiative error:', error);
     sendError(res, 'Internal server error', 500);
@@ -57,7 +39,8 @@ export const updateInitiative = async (req: Request, res: Response) => {
 
 export const deleteInitiative = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
+    await db.initiative.delete({ where: { id } });
     sendSuccess(res, null, 'Initiative deleted successfully');
   } catch (error) {
     console.error('Delete initiative error:', error);

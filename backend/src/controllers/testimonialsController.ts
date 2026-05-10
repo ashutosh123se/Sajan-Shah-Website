@@ -1,35 +1,17 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
+import { db } from '../utils/database';
 
 export const getTestimonials = async (req: Request, res: Response) => {
   try {
     const { limit } = req.query;
     
-    // This would normally fetch from database
-    const testimonials = [
-      {
-        id: '1',
-        name: 'Rahul Kumar',
-        designation: 'Student',
-        organization: 'Delhi Public School',
-        photoUrl: 'https://via.placeholder.com/150',
-        quote: 'Sajan Shah\'s memory techniques transformed my academic performance completely!',
-        isActive: true,
-        order: 1
-      },
-      {
-        id: '2',
-        name: 'Priya Sharma',
-        designation: 'CEO',
-        organization: 'Tech Innovations Pvt Ltd',
-        photoUrl: 'https://via.placeholder.com/150',
-        quote: 'The business program helped me scale my company to new heights.',
-        isActive: true,
-        order: 2
-      }
-    ];
+    const testimonials = await db.testimonial.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' }
+    });
     
-    let filteredTestimonials = testimonials.filter(t => t.isActive);
+    let filteredTestimonials = testimonials;
     
     if (limit) {
       filteredTestimonials = filteredTestimonials.slice(0, parseInt(limit as string));
@@ -45,7 +27,8 @@ export const getTestimonials = async (req: Request, res: Response) => {
 export const createTestimonial = async (req: Request, res: Response) => {
   try {
     const testimonialData = req.body;
-    sendSuccess(res, { testimonial: { ...testimonialData, id: Math.random().toString(36).substr(2, 9) } }, 'Testimonial created successfully');
+    const testimonial = await db.testimonial.create({ data: testimonialData });
+    sendSuccess(res, { testimonial }, 'Testimonial created successfully');
   } catch (error) {
     console.error('Create testimonial error:', error);
     sendError(res, 'Internal server error', 500);
@@ -54,9 +37,10 @@ export const createTestimonial = async (req: Request, res: Response) => {
 
 export const updateTestimonial = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const updateData = req.body;
-    sendSuccess(res, { testimonial: { ...updateData, id } }, 'Testimonial updated successfully');
+    const testimonial = await db.testimonial.update({ where: { id }, data: updateData });
+    sendSuccess(res, { testimonial }, 'Testimonial updated successfully');
   } catch (error) {
     console.error('Update testimonial error:', error);
     sendError(res, 'Internal server error', 500);
@@ -65,7 +49,8 @@ export const updateTestimonial = async (req: Request, res: Response) => {
 
 export const deleteTestimonial = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
+    await db.testimonial.delete({ where: { id } });
     sendSuccess(res, null, 'Testimonial deleted successfully');
   } catch (error) {
     console.error('Delete testimonial error:', error);

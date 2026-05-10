@@ -9,9 +9,9 @@ router.get('/', getPrograms);
 router.get('/:id', getProgramById);
 
 // Protected routes
-router.post('/', verifyToken, requireRole('ADMIN', 'EDITOR'), createProgram);
-router.put('/:id', verifyToken, requireRole('ADMIN', 'EDITOR'), updateProgram);
-router.delete('/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), deleteProgram);
+router.post('/', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), createProgram);
+router.put('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), updateProgram);
+router.delete('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), deleteProgram);
 router.post('/:id/enroll', verifyToken, requireRole('CUSTOMER'), enrollInProgram);
 
 export default router;

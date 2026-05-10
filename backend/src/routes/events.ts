@@ -9,8 +9,8 @@ router.get('/', getEvents);
 router.get('/:id', getEventById);
 
 // Protected routes
-router.post('/', verifyToken, requireRole('ADMIN', 'EDITOR'), createEvent);
-router.put('/:id', verifyToken, requireRole('ADMIN', 'EDITOR'), updateEvent);
-router.delete('/:id', verifyToken, requireRole('ADMIN', 'SUPER_ADMIN'), deleteEvent);
+router.post('/', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), createEvent);
+router.put('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'EDITOR'), updateEvent);
+router.delete('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), deleteEvent);
 
 export default router;

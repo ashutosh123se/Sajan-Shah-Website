@@ -74,7 +74,7 @@ export default function ProgramsPage() {
 
     return (
       <span className={`text-xs px-2 py-1 rounded-full ${colors[difficulty as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
-        {difficulty?.charAt(0).toUpperCase() + difficulty?.slice(1)}
+        {difficulty ? difficulty.charAt(0).toUpperCase() + difficulty.slice(1) : ''}
       </span>
     );
   };
@@ -88,7 +88,7 @@ export default function ProgramsPage() {
 
     return (
       <span className={`text-xs px-2 py-1 rounded-full ${colors[mode as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
-        {mode?.charAt(0).toUpperCase() + mode?.slice(1)}
+        {mode ? mode.charAt(0).toUpperCase() + mode.slice(1) : ''}
       </span>
     );
   };

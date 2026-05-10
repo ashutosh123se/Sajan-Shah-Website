@@ -6,7 +6,7 @@ export const getProducts = async (req: Request, res: Response) => {
   try {
     const { category, page = '1', limit = '12', sort, featured } = req.query;
     
-    let products = await db.productFindMany();
+    let products = await db.product.findMany();
     
     // Apply filters
     if (category && category !== 'all') {
@@ -51,9 +51,8 @@ export const getProducts = async (req: Request, res: Response) => {
 
 export const getProductById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const products = await db.productFindMany();
-    const product = products.find(p => p.id === id);
+    const id = req.params.id as string;
+    const product = await db.product.findUnique({ where: { id } });
     
     if (!product) {
       return sendError(res, 'Product not found', 404);
@@ -69,8 +68,8 @@ export const getProductById = async (req: Request, res: Response) => {
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const productData = req.body;
-    // This would normally create a product in the database
-    sendSuccess(res, { product: { ...productData, id: Math.random().toString(36).substr(2, 9) } }, 'Product created successfully');
+    const product = await db.product.create({ data: productData });
+    sendSuccess(res, { product }, 'Product created successfully');
   } catch (error) {
     console.error('Create product error:', error);
     sendError(res, 'Internal server error', 500);
@@ -79,10 +78,10 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const updateData = req.body;
-    // This would normally update the product in the database
-    sendSuccess(res, { product: { ...updateData, id } }, 'Product updated successfully');
+    const product = await db.product.update({ where: { id }, data: updateData });
+    sendSuccess(res, { product }, 'Product updated successfully');
   } catch (error) {
     console.error('Update product error:', error);
     sendError(res, 'Internal server error', 500);
@@ -91,8 +90,8 @@ export const updateProduct = async (req: Request, res: Response) => {
 
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    // This would normally soft delete the product in the database
+    const id = req.params.id as string;
+    await db.product.delete({ where: { id } });
     sendSuccess(res, null, 'Product deleted successfully');
   } catch (error) {
     console.error('Delete product error:', error);

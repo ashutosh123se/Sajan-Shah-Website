@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import api from '@/lib/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -22,8 +23,22 @@ export default function LoginPage() {
     try {
       const result = await login(email, password);
       if (result?.success) {
-        // First try to push to /admin, the AdminDashboard will handle redirection to / if not admin
-        router.push('/admin');
+        // useAuth login already updates the store with user info
+        // We can access the user from the store or directly from what result might return
+        // In our current hook, result doesn't return user, but useAuth's 'user' state is updated.
+        // However, it's safer to wait for the store update or just check the role.
+        
+        // Let's get the user from localStorage as a fallback or just wait for redirect
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const role = userData.role;
+        
+        if (['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'SHOP_MANAGER'].includes(role)) {
+          router.push('/admin');
+        } else if (role === 'SUBSCRIBER') {
+          router.push('/member');
+        } else {
+          router.push('/user');
+        }
       } else {
         setError(result?.error || 'Failed to login');
       }

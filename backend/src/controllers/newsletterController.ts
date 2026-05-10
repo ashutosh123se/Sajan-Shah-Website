@@ -58,7 +58,7 @@ export const exportSubscribers = async (req: Request, res: Response) => {
 
 export const unsubscribe = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     // This would normally remove from database
     
     sendSuccess(res, null, 'Successfully unsubscribed');

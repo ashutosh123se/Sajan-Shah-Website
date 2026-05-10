@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+import { db } from '../utils/database';
 
 // Initialize Razorpay only if environment variables are available
 const razorpay = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET 
@@ -30,19 +31,25 @@ export const createOrder = async (req: Request, res: Response) => {
       receipt: `rcpt_${Date.now()}`
     });
     
-    // This would normally save order to database
-    const order = {
-      id: Math.random().toString(36).substr(2, 9),
-      userEmail,
-      amount: total,
-      amountPaise,
-      razorpayOrderId: rzpOrder.id,
-      status: 'PENDING',
-      createdAt: new Date(),
-      items
-    };
+    const order = await db.order.create({
+      data: {
+        userEmail,
+        amount: total,
+        amountPaise,
+        razorpayOrderId: rzpOrder.id,
+        status: 'PENDING',
+        items: {
+          create: items.map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        }
+      }
+    });
     
     sendSuccess(res, {
+      orderId: order.id,
       razorpayOrderId: rzpOrder.id,
       amount: amountPaise,
       currency: 'INR',
@@ -60,7 +67,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return sendError(res, 'Payment service not configured', 500);
     }
 
-    const { razorpay_order_id: razorpayOrderId, razorpay_payment_id: razorpayPaymentId, razorpay_signature: razorpaySignature } = req.body;
+    const { razorpay_order_id: razorpayOrderId, razorpay_payment_id: razorpayPaymentId, razorpay_signature: razorpaySignature, orderId } = req.body;
     
     // Verify signature
     const generated = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
@@ -71,12 +78,12 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return sendError(res, 'Invalid payment signature', 400);
     }
     
-    // This would normally update order status in database
-    // TODO: Send order confirmation email
+    await db.order.update({
+      where: { id: orderId },
+      data: { status: 'PAID', paymentId: razorpayPaymentId }
+    });
     
-    sendSuccess(res, {
-      orderId: Math.random().toString(36).substr(2, 9)
-    }, 'Payment verified successfully');
+    sendSuccess(res, { orderId }, 'Payment verified successfully');
   } catch (error) {
     console.error('Verify payment error:', error);
     sendError(res, 'Internal server error', 500);
@@ -85,9 +92,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
-    // This would normally fetch from database
-    const orders: any[] = []; // Mock empty array for now
-    
+    const orders = await db.order.findMany({ include: { items: true, user: true } });
     sendSuccess(res, { orders });
   } catch (error) {
     console.error('Get orders error:', error);
@@ -97,18 +102,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
 export const getOrderById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    // This would normally fetch from database
-    
-    const order = {
-      id,
-      userEmail: 'customer@example.com',
-      amount: 999,
-      status: 'PAID',
-      createdAt: new Date(),
-      items: []
-    };
-    
+    const id = req.params.id as string;
+    const order = await db.order.findUnique({ where: { id }, include: { items: true, user: true } });
+    if (!order) return sendError(res, 'Order not found', 404);
     sendSuccess(res, { order });
   } catch (error) {
     console.error('Get order error:', error);
@@ -118,11 +114,9 @@ export const getOrderById = async (req: Request, res: Response) => {
 
 export const updateOrderStatus = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status } = req.body;
-    
-    // This would normally update order status in database
-    
+    await db.order.update({ where: { id }, data: { status } });
     sendSuccess(res, null, 'Order status updated successfully');
   } catch (error) {
     console.error('Update order status error:', error);

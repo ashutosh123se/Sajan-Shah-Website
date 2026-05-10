@@ -33,7 +33,7 @@ export class CloudinaryService {
       return await response.json();
     } catch (error) {
       console.error('Cloudinary upload error:', error);
-      throw new Error(error.message || 'Upload failed');
+      throw new Error((error as Error).message || 'Upload failed');
     }
   }
 
@@ -69,7 +69,7 @@ export class CloudinaryService {
     return `https://res.cloudinary.com/${this.CLOUDINARY_CLOUD_NAME}/image/upload/${transformation}/${publicId}`;
   }
 
-  static deleteFile(publicId: string): Promise<void> {
+  static async deleteFile(publicId: string): Promise<void> {
     try {
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${this.CLOUDINARY_CLOUD_NAME}/image/destroy`,
@@ -89,7 +89,7 @@ export class CloudinaryService {
       }
     } catch (error) {
       console.error('Cloudinary delete error:', error);
-      throw new Error(error.message || 'Delete failed');
+      throw new Error((error as Error).message || 'Delete failed');
     }
   }
 }

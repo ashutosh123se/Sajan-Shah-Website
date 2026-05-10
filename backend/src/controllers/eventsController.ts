@@ -6,13 +6,14 @@ export const getEvents = async (req: Request, res: Response) => {
   try {
     const { filter, type, city } = req.query;
     
-    let events = await db.eventFindMany();
+    let events = await db.event.findMany();
     
     // Auto-update past events
     const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     events = events.map(event => ({
       ...event,
-      isPast: new Date(event.eventDate) < now
+      isPast: new Date(event.eventDate) < today
     }));
     
     // Apply filters
@@ -42,9 +43,8 @@ export const getEvents = async (req: Request, res: Response) => {
 
 export const getEventById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const events = await db.eventFindMany();
-    const event = events.find(e => e.id === id);
+    const id = req.params.id as string;
+    const event = await db.event.findUnique({ where: { id } });
     
     if (!event) {
       return sendError(res, 'Event not found', 404);
@@ -62,8 +62,32 @@ export const getEventById = async (req: Request, res: Response) => {
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
-    const eventData = req.body;
-    sendSuccess(res, { event: { ...eventData, id: Math.random().toString(36).substr(2, 9) } }, 'Event created successfully');
+    const {
+      title, slug, description, posterUrl, cloudinaryPublicId,
+      webinarUrl, eventDate, city, venue, eventType, isPast,
+      isFree, price, capacity, isActive
+    } = req.body;
+
+    const event = await db.event.create({
+      data: {
+        title,
+        slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        description,
+        posterUrl,
+        cloudinaryPublicId,
+        webinarUrl,
+        eventDate: new Date(eventDate),
+        city,
+        venue,
+        eventType,
+        isPast: isPast || false,
+        isFree: isFree ?? true,
+        price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : null,
+        capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : null,
+        isActive: isActive ?? true
+      }
+    });
+    sendSuccess(res, { event }, 'Event created successfully');
   } catch (error) {
     console.error('Create event error:', error);
     sendError(res, 'Internal server error', 500);
@@ -72,9 +96,34 @@ export const createEvent = async (req: Request, res: Response) => {
 
 export const updateEvent = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const updateData = req.body;
-    sendSuccess(res, { event: { ...updateData, id } }, 'Event updated successfully');
+    const id = req.params.id as string;
+    const {
+      title, slug, description, posterUrl, cloudinaryPublicId,
+      webinarUrl, eventDate, city, venue, eventType, isPast,
+      isFree, price, capacity, isActive
+    } = req.body;
+
+    const event = await db.event.update({
+      where: { id },
+      data: {
+        title,
+        slug,
+        description,
+        posterUrl,
+        cloudinaryPublicId,
+        webinarUrl,
+        eventDate: eventDate ? new Date(eventDate) : undefined,
+        city,
+        venue,
+        eventType,
+        isPast,
+        isFree,
+        price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
+        capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
+        isActive
+      }
+    });
+    sendSuccess(res, { event }, 'Event updated successfully');
   } catch (error) {
     console.error('Update event error:', error);
     sendError(res, 'Internal server error', 500);
@@ -83,7 +132,8 @@ export const updateEvent = async (req: Request, res: Response) => {
 
 export const deleteEvent = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
+    await db.event.delete({ where: { id } });
     sendSuccess(res, null, 'Event deleted successfully');
   } catch (error) {
     console.error('Delete event error:', error);

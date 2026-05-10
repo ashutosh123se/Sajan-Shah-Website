@@ -3,6 +3,7 @@ import { Poppins, Open_Sans } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from 'react-hot-toast';
+import EventPopup from '@/components/common/EventPopup';
 import './globals.css';
 
 const poppins = Poppins({ 
@@ -103,6 +104,7 @@ export default function RootLayout({
             },
           }}
         />
+        <EventPopup />
       </body>
     </html>
   );

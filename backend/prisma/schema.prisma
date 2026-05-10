@@ -31,6 +31,7 @@ model User {
   role         UserRole  @default(CUSTOMER)
   photoUrl     String?
   phone        String?
+  isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   orders       Order[]
 }
@@ -55,16 +56,20 @@ model Product {
 model Event {
   id                 String   @id @default(cuid())
   title              String
+  slug               String   @unique @default("")
   description        String?
   posterUrl          String
   cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
   city               String?
+  venue              String?
   eventType          String?  // school | corporate | public | online
   isPast             Boolean  @default(false)
   isFree             Boolean  @default(true)
   price              Float?
+  capacity           Int?
+  isActive           Boolean  @default(true)
   createdAt          DateTime @default(now())
 }
 
@@ -193,4 +198,15 @@ model LegalPage {
   title     String
   content   String
   updatedAt DateTime @updatedAt
+}
+
+
+model PopupBanner {
+  id          String   @id @default(cuid())
+  title       String
+  imageUrl    String
+  linkUrl     String?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

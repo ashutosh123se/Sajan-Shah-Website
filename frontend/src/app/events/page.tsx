@@ -36,6 +36,7 @@ export default function EventsPage() {
 
   const fetchEvents = async () => {
     try {
+      setLoading(true);
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '12',
@@ -61,7 +62,7 @@ export default function EventsPage() {
   };
 
   const formatPrice = (price?: number) => {
-    if (!price) return 'FREE';
+    if (!price || price === 0) return 'FREE';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -70,201 +71,179 @@ export default function EventsPage() {
 
   const getEventTypeBadge = (eventType?: string) => {
     const colors = {
-      workshop: 'bg-blue-100 text-blue-800',
-      webinar: 'bg-green-100 text-green-800',
-      seminar: 'bg-purple-100 text-purple-800',
-      conference: 'bg-orange-100 text-orange-800',
+      workshop: 'border-blue-500 text-blue-500',
+      webinar: 'border-green-500 text-green-500',
+      seminar: 'border-purple-500 text-purple-500',
+      retreat: 'border-brand-orange text-brand-orange',
     };
 
     return (
-      <span className={`text-xs px-2 py-1 rounded-full ${colors[eventType as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
-        {eventType?.charAt(0).toUpperCase() + eventType?.slice(1)}
+      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border ${colors[eventType as keyof typeof colors] || 'border-gray-500 text-gray-500'}`}>
+        {eventType || 'Event'}
       </span>
     );
   };
 
-  const handleRegister = async (event: Event) => {
+  const handleRegister = (event: Event) => {
     if (event.isPast) return;
-    
-    try {
-      if (event.webinarUrl) {
-        window.open(event.webinarUrl, '_blank', 'noopener,noreferrer');
-      } else {
-        // Redirect to registration page for offline events
-        window.location.href = `/events/${event.id}/register`;
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
+    if (event.webinarUrl) {
+      window.open(event.webinarUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-dark text-white">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-32 pb-20 overflow-hidden border-b border-white/5">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,107,0,0.05)_0%,transparent_70%)]"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Upcoming Events
+            <h1 className="text-5xl md:text-7xl font-black mb-8 uppercase tracking-tighter italic">
+              Upcoming <span className="text-brand-orange">Events</span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Join Sajan Shah for transformative learning experiences
+            <div className="w-24 h-1 bg-brand-orange mx-auto mb-8"></div>
+            <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-medium">
+              Join Sajan Shah for transformative learning experiences that push boundaries.
             </p>
           </div>
         </div>
       </section>
 
       {/* Filters Section */}
-      <section className="py-8 bg-white border-b">
+      <section className="py-12 bg-black/40 backdrop-blur-sm sticky top-0 z-50 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <select
-              value={filters.filter}
-              onChange={(e) => setFilters(prev => ({ ...prev, filter: e.target.value }))}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="upcoming">Upcoming Events</option>
-              <option value="past">Past Events</option>
-              <option value="all">All Events</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">Status</label>
+              <select
+                value={filters.filter}
+                onChange={(e) => setFilters(prev => ({ ...prev, filter: e.target.value }))}
+                className="w-full bg-[#111] border border-white/10 text-white px-4 py-3 focus:border-brand-orange outline-none appearance-none cursor-pointer transition-all hover:border-white/20 font-bold text-sm"
+              >
+                <option value="upcoming">Upcoming Events</option>
+                <option value="past">Past Events</option>
+                <option value="all">All Events</option>
+              </select>
+            </div>
 
-            <select
-              value={filters.type}
-              onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All Types</option>
-              <option value="workshop">Workshop</option>
-              <option value="webinar">Webinar</option>
-              <option value="seminar">Seminar</option>
-              <option value="conference">Conference</option>
-            </select>
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">Category</label>
+              <select
+                value={filters.type}
+                onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+                className="w-full bg-[#111] border border-white/10 text-white px-4 py-3 focus:border-brand-orange outline-none appearance-none cursor-pointer transition-all hover:border-white/20 font-bold text-sm"
+              >
+                <option value="">All Types</option>
+                <option value="workshop">Workshop</option>
+                <option value="webinar">Webinar</option>
+                <option value="seminar">Seminar</option>
+                <option value="retreat">Retreat</option>
+              </select>
+            </div>
 
-            <select
-              value={filters.city}
-              onChange={(e) => setFilters(prev => ({ ...prev, city: e.target.value }))}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All Cities</option>
-              <option value="delhi">Delhi</option>
-              <option value="mumbai">Mumbai</option>
-              <option value="bangalore">Bangalore</option>
-              <option value="hyderabad">Hyderabad</option>
-              <option value="chennai">Chennai</option>
-              <option value="online">Online</option>
-            </select>
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold ml-1">Location</label>
+              <select
+                value={filters.city}
+                onChange={(e) => setFilters(prev => ({ ...prev, city: e.target.value }))}
+                className="w-full bg-[#111] border border-white/10 text-white px-4 py-3 focus:border-brand-orange outline-none appearance-none cursor-pointer transition-all hover:border-white/20 font-bold text-sm"
+              >
+                <option value="">All Locations</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="delhi">Delhi</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="ahmedabad">Ahmedabad</option>
+                <option value="online">Online</option>
+              </select>
+            </div>
 
-            <Button
-              onClick={() => window.location.href = '/contact'}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Request Custom Event
-            </Button>
+            <div className="flex items-end">
+              <Button
+                onClick={() => window.location.href = '/contact'}
+                className="w-full h-[46px] rounded-none bg-white text-black hover:bg-brand-orange hover:text-white transition-all font-black uppercase tracking-widest text-xs"
+              >
+                Request Custom Event
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Events Grid */}
-      <section className="py-12">
+      <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
-                  <div className="h-64 bg-gray-200 rounded-lg mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-[#111] border border-white/5 p-6 animate-pulse aspect-[4/5]">
+                  <div className="h-2/3 bg-white/5 mb-6"></div>
+                  <div className="h-6 bg-white/5 mb-4"></div>
+                  <div className="h-6 bg-white/5 w-1/2"></div>
                 </div>
               ))}
             </div>
           ) : events.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
               {events.map((event) => (
                 <div 
                   key={event.id}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                  className="group relative flex flex-col bg-[#111] border border-white/5 hover:border-brand-orange/50 transition-all duration-500 shadow-2xl overflow-hidden"
                 >
-                  {/* Event Poster */}
-                  <div className="relative h-64 bg-gray-100">
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/5] overflow-hidden bg-[#080808]">
                     <img
                       src={event.posterUrl}
                       alt={event.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 opacity-60 group-hover:opacity-100"
                     />
                     
-                    {/* Past Event Badge */}
-                    {event.isPast && (
-                      <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-                        <span className="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold">
-                          Event Ended
-                        </span>
-                      </div>
-                    )}
+                    {/* Badge Overlay */}
+                    <div className="absolute top-6 left-6">
+                      {getEventTypeBadge(event.eventType)}
+                    </div>
 
-                    {/* Attendee Count */}
-                    {event.currentAttendees && event.maxAttendees && (
-                      <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
-                        {event.currentAttendees}/{event.maxAttendees} attendees
+                    {/* Price Overlay */}
+                    <div className="absolute bottom-6 right-6">
+                       <span className="text-xl font-black bg-brand-orange text-white px-4 py-2 italic tracking-tighter">
+                         {formatPrice(event.price)}
+                       </span>
+                    </div>
+
+                    {/* Past Overlay */}
+                    {event.isPast && (
+                      <div className="absolute inset-0 bg-black/80 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="border-2 border-white/20 text-white/40 px-8 py-3 font-black uppercase tracking-[0.3em] italic text-lg">
+                          Closed
+                        </span>
                       </div>
                     )}
                   </div>
 
-                  <div className="p-6">
-                    {/* Title and Badges */}
-                    <div className="mb-3">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        {event.title}
-                      </h3>
-                      <div className="flex gap-2">
-                        {event.eventType && getEventTypeBadge(event.eventType)}
-                        {event.isFree && (
-                          <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
-                            FREE
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  {/* Content */}
+                  <div className="p-10 flex flex-col flex-grow">
+                    <h3 className="text-3xl font-black uppercase tracking-tight leading-none mb-6 group-hover:text-brand-orange transition-colors italic">
+                      {event.title}
+                    </h3>
 
-                    {/* Description */}
-                    {event.description && (
-                      <p className="text-gray-600 mb-4 line-clamp-2">
-                        {event.description}
-                      </p>
-                    )}
-
-                    {/* Event Details */}
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
+                    <div className="flex items-center text-gray-500 font-bold uppercase tracking-widest text-[10px] mb-8 space-x-6">
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 bg-brand-orange rounded-full mr-2"></span>
                         {formatDate(event.eventDate)}
                       </div>
-                      
                       {event.city && (
-                        <div className="flex items-center text-sm text-gray-500">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707l-3.75-3.75a1 1 0 00-1.414 1.414l2.336 2.336V8a2 2 0 012-2h8a2 2 0 012 2v8.828l2.336-2.336a1 1 0 001.414 1.414l-3.75 3.75a1 1 0 01-.707.293l-5.586 5.586a1 1 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707z"/>
-                          </svg>
+                        <div className="flex items-center">
+                          <span className="w-2 h-2 bg-white/20 rounded-full mr-2"></span>
                           {event.city}
                         </div>
                       )}
-
-                      <div className="flex items-center text-sm text-gray-500">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 .895 3 2-1.343 2-3 2zm0 8c1.11 0 2.08.402 2.599-1M12 8V7l-8 5v3l8-2z"/>
-                        </svg>
-                        {formatPrice(event.price)}
-                      </div>
                     </div>
 
-                    {/* CTA Button */}
                     {!event.isPast && (
                       <Button 
-                        className="w-full"
+                        className="mt-auto w-full rounded-none py-6 font-black uppercase tracking-[0.2em] text-xs bg-white text-black hover:bg-brand-orange hover:text-white transition-all transform group-hover:translate-y-[-4px]"
                         onClick={() => handleRegister(event)}
                       >
-                        {event.isFree ? 'Register Free' : 'Register Now'}
+                        {event.isFree ? 'Get Access' : 'Book Ticket'}
                       </Button>
                     )}
                   </div>
@@ -272,29 +251,32 @@ export default function EventsPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No events found matching your criteria.</p>
+            <div className="text-center py-40 border border-white/5 bg-[#080808]">
+              <div className="w-20 h-20 border-2 border-white/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                <span className="text-4xl text-white/10">!</span>
+              </div>
+              <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-sm italic">
+                No events found matching your criteria.
+              </p>
             </div>
           )}
 
           {/* Pagination */}
           {events.length > 0 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  Next
-                </button>
-              </div>
+            <div className="flex justify-center mt-24 space-x-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-8 py-3 border border-white/10 font-bold uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all disabled:opacity-20"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-8 py-3 border border-white/10 font-bold uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

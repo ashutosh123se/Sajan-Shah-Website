@@ -22,8 +22,8 @@ export default function SignupPage() {
     try {
       const result = await register(name, email, password);
       if (result?.success) {
-        // After successful registration, push to homepage
-        router.push('/');
+        // After successful registration, push to customer dashboard
+        router.push('/user');
       } else {
         setError(result?.error || 'Failed to register');
       }

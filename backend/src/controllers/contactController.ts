@@ -56,7 +56,7 @@ export const getContactMessages = async (req: Request, res: Response) => {
 
 export const markAsRead = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     // This would normally mark as read in database
     
     sendSuccess(res, null, 'Message marked as read');
@@ -68,7 +68,7 @@ export const markAsRead = async (req: Request, res: Response) => {
 
 export const replyToMessage = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { reply } = req.body;
     
     // This would normally send email and update database
