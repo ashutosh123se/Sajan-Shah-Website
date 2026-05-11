@@ -8,6 +8,7 @@ import { AboutBio } from '@/components/sections/about/AboutBio';
 import { AboutSystem } from '@/components/sections/about/AboutSystem';
 import { AboutMovement } from '@/components/sections/about/AboutMovement';
 import { AboutAccolades } from '@/components/sections/about/AboutAccolades';
+import { AboutClients } from '@/components/sections/about/AboutClients';
 
 export default function AboutPage() {
   return (
@@ -30,6 +31,9 @@ export default function AboutPage() {
 
       {/* 6. Noteworthy Accolades (Recognition List) */}
       <AboutAccolades />
+
+      {/* 7. Previous Delighted Clients */}
+      <AboutClients />
 
       {/* 7. Final Positioning Section */}
       <section className="py-32 bg-white text-center px-4 border-t border-gray-100">
