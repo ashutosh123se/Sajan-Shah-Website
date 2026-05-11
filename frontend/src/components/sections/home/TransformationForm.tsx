@@ -16,52 +16,84 @@ export const TransformationForm: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0a0a0a]">
-      <div className="flex flex-col lg:flex-row min-h-[600px]">
-        {/* Left Side - Orange */}
-        <div className="lg:w-1/2 bg-[#f26522] p-12 lg:p-24 flex flex-col justify-center items-center text-center">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight max-w-xl mx-auto tracking-wide">
-            Start Your Transformation Conversation
-          </h2>
-          <p className="text-lg md:text-xl text-white mt-8 font-medium leading-relaxed max-w-lg mx-auto">
-            Tell us about your event, audience, or requirement, and let’s design an experience that drives real impact, not just motivation.
-          </p>
-          <div className="mt-12 bg-black/10 p-6 border-l-4 border-white max-w-lg mx-auto text-left w-full shadow-inner">
-            <p className="text-lg font-bold text-white">
-              Trusted by 16M+ lives impacted, global platforms, and institutions across India.
+    <section className="bg-[#0a0a0a] py-24 lg:py-32 relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#f26522]/5 rounded-full filter blur-[150px] -z-10"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+          
+          {/* Left: Persuasive Text */}
+          <div className="lg:w-2/5">
+            <p className="text-[#f26522] font-bold text-sm tracking-[0.3em] uppercase mb-6">Booking & Inquiries</p>
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-8 leading-[1.2] tracking-tight">
+              Start Your <br/><span className="font-bold">Transformation Conversation.</span>
+            </h2>
+            <p className="text-gray-400 text-lg md:text-xl font-light leading-relaxed mb-10">
+              Tell us about your event, audience, or requirement. Let’s design an experience that drives real impact, not just motivation.
             </p>
-          </div>
-        </div>
-        
-        {/* Right Side - Black Form */}
-        <div className="lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center bg-[#0a0a0a]">
-          <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input type="text" name="name" placeholder="Full name *" required onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-              <input type="text" name="org" placeholder="Organization" onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input type="email" name="email" placeholder="Email address *" required onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-              <input type="tel" name="phone" placeholder="Telephone number *" required onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input type="text" name="startDate" placeholder="Event start date" onFocus={(e) => e.target.type = 'date'} onBlur={(e) => !e.target.value && (e.target.type = 'text')} onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-              <input type="text" name="endDate" placeholder="Event end date" onFocus={(e) => e.target.type = 'date'} onBlur={(e) => !e.target.value && (e.target.type = 'text')} onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-            </div>
-            <div className="mb-4">
-              <input type="text" name="location" placeholder="Event location" onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors" />
-            </div>
-            <div className="mb-8">
-              <textarea name="info" rows={5} placeholder="Any additional information?" onChange={handleChange} className="w-full px-5 py-4 bg-[#151515] border border-[#222] text-white placeholder-gray-500 focus:border-[#f26522] focus:bg-[#1a1a1a] outline-none transition-colors resize-none"></textarea>
-            </div>
             
-            <button type="submit" className="bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-4 px-12 transition-colors inline-block tracking-wide">
-              Send
-            </button>
-            <p className="text-xs font-semibold text-gray-600 mt-6 uppercase tracking-widest">
-              From high-energy keynotes to deep transformation sessions.
-            </p>
-          </form>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4 text-white group">
+                <div className="w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center group-hover:border-[#f26522] group-hover:bg-[#f26522] transition-all duration-300">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Email Us</p>
+                  <p className="text-lg font-light">info@sajanshah.com</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 text-white group">
+                <div className="w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center group-hover:border-[#f26522] group-hover:bg-[#f26522] transition-all duration-300">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Call Us</p>
+                  <p className="text-lg font-light">+91 990 444 4444</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right: Glassmorphism Form */}
+          <div className="lg:w-3/5 w-full bg-[#111] p-8 md:p-12 border border-gray-900 rounded-sm shadow-2xl relative">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Full Name *</label>
+                  <input type="text" name="name" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Organization</label>
+                  <input type="text" name="org" onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Email Address *</label>
+                  <input type="email" name="email" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Phone Number *</label>
+                  <input type="tel" name="phone" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Event Details & Inquiry</label>
+                <textarea name="info" rows={4} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300 resize-none"></textarea>
+              </div>
+              
+              <div className="pt-6">
+                <button type="submit" className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-5 px-12 transition-all duration-300 inline-block tracking-widest uppercase text-xs shadow-[0_10px_20px_rgba(242,101,34,0.2)]">
+                  Submit Inquiry
+                </button>
+              </div>
+            </form>
+          </div>
+          
         </div>
       </div>
     </section>

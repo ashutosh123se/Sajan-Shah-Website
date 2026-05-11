@@ -1,257 +1,92 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import api from '@/lib/api';
-import toast from 'react-hot-toast';
-import Link from 'next/link';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ContactHero } from '@/components/sections/contact/ContactHero';
+import { ContactForm } from '@/components/sections/contact/ContactForm';
+import { ContactInfo } from '@/components/sections/contact/ContactInfo';
+import { ContactAddresses } from '@/components/sections/contact/ContactAddresses';
+
+// Custom Social Icons
+const InstagramIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+);
+const YoutubeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.14 1 12 1 12s0 3.86.4 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.86 23 12 23 12s0-3.86-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon></svg>
+);
+const LinkedinIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+);
+const FacebookIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+);
+const TwitterIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+);
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    honeypot: '',
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    // Check honeypot
-    if (formData.honeypot) {
-      toast.error('Form submission failed');
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      await api.post('/contact', {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        message: formData.message,
-      });
-      
-      toast.success('Message sent successfully! We\'ll get back to you soon.');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: '',
-        honeypot: '',
-      });
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to send message. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const socialLinks = [
+    { icon: <InstagramIcon />, href: 'https://www.instagram.com/sajan_shahh/', label: 'Instagram' },
+    { icon: <YoutubeIcon />, href: 'https://www.youtube.com/@SajanShah', label: 'YouTube' },
+    { icon: <LinkedinIcon />, href: 'https://www.linkedin.com/in/sajan-shah-7840244a/', label: 'LinkedIn' },
+    { icon: <FacebookIcon />, href: 'https://www.facebook.com/SajanShahPage', label: 'Facebook' },
+    { icon: <TwitterIcon />, href: 'https://x.com/sajanofficial', label: 'X' },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-white font-sans">
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Get in Touch.
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto font-light">
-            Whether you're looking to book a workshop, inquire about coaching, or just say hello—we're here.
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen bg-white text-[#0a0a0a] selection:bg-[#f26522]/30">
+      
+      {/* 1. Cinematic Hero Section */}
+      <div className="bg-[#0a0a0a] text-white">
+        <ContactHero />
+      </div>
 
-      {/* Contact Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      {/* 2. Main Content Grid (Split Form & Support) */}
+      <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-20">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            
-            {/* Contact Information */}
-            <div className="order-2 lg:order-1 flex flex-col justify-center">
-              <h2 className="text-3xl font-bold mb-10 tracking-wide">
-                Direct Contact
-              </h2>
-              
-              <div className="space-y-10">
-                <div className="flex items-start space-x-5 group">
-                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-1">Email Us</h3>
-                    <p className="text-gray-400 font-light">
-                      <a href="mailto:info@sajanshah.com" className="hover:text-white transition-colors">
-                        info@sajanshah.com
-                      </a>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-5 group">
-                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502.817l-2.462 2.462a1 1 0 01-.817.502l-4.493-1.498A1 1 0 015 13.28V5z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-1">Call Us</h3>
-                    <p className="text-gray-400 font-light">
-                      <a href="tel:+919876543210" className="hover:text-white transition-colors">
-                        +91 98765 43210
-                      </a>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-5 group">
-                  <div className="flex-shrink-0 w-14 h-14 bg-[#141414] border border-white/10 rounded-full flex items-center justify-center transition-colors group-hover:border-white/30">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-1.414 0l-5.586-5.586a1 1 0 01-.707-.293l-3.75-3.75a1 1 0 00-1.414 1.414l2.336 2.336V8a2 2 0 012-2h8a2 2 0 012 2v8.828l2.336-2.336a1 1 0 001.414 1.414l-5.586 5.586a1 1 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-1">Office Location</h3>
-                    <p className="text-gray-400 font-light leading-relaxed">
-                      Sajan Shah Headquarters<br />
-                      Mumbai, Maharashtra<br />
-                      India
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="order-1 lg:order-2 bg-[#141414] p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
-              <h2 className="text-3xl font-bold mb-8">
-                Send a Message
-              </h2>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Honeypot Field (Hidden) */}
-                <input
-                  type="text"
-                  name="honeypot"
-                  value={formData.honeypot}
-                  onChange={handleInputChange}
-                  style={{ display: 'none' }}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
-                      placeholder="John Doe"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
-                      placeholder="+91 98765 43210"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-400 mb-2">
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
-                      placeholder="Speaking Inquiry"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all resize-none"
-                    placeholder="How can we help you?"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex justify-center items-center py-4 px-8 border border-transparent rounded-lg shadow-sm text-base font-semibold text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-[#141414] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Sending Message...' : 'Send Message'}
-                </button>
-              </form>
-            </div>
-            
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <ContactForm />
+            <ContactInfo />
           </div>
         </div>
       </section>
+
+      {/* 3. Detailed Addresses Section (Downside to both) */}
+      <ContactAddresses />
+
+      {/* 4. Social & Final Positioning (Bottom) */}
+      <section className="py-24 bg-white text-center px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-20">
+            <h3 className="text-[#f26522] text-xs font-bold uppercase tracking-[0.4em] mb-10">Follow & Connect</h3>
+            <div className="flex flex-wrap justify-center gap-6">
+              {socialLinks.map((social, idx) => (
+                <motion.a
+                  key={idx}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.1 }}
+                  className="w-12 h-12 bg-[#f26522] text-white flex items-center justify-center rounded-sm hover:bg-[#d95a1e] transition-colors"
+                >
+                  <div className="scale-90">
+                    {social.icon}
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative inline-block py-12 border-t border-gray-100 w-full">
+            <h3 className="text-2xl md:text-3xl italic font-light text-gray-400 leading-relaxed mb-8">
+              "You don't reach out for information. <br className="hidden md:block" />
+              You reach out for <span className="text-[#0a0a0a] font-bold">transformation."</span>
+            </h3>
+            <div className="w-20 h-1 bg-[#f26522] mx-auto"></div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
