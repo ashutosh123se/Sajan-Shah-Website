@@ -75,15 +75,6 @@ export const HeroSlider: React.FC = () => {
           {slide.subheadline}
         </p>
         
-        {/* Solid orange button like reference */}
-        <div className="animate-fade-in-up animation-delay-400">
-          <button 
-            onClick={() => window.location.href = slide.ctaLink} 
-            className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-10 py-5 font-bold tracking-widest uppercase transition-colors text-sm shadow-[0_0_20px_rgba(242,101,34,0.4)] inline-block"
-          >
-            {slide.ctaText}
-          </button>
-        </div>
       </div>
 
       {/* Slide Indicators */}

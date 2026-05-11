@@ -15,7 +15,7 @@ export const ContactHero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
       </div>
       
-      <div className="relative z-10 text-center px-4 max-w-4xl mt-20 md:mt-32">
+      <div className="relative z-10 text-center px-4 max-w-4xl mt-32 md:mt-48">
         <motion.p 
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}

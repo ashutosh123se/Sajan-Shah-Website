@@ -16,7 +16,7 @@ export const AboutHero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
       </div>
 
-      <div className="relative z-10 text-center px-4 max-w-5xl">
+      <div className="relative z-10 text-center px-4 max-w-5xl mt-40 md:mt-64">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

@@ -20,7 +20,7 @@ export const AboutAccolades: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-[#111111] text-white px-6 md:px-16">
+    <section className="py-20 bg-[#1a1a1a] text-white px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-16 items-start">
 
@@ -30,19 +30,19 @@ export const AboutAccolades: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="lg:w-5/12 flex flex-col items-start gap-8"
+            className="lg:w-5/12 flex flex-col items-center lg:items-start text-center lg:text-left"
           >
-            <h2 className="text-3xl md:text-4xl font-light italic leading-tight text-white">
+            <h2 className="text-3xl md:text-4xl font-light italic leading-tight text-white mb-12">
               A few noteworthy<br />
               <span className="font-semibold">accolades include:</span>
             </h2>
 
-            {/* Trophy Award Image */}
-            <div className="flex items-start justify-start w-full">
+            {/* Trophy Award Image - Perfectly aligned below heading */}
+            <div className="w-full flex justify-start">
               <img
                 src="/image.png"
                 alt="Award Trophy"
-                className="w-48 md:w-64 object-contain"
+                className="w-64 md:w-80 object-contain"
               />
             </div>
           </motion.div>
