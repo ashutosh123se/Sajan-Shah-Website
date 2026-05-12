@@ -64,25 +64,25 @@ export const StatsStrip: React.FC = () => {
     }, [isVisible, end]);
 
     return (
-      <span className="text-4xl md:text-5xl font-black text-white drop-shadow-md">
+      <span className="text-3xl md:text-4xl font-bold text-[#f26522]">
         {count.toLocaleString()}{suffix}
       </span>
     );
   };
 
   return (
-    <section className="bg-brand-orange py-20 border-y-4 border-brand-dark" ref={statsRef}>
+    <section className="bg-[#111] py-16" ref={statsRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {stats.map((stat, index) => (
-            <div key={index} className="text-brand-dark flex flex-col items-center justify-center p-6 border-2 border-white/20 bg-white/10 rounded-lg backdrop-blur-sm shadow-xl">
-              <div className="mb-4">
+            <div key={index} className="text-white">
+              <div className="mb-2">
                 <CountUp 
                   end={parseInt(stat.value)} 
                   suffix={stat.suffix} 
                 />
               </div>
-              <div className="text-sm md:text-lg font-black text-brand-dark uppercase tracking-widest">
+              <div className="text-lg md:text-xl font-medium text-gray-400">
                 {stat.label}
               </div>
             </div>
@@ -90,8 +90,8 @@ export const StatsStrip: React.FC = () => {
         </div>
         
         {/* Impact Statement */}
-        <div className="mt-16 text-center">
-          <p className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight max-w-4xl mx-auto">
+        <div className="mt-12 text-center">
+          <p className="text-xl md:text-2xl font-semibold text-white max-w-3xl mx-auto">
             Transforming Education Through Science and Innovation
           </p>
         </div>

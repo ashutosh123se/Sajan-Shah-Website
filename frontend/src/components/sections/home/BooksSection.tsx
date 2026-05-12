@@ -5,6 +5,7 @@ export const BooksSection: React.FC = () => {
   const books = [
     {
       title: "You v/s You",
+      image: "/You vs You.png",
       subtext: "A 100-Day Personal Transformation Challenge",
       description: "Not just a book, your personal mentor in paperback form. A 100-day transformation journey designed to help you outgrow your old self through powerful, action-driven tasks.",
       stats: [
@@ -22,6 +23,7 @@ export const BooksSection: React.FC = () => {
     },
     {
       title: "Studenting & Parenting",
+      image: "/Studenting & Parenting.png",
       subtext: "Build a Positive, Happy Home Culture",
       description: "A practical guide to transforming the relationship between students and parents in today’s fast-changing world. Structured with 100 chapters (50 for parents, 50 for students), this book creates a shared growth journey.",
       stats: [
@@ -37,6 +39,7 @@ export const BooksSection: React.FC = () => {
     },
     {
       title: "Untold Stories of Your Heroes",
+      image: "/Untold Stories of Your Heroes.png",
       subtext: "100 Transformational Journeys to Inspire",
       description: "A powerful collection of 100 transformational stories of individuals who overcame challenges, broke barriers, and created impact. Across multiple fields, each story delivers lessons that drive real change.",
       stats: [
@@ -91,7 +94,7 @@ export const BooksSection: React.FC = () => {
               {/* Quote Card mimicking reference */}
               <div className="bg-[#151515] p-8 md:p-10 border border-gray-800 shadow-[0_0_50px_rgba(0,0,0,0.6)] flex flex-col md:flex-row gap-8 items-start relative mb-12 rounded-sm transform transition-transform hover:-translate-y-1">
                 <div className="w-20 h-20 rounded-full bg-gray-800 flex-shrink-0 border-2 border-gray-700 overflow-hidden shadow-inner">
-                   <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-gray-500 text-xs font-bold tracking-widest">IMG</div>
+                   <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-gray-500 text-xs font-bold tracking-widest uppercase">Member</div>
                 </div>
                 <div>
                   <p className="text-base md:text-lg text-gray-300 leading-relaxed mb-6 font-light">
@@ -109,23 +112,16 @@ export const BooksSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Image Side */}
-            <div className={`w-full lg:w-1/2 bg-[#111] relative overflow-hidden min-h-[500px] flex items-center justify-center border-t lg:border-t-0 ${idx % 2 !== 0 ? 'lg:border-r border-gray-800 lg:order-1' : 'lg:border-l border-gray-800'}`}>
-               {/* Background Pattern mimicking the reference lines/textures */}
-               <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'linear-gradient(90deg, #fff 1px, transparent 1px), linear-gradient(#fff 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
-               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent opacity-80"></div>
-               
-               {/* 3D Book Placeholder */}
-               <div className="relative z-10 w-[280px] md:w-[340px] h-[400px] md:h-[480px] shadow-[40px_40px_80px_rgba(0,0,0,0.9)] bg-gray-100 flex items-center justify-center border-l-[16px] border-gray-300 transform transition-transform hover:scale-105 duration-500">
-                 <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-8 text-center shadow-inner">
-                    <p className="text-gray-500 text-sm font-bold mb-8 uppercase tracking-[0.3em]">Sajan Shah</p>
-                    <h3 className="text-5xl md:text-6xl font-black text-[#f26522] uppercase leading-[0.9] tracking-tighter mb-6" style={{ wordBreak: 'break-word' }}>
-                      {book.title.split(' ').map((word, i) => <div key={i}>{word}</div>)}
-                    </h3>
-                    <div className="w-full h-1.5 bg-[#f26522] my-6"></div>
-                    <p className="text-gray-800 font-bold text-base md:text-lg leading-tight tracking-wide">{book.subtext}</p>
-                 </div>
-               </div>
+            {/* Image Side - Full Bleed Coverage */}
+            <div className={`w-full lg:w-1/2 relative min-h-[500px] lg:min-h-full overflow-hidden ${idx % 2 !== 0 ? 'lg:order-1' : ''}`}>
+               <img 
+                 src={book.image} 
+                 alt={book.title} 
+                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] hover:scale-105"
+               />
+               {/* Overlay for text legibility and depth */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+               <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.4)] pointer-events-none"></div>
             </div>
 
           </div>

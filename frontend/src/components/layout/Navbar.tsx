@@ -1,174 +1,188 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
-import { Button } from '@/components/ui/Button';
+import { usePathname } from 'next/navigation';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { getTotalItems, openCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Contributions', href: '/contributions' },
-    { name: 'Programs', href: '/programs' },
-    { name: 'Products', href: '/products' },
-    { name: 'Events', href: '/events' },
-    { name: 'Members', href: '/members' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'HOME', href: '/' },
+    { name: 'ABOUT', href: '/about' },
+    { name: 'CONTRIBUTIONS', href: '/contributions' },
+    { name: 'PROGRAMS', href: '/programs' },
+    { name: 'PRODUCTS', href: '/products' },
+    { name: 'EVENTS', href: '/events' },
+    { name: 'MEMBERS', href: '/members' },
+    { name: 'CONTACT', href: '/contact' },
   ];
 
   const adminNavigation = [
-    { name: 'Admin Dashboard', href: '/admin' },
+    { name: 'ADMIN', href: '/admin' },
   ];
 
+  const isActive = (path: string) => pathname === path;
+
   return (
-    <nav className="bg-brand-dark shadow-md sticky top-0 z-50 border-b border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0">
-              <span className="text-2xl font-black tracking-tighter text-white uppercase">Sajan<span className="text-brand-orange">Shah</span></span>
+    <>
+      <nav className="bg-[#0a0a0a] fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b border-gray-900 shadow-2xl">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-10 pb-6'}`}>
+          
+          {/* Top Centered Logo Section */}
+          <div className={`flex justify-center items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-16 md:h-20 mb-10 opacity-100'}`}>
+            <Link href="/" className="flex flex-col items-center group">
+              <div className="text-4xl md:text-5xl font-light tracking-tight text-white mb-1 group-hover:text-gray-200 transition-colors">
+                sajan<span className="font-bold">shah</span>
+              </div>
+              <div className="w-12 h-[2px] bg-[#f26522] mb-1"></div>
+              <span className="text-[10px] md:text-xs text-gray-400 uppercase tracking-[0.2em] font-semibold">
+                Transform Your Thinking. Transform Your Life.
+              </span>
             </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-300 hover:text-brand-orange px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-            
-            {/* Admin Links */}
-            {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
-              <>
-                {adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-purple-600 hover:text-purple-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </>
-            )}
-
-            {/* Cart */}
-            <button
-              onClick={openCart}
-              className="relative text-gray-300 hover:text-brand-orange p-2 transition-colors"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {getTotalItems()}
-                </span>
-              )}
-            </button>
-
-            {/* Auth Buttons */}
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-400 font-medium">Welcome, {user?.name}</span>
-                <Button variant="outline" size="sm" onClick={logout}>
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link href="/login">
-                  <Button variant="outline" size="sm">Login</Button>
-                </Link>
-                <Link href="/signup">
-                  <Button size="sm">Register</Button>
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-300 hover:text-brand-orange p-2 transition-colors"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            {/* Absolute positioned Cart & Auth for Desktop to keep Logo perfectly centered */}
+            <div className="hidden md:flex absolute right-0 items-center space-x-6 top-1/2 transform -translate-y-1/2">
+               <button onClick={openCart} className="relative text-white hover:text-[#f26522] transition-colors">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#f26522] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
                 )}
-              </svg>
-            </button>
+              </button>
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-xs text-gray-400 font-medium">Welcome, {user?.name?.split(' ')[0]}</span>
+                  <button onClick={logout} className="text-xs text-white hover:text-[#f26522] uppercase tracking-widest font-bold transition-colors">
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <Link href="/login" className="text-xs text-white hover:text-[#f26522] uppercase tracking-widest font-bold transition-colors">
+                    Login
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Links Section */}
+          <div className="flex justify-between items-center">
+            
+            {/* Mobile menu button (Left aligned on mobile) */}
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white hover:text-[#f26522] p-2">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+
+            {/* Desktop Navigation (Centered) */}
+            <div className="hidden md:flex w-full justify-center space-x-12 lg:space-x-20">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`text-xs uppercase tracking-widest font-bold transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-white hover:text-[#f26522]'}`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {/* Admin Links */}
+              {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+                <>
+                  {adminNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`text-xs uppercase tracking-widest font-bold transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-gray-500 hover:text-white'}`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </>
+              )}
+            </div>
+
+            {/* Mobile Cart Icon (Right aligned on mobile) */}
+            <div className="md:hidden flex items-center">
+               <button onClick={openCart} className="relative text-white hover:text-[#f26522] p-2">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {getTotalItems() > 0 && (
+                  <span className="absolute top-0 right-0 bg-[#f26522] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </button>
+            </div>
+
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile menu */}
+      {/* Global Fullscreen Menu (Triggers from both main navbar mobile button and floating scroll button) */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-brand-dark border-t border-gray-800">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="fixed inset-0 z-[55] bg-black/95 backdrop-blur-xl flex items-center justify-center">
+          <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-8 text-white hover:text-[#f26522]">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+          <div className="flex flex-col items-center space-y-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-300 hover:text-brand-orange block px-3 py-2 text-base font-bold uppercase tracking-widest"
+                className={`text-2xl md:text-4xl font-bold tracking-widest uppercase transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-white hover:text-[#f26522]'}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
             
-            {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
-              <>
-                {adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-purple-600 hover:text-purple-700 block px-3 py-2 rounded-md text-base font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </>
+            <div className="w-24 h-1 bg-gray-800 my-8"></div>
+            
+            {isAuthenticated ? (
+              <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="text-xl text-gray-500 hover:text-white uppercase tracking-widest font-bold">
+                Logout
+              </button>
+            ) : (
+              <div className="flex space-x-6">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold">
+                  Login
+                </Link>
+                <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold">
+                  Register
+                </Link>
+              </div>
             )}
-
-            <div className="border-t border-gray-200 pt-4">
-              {isAuthenticated ? (
-                <div className="px-3 py-2">
-                  <p className="text-sm text-gray-600">Welcome, {user?.name}</p>
-                  <Button variant="outline" size="sm" onClick={logout} className="mt-2 w-full">
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <div className="px-3 py-2 space-y-2">
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">Login</Button>
-                  </Link>
-                  <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button size="sm" className="w-full">Register</Button>
-                  </Link>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };

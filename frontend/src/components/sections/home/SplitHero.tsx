@@ -12,11 +12,11 @@ export const SplitHero: React.FC = () => {
 
   return (
     <section className="bg-white relative pb-32 pt-1">
-      {/* Overlapping Orange Box mimicking the wide banner layout - Changed to relative negative margin to fix subpixel rendering line glitch */}
-      <div className="relative -mt-24 md:-mt-32 mx-auto w-[90%] max-w-[1400px] bg-[#f26522] p-12 md:p-20 text-center shadow-[0_20px_50px_rgba(242,101,34,0.3)] z-30">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-light text-white leading-tight tracking-wide">
+      {/* Overlapping Orange Box mimicking the wide banner layout - Reduced size and lowered position */}
+      <div className="relative -mt-16 md:-mt-20 mx-auto w-[85%] max-w-[1100px] bg-[#f26522] p-8 md:p-12 text-center shadow-[0_20px_50px_rgba(242,101,34,0.3)] z-30">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white leading-tight tracking-wide">
           This Is Not an Event.<br />
-          It’s a Transformation <span className="font-bold inline-block min-w-[300px] text-left">{words[currentWord]}</span>
+          It’s a Transformation <span className="font-bold inline-block min-w-[200px] md:min-w-[250px] text-left">{words[currentWord]}</span>
         </h2>
       </div>
 
@@ -24,15 +24,20 @@ export const SplitHero: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-32">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
-          {/* Left: Image (Editorial style) */}
-          <div className="lg:w-5/12 relative group w-full">
-            <div className="aspect-[3/4] bg-gray-100 w-full overflow-hidden relative border border-gray-200">
-              {/* Placeholder for Sajan Shah image */}
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-80 z-10 transition-opacity duration-700 group-hover:opacity-60"></div>
-              <img src="/sajan-photo-bg.jpg" alt="Sajan Shah" className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 flex items-center justify-center text-gray-300 font-bold tracking-widest uppercase z-0 text-sm">
-                Sajan Shah Photo
-              </div>
+          {/* Left: Image (High-end Editorial style) - Sticky effect implemented */}
+          <div className="lg:w-5/12 lg:sticky lg:top-32 relative group w-full self-start">
+            <div className="aspect-[3/4] bg-[#0a0a0a] w-full overflow-hidden relative border border-gray-100 shadow-[20px_20px_60px_rgba(0,0,0,0.1)]">
+              {/* Overlay with subtle brand glow */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+              
+              <img 
+                src="https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg" 
+                alt="Sajan Shah" 
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
+              />
+              
+              {/* Floating Frame Element for depth */}
+              <div className="absolute -inset-4 border border-gray-100/10 z-0 pointer-events-none"></div>
             </div>
           </div>
 
@@ -68,122 +73,150 @@ export const SplitHero: React.FC = () => {
       </div>
 
       {/* Cinematic Flip Cards Section */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-          {/* Card 1 - Speaking */}
+          
+          {/* Card 1 - Webinar */}
           <div
-            className="group relative w-full h-[420px] [perspective:2000px] cursor-pointer"
-            onClick={() => (window.location.href = '/speaking')}
-          >
-            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-
-              {/* Front Side */}
-              <div className="absolute inset-0 overflow-hidden shadow-2xl [backface-visibility:hidden]">
-
-                <div className="absolute inset-0 bg-[url('/card-speaking.jpg')] bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"></div>
-
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-wide">
-                    Speaking
-                  </h3>
-                </div>
-              </div>
-
-              {/* Back Side */}
-              <div className="absolute inset-0 bg-black border border-white/10 shadow-[0_0_40px_rgba(242,101,34,0.25)] flex flex-col items-center justify-center p-8 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-
-                <h3 className="text-3xl md:text-4xl font-light text-white mb-6">
-                  Speaking
-                </h3>
-
-                <p className="text-white/70 text-sm leading-relaxed mb-8 max-w-xs">
-                  High-impact keynote experiences designed to transform thinking,
-                  performance, and leadership.
-                </p>
-
-                <span className="bg-[#f26522] hover:bg-[#ff7a3d] transition-all duration-300 text-white px-8 py-3 uppercase tracking-[0.2em] text-xs font-semibold">
-                  Find Out More
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2 - Webinar */}
-          <div
-            className="group relative w-full h-[420px] [perspective:2000px] cursor-pointer"
+            className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
             onClick={() => (window.location.href = 'https://webinar.sajanshah.com')}
           >
-            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-
+            <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
+              
               {/* Front Side */}
-              <div className="absolute inset-0 overflow-hidden shadow-2xl [backface-visibility:hidden]">
-
-                <div className="absolute inset-0 bg-[url('/card-webinar.jpg')] bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"></div>
-
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-wide">
+              <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl">
+                <img 
+                  src="/webinar.png" 
+                  alt="Webinar" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center [transform-style:preserve-3d]">
+                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-widest [transform:translateZ(70px)] drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] uppercase">
                     Webinar
                   </h3>
                 </div>
               </div>
 
               {/* Back Side */}
-              <div className="absolute inset-0 bg-black border border-white/10 shadow-[0_0_40px_rgba(242,101,34,0.25)] flex flex-col items-center justify-center p-8 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+              <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl bg-[#0a0a0a]">
+                <img 
+                  src="/webinar.png" 
+                  alt="Webinar" 
+                  className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center [transform-style:preserve-3d]">
+                  {/* High-Distance 3D Pop-out */}
+                  <div className="[transform:translateZ(130px)] flex flex-col items-center">
+                    <h3 className="text-3xl md:text-4xl font-light text-white mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] uppercase tracking-wider">
+                      Webinar
+                    </h3>
+                    <p className="text-white/80 text-sm leading-relaxed mb-10 max-w-xs font-light drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                      Join transformational online sessions focused on focus, confidence,
+                      performance, and mindset breakthroughs.
+                    </p>
+                    <span className="inline-block bg-[#f26522] hover:bg-white hover:text-black transition-all duration-500 text-white px-10 py-4 uppercase tracking-[0.3em] text-[10px] font-bold shadow-[0_25px_50px_-12px_rgba(242,101,34,0.5)]">
+                      Find Out More
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <h3 className="text-3xl md:text-4xl font-light text-white mb-6">
-                  Webinar
-                </h3>
+          {/* Card 2 - Speaking */}
+          <div
+            className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
+            onClick={() => (window.location.href = '/speaking')}
+          >
+            <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
+              
+              {/* Front Side */}
+              <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl">
+                <img 
+                  src="/speaking.jpeg" 
+                  alt="Speaking" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center [transform-style:preserve-3d]">
+                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-widest [transform:translateZ(70px)] drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] uppercase">
+                    Speaking
+                  </h3>
+                </div>
+              </div>
 
-                <p className="text-white/70 text-sm leading-relaxed mb-8 max-w-xs">
-                  Join transformational online sessions focused on focus, confidence,
-                  performance, and mindset breakthroughs.
-                </p>
-
-                <span className="bg-[#f26522] hover:bg-[#ff7a3d] transition-all duration-300 text-white px-8 py-3 uppercase tracking-[0.2em] text-xs font-semibold">
-                  Find Out More
-                </span>
+              {/* Back Side */}
+              <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl bg-[#0a0a0a]">
+                <img 
+                  src="/speaking.jpeg" 
+                  alt="Speaking" 
+                  className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center [transform-style:preserve-3d]">
+                  {/* High-Distance 3D Pop-out */}
+                  <div className="[transform:translateZ(130px)] flex flex-col items-center">
+                    <h3 className="text-3xl md:text-4xl font-light text-white mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] uppercase tracking-wider">
+                      Speaking
+                    </h3>
+                    <p className="text-white/80 text-sm leading-relaxed mb-10 max-w-xs font-light drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                      High-impact keynote experiences designed to transform thinking,
+                      performance, and leadership.
+                    </p>
+                    <span className="inline-block bg-[#f26522] hover:bg-white hover:text-black transition-all duration-500 text-white px-10 py-4 uppercase tracking-[0.3em] text-[10px] font-bold shadow-[0_25px_50px_-12px_rgba(242,101,34,0.5)]">
+                      Find Out More
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Card 3 - Impact */}
           <div
-            className="group relative w-full h-[420px] [perspective:2000px] cursor-pointer"
+            className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
             onClick={() => (window.location.href = '/impact')}
           >
-            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-
+            <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
+              
               {/* Front Side */}
-              <div className="absolute inset-0 overflow-hidden shadow-2xl [backface-visibility:hidden]">
-
-                <div className="absolute inset-0 bg-[url('/card-impact.jpg')] bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"></div>
-
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-wide">
+              <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl">
+                <img 
+                  src="/impact.png" 
+                  alt="Impact" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center [transform-style:preserve-3d]">
+                  <h3 className="text-4xl md:text-5xl font-light text-white tracking-widest [transform:translateZ(70px)] drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] uppercase">
                     Impact
                   </h3>
                 </div>
               </div>
 
               {/* Back Side */}
-              <div className="absolute inset-0 bg-black border border-white/10 shadow-[0_0_40px_rgba(242,101,34,0.25)] flex flex-col items-center justify-center p-8 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-
-                <h3 className="text-3xl md:text-4xl font-light text-white mb-6">
-                  Impact
-                </h3>
-
-                <p className="text-white/70 text-sm leading-relaxed mb-8 max-w-xs">
-                  Real transformation initiatives creating meaningful social and
-                  educational impact across communities.
-                </p>
-
-                <span className="bg-[#f26522] hover:bg-[#ff7a3d] transition-all duration-300 text-white px-8 py-3 uppercase tracking-[0.2em] text-xs font-semibold">
-                  Find Out More
-                </span>
+              <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl bg-[#0a0a0a]">
+                <img 
+                  src="/impact.png" 
+                  alt="Impact" 
+                  className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center [transform-style:preserve-3d]">
+                  {/* High-Distance 3D Pop-out */}
+                  <div className="[transform:translateZ(130px)] flex flex-col items-center">
+                    <h3 className="text-3xl md:text-4xl font-light text-white mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] uppercase tracking-wider">
+                      Impact
+                    </h3>
+                    <p className="text-white/80 text-sm leading-relaxed mb-10 max-w-xs font-light drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                      Real transformation initiatives creating meaningful social and
+                      educational impact across communities.
+                    </p>
+                    <span className="inline-block bg-[#f26522] hover:bg-white hover:text-black transition-all duration-500 text-white px-10 py-4 uppercase tracking-[0.3em] text-[10px] font-bold shadow-[0_25px_50px_-12px_rgba(242,101,34,0.5)]">
+                      Find Out More
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>

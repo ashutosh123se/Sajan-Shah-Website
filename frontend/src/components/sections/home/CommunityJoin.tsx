@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -35,7 +34,7 @@ export const CommunityJoin: React.FC = () => {
     setLoading(true);
     
     try {
-      const response = await api.post('/newsletter', formData);
+      await api.post('/newsletter', formData);
       toast.success('Welcome to the Sajan Shah Community!');
       setFormData({ name: '', email: '', phone: '', whatsappOptIn: false });
     } catch (error: any) {
@@ -46,101 +45,117 @@ export const CommunityJoin: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-brand-dark text-white border-y border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tight">
-            Join Our Global Community
-          </h2>
-          <div className="w-24 h-1 bg-brand-orange mx-auto mb-8"></div>
-          <p className="text-xl md:text-2xl mb-8 text-gray-300 font-medium">
-            Get exclusive content, early access to programs, and connect with thousands of learners
-          </p>
-        </div>
-        
-        {/* Lead Form */}
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-          <div className="bg-white/5 border border-white/10 p-10 md:p-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              {/* Name Field */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
-                  placeholder="ENTER YOUR FULL NAME"
-                />
-              </div>
+    <section className="py-24 bg-[#0a0a0a] text-white overflow-hidden relative">
+      {/* Background Accents */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f26522]/5 rounded-full filter blur-[120px] -z-0"></div>
+      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full filter blur-[100px] -z-0"></div>
 
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
-                  placeholder="YOUR.EMAIL@EXAMPLE.COM"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-              {/* Phone Field */}
-              <div>
-                <label htmlFor="phone" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-6 py-4 bg-brand-dark border border-white/20 rounded-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-white placeholder-gray-500 transition-all outline-none"
-                  placeholder="+91 98765 43210"
-                />
-              </div>
-
-              {/* WhatsApp Opt-in */}
-              <div className="flex items-center pt-8">
-                <input
-                  type="checkbox"
-                  id="whatsappOptIn"
-                  name="whatsappOptIn"
-                  checked={formData.whatsappOptIn}
-                  onChange={handleInputChange}
-                  className="w-6 h-6 text-brand-orange bg-brand-dark border-white/20 rounded-none focus:ring-brand-orange accent-brand-orange cursor-pointer"
-                />
-                <label htmlFor="whatsappOptIn" className="ml-4 text-sm font-bold text-white uppercase tracking-wider cursor-pointer">
-                  Send me updates on WhatsApp
-                </label>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={loading}
-              size="lg"
-              className="w-full py-6 text-xl"
-            >
-              {loading ? 'JOINING...' : 'JOIN COMMUNITY NOW'}
-            </Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          
+          <div className="text-center mb-16">
+            <p className="text-[#f26522] font-bold text-xs tracking-[0.5em] uppercase mb-4">Elite Access</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-tight">
+              Join Our Global <span className="font-bold">Movement.</span>
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
+              Get exclusive cognitive insights, priority access to live transformations, and join a community of 16 million impact-makers.
+            </p>
           </div>
-        </form>
+          
+          {/* Lead Form with Glassmorphism */}
+          <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+            <div className="bg-[#111] bg-opacity-50 backdrop-blur-xl border border-gray-800 p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.4)] rounded-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {/* Name Field */}
+                <div>
+                  <label htmlFor="name" className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-[0.2em]">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-0 py-3 bg-transparent border-b border-gray-800 focus:border-[#f26522] outline-none text-white transition-all placeholder-gray-700"
+                    placeholder="Enter your name"
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label htmlFor="email" className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-[0.2em]">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-0 py-3 bg-transparent border-b border-gray-800 focus:border-[#f26522] outline-none text-white transition-all placeholder-gray-700"
+                    placeholder="name@company.com"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                {/* Phone Field */}
+                <div>
+                  <label htmlFor="phone" className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-[0.2em]">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-0 py-3 bg-transparent border-b border-gray-800 focus:border-[#f26522] outline-none text-white transition-all placeholder-gray-700"
+                    placeholder="+91 00000 00000"
+                  />
+                </div>
+
+                {/* WhatsApp Opt-in */}
+                <div className="flex items-center">
+                  <label className="flex items-center cursor-pointer group">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        id="whatsappOptIn"
+                        name="whatsappOptIn"
+                        checked={formData.whatsappOptIn}
+                        onChange={handleInputChange}
+                        className="sr-only"
+                      />
+                      <div className={`w-10 h-5 rounded-full transition-colors ${formData.whatsappOptIn ? 'bg-[#f26522]' : 'bg-gray-800'}`}></div>
+                      <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform ${formData.whatsappOptIn ? 'translate-x-5' : ''}`}></div>
+                    </div>
+                    <span className="ml-4 text-xs text-gray-500 font-medium group-hover:text-gray-300 transition-colors">
+                      Send me updates on WhatsApp
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white py-5 font-bold text-xs uppercase tracking-[0.3em] transition-all shadow-[0_10px_30px_rgba(242,101,34,0.3)]"
+              >
+                {loading ? 'Processing...' : 'Join The Community'}
+              </button>
+              
+              <p className="mt-6 text-center text-[10px] text-gray-600 font-medium tracking-widest uppercase">
+                Zero Spam. Pure Transformation.
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </section>
   );
