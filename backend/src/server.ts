@@ -22,6 +22,7 @@ import legalRoutes from './routes/legal';
 import bannersRoutes from './routes/bannersRoutes';
 import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settingsRoutes';
+import leadsRoutes from './routes/leads';
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +57,7 @@ app.use('/api/legal', legalRoutes);
 app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/leads', leadsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

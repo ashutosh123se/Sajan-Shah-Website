@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { db } from '../utils/database';
+import { generateSetupToken, getSetupTokenExpiry } from '../utils/authUtils';
+import { EmailService } from '../services/emailService';
 
 export const getMembers = async (req: Request, res: Response) => {
   try {
@@ -71,6 +73,48 @@ export const applyForMember = async (req: Request, res: Response) => {
     const application = await (db as any).memberApplication.create({
       data: { name, email, phone, bio, whyJoin }
     });
+
+    // Capture User / Account Creation logic
+    let user = await db.user.findUnique({ where: { email } });
+    if (!user) {
+      const setupToken = generateSetupToken();
+      user = await db.user.create({
+        data: {
+          email,
+          name,
+          phone,
+          passwordSetupToken: setupToken,
+          passwordSetupExpires: getSetupTokenExpiry(),
+          role: 'CUSTOMER'
+        }
+      });
+      
+      // Send setup email
+      await EmailService.sendPasswordSetupEmail(email, name, setupToken);
+    } else if (!user.passwordHash && !user.passwordSetupToken) {
+      // User exists but has no password (maybe from a previous purchase)
+      const setupToken = generateSetupToken();
+      await db.user.update({
+        where: { email },
+        data: {
+          passwordSetupToken: setupToken,
+          passwordSetupExpires: getSetupTokenExpiry()
+        }
+      });
+      await EmailService.sendPasswordSetupEmail(email, name, setupToken);
+    }
+
+    // Also save as a Lead
+    await db.lead.create({
+      data: {
+        name,
+        email,
+        phone,
+        source: 'membership-application',
+        data: { bio, whyJoin }
+      }
+    });
+
     sendSuccess(res, { application }, 'Application submitted successfully');
   } catch (error) {
     console.error('Apply for member error:', error);

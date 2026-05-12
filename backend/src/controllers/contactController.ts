@@ -32,6 +32,24 @@ export const submitContact = async (req: Request, res: Response) => {
         formType: formType || 'inquiry'
       }
     });
+
+    // Also save as a Lead
+    await db.lead.create({
+      data: {
+        name,
+        email,
+        phone,
+        source: formType || 'contact-form',
+        data: {
+          organization,
+          city,
+          eventType,
+          eventDate,
+          audience,
+          message
+        }
+      }
+    });
     
     // Send admin alert email
     try {

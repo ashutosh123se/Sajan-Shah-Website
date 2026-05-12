@@ -58,7 +58,7 @@ export const Navbar: React.FC = () => {
 
             {/* Absolute positioned Cart & Auth for Desktop to keep Logo perfectly centered */}
             <div className="hidden md:flex absolute right-0 items-center space-x-6 top-1/2 transform -translate-y-1/2">
-               <button onClick={openCart} className="relative text-white hover:text-[#f26522] transition-colors">
+             <Link href="/cart" className="relative text-white hover:text-[#f26522] transition-colors">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -67,10 +67,15 @@ export const Navbar: React.FC = () => {
                     {getTotalItems()}
                   </span>
                 )}
-              </button>
+              </Link>
               {isAuthenticated ? (
                 <div className="flex items-center space-x-4">
-                  <span className="text-xs text-gray-400 font-medium">Welcome, {user?.name?.split(' ')[0]}</span>
+                  <Link 
+                    href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/user'}
+                    className="text-xs text-gray-400 font-medium hover:text-white transition-colors"
+                  >
+                    Welcome, {user?.name?.split(' ')[0]}
+                  </Link>
                   <button onClick={logout} className="text-xs text-white hover:text-[#f26522] uppercase tracking-widest font-bold transition-colors">
                     Logout
                   </button>
@@ -131,7 +136,7 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile Cart Icon (Right aligned on mobile) */}
             <div className="md:hidden flex items-center">
-               <button onClick={openCart} className="relative text-white hover:text-[#f26522] p-2">
+               <Link href="/cart" className="relative text-white hover:text-[#f26522] p-2">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -140,7 +145,7 @@ export const Navbar: React.FC = () => {
                     {getTotalItems()}
                   </span>
                 )}
-              </button>
+              </Link>
             </div>
 
           </div>
@@ -168,16 +173,14 @@ export const Navbar: React.FC = () => {
             <div className="w-24 h-1 bg-gray-800 my-8"></div>
             
             {isAuthenticated ? (
-              <div className="flex flex-col items-center space-y-4">
-                {(user?.role === 'CUSTOMER' || user?.role === 'SUBSCRIBER') && (
-                  <Link
-                    href="/user"
-                    className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    My Dashboard
-                  </Link>
-                )}
+              <div className="flex flex-col items-center space-y-6">
+                <Link
+                  href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/user'}
+                  className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Dashboard
+                </Link>
                 <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="text-xl text-gray-500 hover:text-white uppercase tracking-widest font-bold">
                   Logout
                 </button>
@@ -186,9 +189,6 @@ export const Navbar: React.FC = () => {
               <div className="flex space-x-6">
                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold">
                   Login
-                </Link>
-                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold">
-                  Register
                 </Link>
               </div>
             )}

@@ -28,16 +28,18 @@ enum OrderStatus {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  email        String    @unique
-  passwordHash String
-  role         UserRole  @default(CUSTOMER)
-  photoUrl     String?
-  phone        String?
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  orders       Order[]
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  passwordHash         String?
+  passwordSetupToken   String?   @unique
+  passwordSetupExpires DateTime?
+  role                 UserRole  @default(CUSTOMER)
+  photoUrl             String?
+  phone                String?
+  isActive             Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  orders               Order[]
 }
 
 model Product {
@@ -229,4 +231,15 @@ model Setting {
   group     String   // website, smtp, payment, social
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
+  data      Json?    // to store additional fields like message, subject, organization, etc.
+  status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
+  createdAt DateTime @default(now())
 }

@@ -69,9 +69,27 @@ export const LogoStrip: React.FC = () => {
               Get weekly neuroscience-backed insights and strategies directly from Sajan Shah. No fluff, just pure transformation.
             </p>
             
-            <form className="flex flex-col sm:flex-row gap-4 w-full max-w-lg mx-auto lg:mx-0" onSubmit={e => e.preventDefault()}>
+            <form 
+              className="flex flex-col sm:flex-row gap-4 w-full max-w-lg mx-auto lg:mx-0" 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const email = (e.target as any).email.value;
+                if (!email) return;
+                try {
+                  const api = (await import('@/lib/api')).default;
+                  const toast = (await import('react-hot-toast')).default;
+                  await api.post('/newsletter', { email, source: 'logo-strip-subscribe' });
+                  toast.success('Welcome aboard!');
+                  (e.target as any).email.value = '';
+                } catch (err) {
+                  const toast = (await import('react-hot-toast')).default;
+                  toast.error('Failed to subscribe');
+                }
+              }}
+            >
               <input 
                 type="email" 
+                name="email"
                 placeholder="Your email address" 
                 className="px-6 py-5 bg-[#151515] border border-gray-800 text-white outline-none w-full sm:flex-1 text-sm md:text-base font-light focus:border-[#f26522] transition-colors" 
                 required 
