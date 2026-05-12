@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useCart } from '@/hooks/useCart';
 import api from '@/lib/api';
+import Link from 'next/link';
 
 interface Product {
   id: string;
@@ -247,13 +248,12 @@ export default function ProductsPage() {
                       >
                         Add to Cart
                       </Button>
-                      <Button 
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.location.href = `/products/${product.id}`}
+                      <Link 
+                        href={`/products/${product.id}`}
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
                       >
                         View Details
-                      </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>

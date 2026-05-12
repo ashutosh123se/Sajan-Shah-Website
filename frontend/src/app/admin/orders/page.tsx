@@ -4,30 +4,36 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
+import api from '@/lib/api';
 
 interface Order {
   id: string;
-  customerName: string;
-  customerEmail: string;
-  total: number;
-  status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  date: string;
+  userEmail: string;
+  user: {
+    name: string;
+    email: string;
+  };
+  amount: number;
+  status: 'PENDING' | 'PAID' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'FAILED' | 'REFUNDED';
+  createdAt: string;
   trackingId?: string;
-  shippingUpdate?: string;
+  shippingNotes?: string;
+  shippingAddress?: string;
+  phone?: string;
 }
 
 export default function AdminOrdersPage() {
-  const { isSuperAdmin, isAdmin, isShopManager } = useAuth();
+  const { isSuperAdmin, isAdmin, isEditor, isShopManager } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Modal State
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [statusUpdate, setStatusUpdate] = useState<Order['status']>('Pending');
+  const [statusUpdate, setStatusUpdate] = useState<Order['status']>('PENDING');
   const [trackingId, setTrackingId] = useState('');
-  const [shippingUpdate, setShippingUpdate] = useState('');
+  const [shippingNotes, setShippingNotes] = useState('');
 
-  const hasAccess = isSuperAdmin || isAdmin || isShopManager;
+  const hasAccess = isSuperAdmin || isAdmin || isEditor || isShopManager;
 
   useEffect(() => {
     if (!hasAccess) return;
@@ -36,32 +42,31 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      // Mocked data for UI demonstration
-      const mockOrders: Order[] = [
-        { id: 'ORD-001', customerName: 'John Doe', customerEmail: 'john@example.com', total: 450, status: 'Pending', date: '2026-05-09' },
-        { id: 'ORD-002', customerName: 'Jane Smith', customerEmail: 'jane@example.com', total: 1200, status: 'Processing', date: '2026-05-08' },
-        { id: 'ORD-003', customerName: 'Robert Johnson', customerEmail: 'rob@example.com', total: 850, status: 'Shipped', date: '2026-05-07', trackingId: 'TRK123456789' },
-      ];
-      setOrders(mockOrders);
+      setLoading(true);
+      const response = await api.get('/orders');
+      setOrders(response.data.data.orders || []);
     } catch (error) {
+      console.error('Failed to fetch orders:', error);
       toast.error('Failed to fetch orders');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateOrder = () => {
+  const handleUpdateOrder = async () => {
     if (!selectedOrder) return;
     try {
-      setOrders(orders.map(o => o.id === selectedOrder.id ? { 
-        ...o, 
-        status: statusUpdate, 
-        trackingId: trackingId || o.trackingId,
-        shippingUpdate: shippingUpdate || o.shippingUpdate
-      } : o));
+      await api.patch(`/orders/${selectedOrder.id}/status`, {
+        status: statusUpdate,
+        trackingId,
+        shippingNotes
+      });
+      
       toast.success('Order updated successfully');
       setSelectedOrder(null);
+      fetchOrders();
     } catch (error) {
+      console.error('Failed to update order:', error);
       toast.error('Failed to update order');
     }
   };
@@ -70,16 +75,18 @@ export default function AdminOrdersPage() {
     setSelectedOrder(order);
     setStatusUpdate(order.status);
     setTrackingId(order.trackingId || '');
-    setShippingUpdate(order.shippingUpdate || '');
+    setShippingNotes(order.shippingNotes || '');
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pending': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
-      case 'Processing': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'Shipped': return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
-      case 'Delivered': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'Cancelled': return 'bg-red-500/10 text-red-400 border-red-500/20';
+      case 'PENDING': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      case 'PAID': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      case 'PROCESSING': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      case 'SHIPPED': return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+      case 'DELIVERED': return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'CANCELLED': return 'bg-red-500/10 text-red-400 border-red-500/20';
+      case 'FAILED': return 'bg-red-500/10 text-red-400 border-red-500/20';
       default: return 'bg-white/5 text-gray-400 border-white/10';
     }
   };
@@ -111,13 +118,13 @@ export default function AdminOrdersPage() {
               <tbody className="divide-y divide-white/10 bg-transparent">
                 {orders.map(order => (
                   <tr key={order.id} className="hover:bg-white/5 transition-colors duration-200">
-                    <td className="px-6 py-4 font-medium text-white tracking-wider">#{order.id}</td>
+                    <td className="px-6 py-4 font-medium text-white tracking-wider">#{order.id.slice(-6)}</td>
                     <td className="px-6 py-4">
-                      <div className="text-white font-medium">{order.customerName}</div>
-                      <div className="text-sm text-gray-400">{order.customerEmail}</div>
+                      <div className="text-white font-medium">{order.user?.name || 'Guest'}</div>
+                      <div className="text-sm text-gray-400">{order.user?.email || order.userEmail}</div>
                     </td>
-                    <td className="px-6 py-4 text-gray-300">{new Date(order.date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 font-light text-lg text-white">₹{order.total}</td>
+                    <td className="px-6 py-4 text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 font-light text-lg text-white">₹{order.amount}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 font-medium tracking-wide border text-xs uppercase ${getStatusColor(order.status)}`}>
                         {order.status}
@@ -146,9 +153,17 @@ export default function AdminOrdersPage() {
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-[#141414] border border-white/10 p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold mb-6 text-white tracking-tight">Update Order #{selectedOrder.id}</h2>
+            <h2 className="text-xl font-bold mb-6 text-white tracking-tight">Update Order #{selectedOrder.id.slice(-6)}</h2>
             
             <div className="space-y-5">
+              {selectedOrder.shippingAddress && (
+                <div className="bg-white/5 p-4 border border-white/10 text-sm">
+                  <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Shipping Details</p>
+                  <p className="text-white mb-1">{selectedOrder.shippingAddress}</p>
+                  <p className="text-blue-400 font-mono">{selectedOrder.phone}</p>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs uppercase tracking-wider font-medium text-gray-400 mb-2">Order Status</label>
                 <select 
@@ -156,11 +171,14 @@ export default function AdminOrdersPage() {
                   onChange={(e) => setStatusUpdate(e.target.value as Order['status'])}
                   className="w-full px-4 py-2 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-white transition-all rounded-none appearance-none"
                 >
-                  <option value="Pending" className="bg-[#141414]">Pending</option>
-                  <option value="Processing" className="bg-[#141414]">Processing</option>
-                  <option value="Shipped" className="bg-[#141414]">Shipped</option>
-                  <option value="Delivered" className="bg-[#141414]">Delivered</option>
-                  <option value="Cancelled" className="bg-[#141414]">Cancelled</option>
+                  <option value="PENDING" className="bg-[#141414]">Pending</option>
+                  <option value="PAID" className="bg-[#141414]">Paid</option>
+                  <option value="PROCESSING" className="bg-[#141414]">Processing</option>
+                  <option value="SHIPPED" className="bg-[#141414]">Shipped</option>
+                  <option value="DELIVERED" className="bg-[#141414]">Delivered</option>
+                  <option value="CANCELLED" className="bg-[#141414]">Cancelled</option>
+                  <option value="FAILED" className="bg-[#141414]">Failed</option>
+                  <option value="REFUNDED" className="bg-[#141414]">Refunded</option>
                 </select>
               </div>
 
@@ -178,8 +196,8 @@ export default function AdminOrdersPage() {
               <div>
                 <label className="block text-xs uppercase tracking-wider font-medium text-gray-400 mb-2">Shipment Update / Notes</label>
                 <textarea 
-                  value={shippingUpdate} 
-                  onChange={(e) => setShippingUpdate(e.target.value)} 
+                  value={shippingNotes} 
+                  onChange={(e) => setShippingNotes(e.target.value)} 
                   placeholder="e.g. Package is out for delivery"
                   className="w-full px-4 py-2 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-white transition-all rounded-none"
                   rows={3}

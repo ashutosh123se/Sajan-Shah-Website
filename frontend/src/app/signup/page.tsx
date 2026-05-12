@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -22,7 +23,6 @@ export default function SignupPage() {
     try {
       const result = await register(name, email, password);
       if (result?.success) {
-        // After successful registration, push to customer dashboard
         router.push('/user');
       } else {
         setError(result?.error || 'Failed to register');
@@ -35,99 +35,125 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
+    <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden">
+      {/* Premium Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/images/premium_bg.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+      </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-transparent via-gold-500/50 to-transparent"></div>
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 w-full max-w-md"
+      >
+        <div className="text-center mb-8">
           <Link href="/">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight cursor-pointer">
-              Sajan<span className="text-gray-400">Shah</span>
+            <h1 className="text-4xl font-black text-white tracking-tighter cursor-pointer uppercase mb-2">
+              Sajan<span className="text-gray-500">Shah</span>
             </h1>
           </Link>
-          <h2 className="mt-6 text-2xl font-semibold text-white tracking-wide">
-            Create an account
+          <div className="h-px w-12 bg-white/30 mx-auto mb-6"></div>
+          <h2 className="text-2xl font-light text-white tracking-[0.2em] uppercase">
+            Begin the Journey
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Join the movement today
+          <p className="mt-2 text-xs text-gray-400 uppercase tracking-widest font-medium">
+            Join the elite circle
           </p>
         </div>
 
-        <div className="bg-[#141414] py-8 px-6 shadow-2xl rounded-2xl border border-white/10 sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm rounded-lg p-3 text-center">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs uppercase tracking-widest py-3 px-4 text-center"
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
             
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
                 Full Name
               </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all sm:text-sm"
-                  placeholder="Enter your full name"
-                />
-              </div>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
+                placeholder="John Doe"
+              />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
-                Email address
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+                Email Address
               </label>
-              <div className="mt-1">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all sm:text-sm"
-                  placeholder="Enter your email"
-                />
-              </div>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
+                placeholder="you@example.com"
+              />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
                 Password
               </label>
-              <div className="mt-1">
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all sm:text-sm"
-                  placeholder="Create a strong password"
-                />
-              </div>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
+                placeholder="••••••••"
+              />
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-[#141414] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? 'Creating account...' : 'Sign up'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-4 bg-white text-black text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all disabled:opacity-50 relative overflow-hidden group mt-4"
+            >
+              <span className="relative z-10">{isLoading ? 'Creating Identity...' : 'Initiate Registration'}</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
+            </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
-              Already have an account?{' '}
-              <Link href="/login" className="font-medium text-white hover:underline transition-all">
-                Sign in
+          <div className="mt-8 text-center">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
+              Already a member?{' '}
+              <Link href="/login" className="text-white hover:underline font-bold transition-all ml-1">
+                Sign In
               </Link>
             </p>
           </div>
         </div>
-      </div>
+
+        {/* Subtle Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-[9px] uppercase tracking-[0.4em] text-gray-600 font-medium">
+            SECURE ACCESS • ELITE PRIVACY
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
+

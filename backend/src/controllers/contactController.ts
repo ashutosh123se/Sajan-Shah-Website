@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
+import { db } from '../utils/database';
+import { EmailService } from '../services/emailService';
 
 export const submitContact = async (req: Request, res: Response) => {
   try {
@@ -15,25 +17,35 @@ export const submitContact = async (req: Request, res: Response) => {
       return sendError(res, 'Name, email, and message are required', 400);
     }
     
-    // This would normally save to database and send emails
-    const contactSubmission = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      organization,
-      email,
-      phone,
-      city,
-      eventType,
-      eventDate,
-      audience,
-      message,
-      formType: formType || 'inquiry',
-      receivedAt: new Date(),
-      isRead: false
-    };
+    // Save to database
+    const contactSubmission = await db.contact.create({
+      data: {
+        name,
+        organization,
+        email,
+        phone,
+        city,
+        eventType,
+        eventDate: eventDate ? new Date(eventDate) : null,
+        audience,
+        message,
+        formType: formType || 'inquiry'
+      }
+    });
     
-    // TODO: Send admin alert email
-    // TODO: Send auto-reply to user
+    // Send admin alert email
+    try {
+      await EmailService.sendContactNotification({
+        name,
+        email,
+        phone,
+        subject: `New ${formType || 'Inquiry'} from ${name}`,
+        message
+      });
+    } catch (emailError) {
+      console.error('Failed to send contact notification email:', emailError);
+      // Don't fail the request if email fails, as DB record is created
+    }
     
     sendSuccess(res, { contactSubmission }, 'Message submitted successfully');
   } catch (error) {
@@ -44,8 +56,9 @@ export const submitContact = async (req: Request, res: Response) => {
 
 export const getContactMessages = async (req: Request, res: Response) => {
   try {
-    // This would normally fetch from database
-    const messages: any[] = []; // Mock empty array for now
+    const messages = await db.contact.findMany({
+      orderBy: { receivedAt: 'desc' }
+    });
     
     sendSuccess(res, { messages });
   } catch (error) {
@@ -57,7 +70,10 @@ export const getContactMessages = async (req: Request, res: Response) => {
 export const markAsRead = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    // This would normally mark as read in database
+    await db.contact.update({
+      where: { id },
+      data: { isRead: true }
+    });
     
     sendSuccess(res, null, 'Message marked as read');
   } catch (error) {
@@ -71,7 +87,24 @@ export const replyToMessage = async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const { reply } = req.body;
     
-    // This would normally send email and update database
+    const originalMessage = await db.contact.findUnique({ where: { id } });
+    if (!originalMessage) return sendError(res, 'Message not found', 404);
+
+    // Send reply email
+    await EmailService.sendEmail({
+      to: originalMessage.email,
+      subject: `Re: ${originalMessage.formType || 'Inquiry'} - Sajan Shah`,
+      text: reply,
+      html: `<div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+        <p>Dear ${originalMessage.name},</p>
+        <p>${reply.replace(/\n/g, '<br>')}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #666;">Original Message:</p>
+        <blockquote style="border-left: 3px solid #eee; padding-left: 15px; color: #666; font-style: italic;">
+          ${originalMessage.message}
+        </blockquote>
+      </div>`
+    });
     
     sendSuccess(res, null, 'Reply sent successfully');
   } catch (error) {

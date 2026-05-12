@@ -12,21 +12,31 @@ interface EmailOptions {
   }>;
 }
 
+import { getSmtpConfig } from '../utils/config';
+
 export class EmailService {
-  private static transporter = nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+  private static async getTransporter() {
+    const config = await getSmtpConfig();
+    
+    // @ts-ignore - nodemailer typing might vary
+    return nodemailer.createTransport({
+      host: config.host,
+      port: config.port,
+      secure: config.secure,
+      auth: {
+        user: config.user,
+        pass: config.pass,
+      },
+    });
+  }
 
   static async sendEmail(options: EmailOptions): Promise<void> {
     try {
+      const config = await getSmtpConfig();
+      const transporter = await this.getTransporter();
+      
       const mailOptions = {
-        from: `"Sajan Shah" <${process.env.SMTP_USER}>`,
+        from: config.from,
         to: options.to,
         subject: options.subject,
         text: options.text,
@@ -34,7 +44,7 @@ export class EmailService {
         attachments: options.attachments,
       };
 
-      await this.transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
       console.log('Email sent successfully to:', options.to);
     } catch (error) {
       console.error('Failed to send email:', error);

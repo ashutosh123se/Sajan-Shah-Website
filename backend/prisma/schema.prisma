@@ -19,6 +19,10 @@ enum UserRole {
 enum OrderStatus {
   PENDING
   PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
   FAILED
   REFUNDED
 }
@@ -39,8 +43,10 @@ model User {
 model Product {
   id                 String      @id @default(cuid())
   title              String
+  slug               String      @default("")
   description        String
   price              Float
+  currency           String      @default("INR")
   imageUrl           String
   images             String[]
   category           String      // books | merchandise | courses | posters | bands | ai | bundles
@@ -155,6 +161,11 @@ model Order {
   paymentId       String?
   razorpayOrderId String?
   status          OrderStatus @default(PENDING)
+  paymentMethod   String      @default("RAZORPAY")
+  trackingId      String?
+  shippingNotes   String?
+  shippingAddress String?
+  phone           String?
   createdAt       DateTime    @default(now())
   items           OrderItem[]
 }
@@ -209,4 +220,13 @@ model PopupBanner {
   isActive    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  group     String   // website, smtp, payment, social
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

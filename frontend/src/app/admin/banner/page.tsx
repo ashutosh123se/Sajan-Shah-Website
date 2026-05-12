@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -14,7 +15,17 @@ interface Banner {
 }
 
 export default function AdminBannerPage() {
+  const { isSuperAdmin, isAdmin, isEditor } = useAuth();
   const [banners, setBanners] = useState<Banner[]>([]);
+
+  if (!isSuperAdmin && !isAdmin && !isEditor) {
+    return (
+      <div className="p-8 text-center text-red-600">
+        <h1 className="text-2xl font-bold">Access Denied</h1>
+        <p>You do not have permission to access this page.</p>
+      </div>
+    );
+  }
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({

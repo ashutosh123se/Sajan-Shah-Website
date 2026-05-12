@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -167,15 +168,26 @@ export const Navbar: React.FC = () => {
             <div className="w-24 h-1 bg-gray-800 my-8"></div>
             
             {isAuthenticated ? (
-              <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="text-xl text-gray-500 hover:text-white uppercase tracking-widest font-bold">
-                Logout
-              </button>
+              <div className="flex flex-col items-center space-y-4">
+                {(user?.role === 'CUSTOMER' || user?.role === 'SUBSCRIBER') && (
+                  <Link
+                    href="/user"
+                    className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Dashboard
+                  </Link>
+                )}
+                <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="text-xl text-gray-500 hover:text-white uppercase tracking-widest font-bold">
+                  Logout
+                </button>
+              </div>
             ) : (
               <div className="flex space-x-6">
                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold">
                   Login
                 </Link>
-                <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold">
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold">
                   Register
                 </Link>
               </div>
