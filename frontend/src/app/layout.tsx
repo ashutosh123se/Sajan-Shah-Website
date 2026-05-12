@@ -78,6 +78,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'} />
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </head>
       <body className={`${poppins.variable} ${openSans.variable} font-body antialiased`}>
         <div className="min-h-screen flex flex-col">

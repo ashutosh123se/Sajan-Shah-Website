@@ -10,6 +10,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       totalProducts,
       totalEvents,
       totalPrograms,
+      totalLeads,
       recentOrders
     ] = await Promise.all([
       db.user.count(),
@@ -17,6 +18,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       db.product.count(),
       db.event.count(),
       db.program.count(),
+      db.lead.count(),
       db.order.findMany({
         take: 5,
         orderBy: { createdAt: 'desc' },
@@ -38,7 +40,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         totalRevenue,
         totalProducts,
         totalEvents,
-        totalPrograms
+        totalPrograms,
+        totalLeads
       },
       recentActivity: recentOrders.map(order => ({
         time: new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),

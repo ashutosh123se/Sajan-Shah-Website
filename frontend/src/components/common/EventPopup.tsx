@@ -18,10 +18,6 @@ export default function EventPopup() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user already dismissed the popup in this session
-    const isDismissed = sessionStorage.getItem('eventPopupDismissed');
-    if (isDismissed) return;
-
     fetchActiveBanner();
   }, []);
 
@@ -30,8 +26,8 @@ export default function EventPopup() {
       const response = await api.get('/banners/active');
       if (response.data?.data?.banner) {
         setBanner(response.data.data.banner);
-        // Add a small delay for better UX
-        setTimeout(() => setIsVisible(true), 1500);
+        // Immediate appearance for better impact as requested
+        setTimeout(() => setIsVisible(true), 500);
       }
     } catch (error) {
       console.error('Failed to fetch banner:', error);
@@ -40,7 +36,6 @@ export default function EventPopup() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    sessionStorage.setItem('eventPopupDismissed', 'true');
   };
 
   const handleClick = () => {
