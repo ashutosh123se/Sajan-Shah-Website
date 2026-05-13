@@ -26,11 +26,11 @@ export const Footer: React.FC = () => {
     { name: "For Event Organisers", href: "#" },
     { name: "For Podcast & Media Interviews", href: "#" },
     { name: "Success Stories", href: "https://www.youtube.com/@teamsajanshah" },
-    { name: "Privacy Policy", href: "https://docs.google.com/document/d/1qr5l8OqkDrdOqmWwKhdFt0LzOaQcF5kVsdsEEgXwXgs/edit?usp=drive_link" },
-    { name: "Terms of service", href: "https://docs.google.com/document/d/14_Pnu-gfEiDYcTu5NOy4T1Y9p_ZJB-fPnldokeKgGLg/edit?usp=drive_link" },
-    { name: "Terms and Conditions", href: "https://docs.google.com/document/d/1KsdvF-vf7pomBgVaJRXZ2FewJNzna6bu1sr8wL9m2bE/edit?usp=drive_link" },
-    { name: "Refund and replacement Policy", href: "https://docs.google.com/document/d/1ral0mySL2HjLbFK5siee9Xb4HJx27yYgJckINqPsgfU/edit?usp=sharing" },
-    { name: "AI Policy", href: "https://docs.google.com/document/d/1MfMZbLyhQ7WQFz9Fa5GCX2c2XVAsx_POygtQ7izUK8U/edit?usp=sharing" }
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Terms of Service", href: "/terms-of-service" },
+    { name: "Terms and Conditions", href: "/terms-and-conditions" },
+    { name: "Refund and Replacement Policy", href: "/refund-policy" },
+    { name: "AI Policy", href: "/ai-policy" }
   ];
 
   const socialLinks = [
@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-[#0a0a0a] text-white pt-24 pb-12 border-t-8 border-[#f26522]">
+    <footer className="bg-black text-white pt-24 pb-12 border-t-8 border-[#f26522] z-50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
           {/* Block 1 */}
@@ -67,14 +67,11 @@ export const Footer: React.FC = () => {
               Explore The Journey
             </button>
             <div className="pt-6 border-t border-gray-800 mt-8">
-              <p className="text-xs text-[#f26522] font-bold mb-3 uppercase tracking-wider">Credentials</p>
-              <div className="text-xs text-gray-400 flex flex-wrap gap-2 uppercase tracking-widest">
-                <span className="bg-[#151515] border border-gray-800 px-3 py-1.5">TEDx Speaker</span>
-                <span className="bg-[#151515] border border-gray-800 px-3 py-1.5">World Parliament of Religions</span>
-                <span className="bg-[#151515] border border-gray-800 px-3 py-1.5">United First</span>
-                <span className="bg-[#151515] border border-gray-800 px-3 py-1.5">Live to Inspire</span>
-                <span className="bg-[#151515] border border-gray-800 px-3 py-1.5">UN SDG 2030 Alignment</span>
-              </div>
+              <img 
+                src="/LOGO2.png" 
+                alt="Credentials" 
+                className="h-32 w-auto object-contain" 
+              />
             </div>
           </div>
 
@@ -94,7 +91,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Block 3 */}
-          <div className="col-span-1 bg-[#111] p-8 border border-gray-800 h-fit">
+          <div className="col-span-1 h-fit">
             <h3 className="text-xl font-bold mb-4 text-white uppercase tracking-widest">Sign up for Updates</h3>
             <div className="w-12 h-1 bg-[#f26522] mb-6"></div>
             <p className="text-sm text-gray-400 mb-6 leading-relaxed font-light">
