@@ -3,7 +3,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const AboutBio: React.FC = () => {
+interface AboutBioProps {
+  content?: {
+    image?: string;
+    heading1?: string;
+    heading2?: string;
+    introBold?: string;
+    introItalic?: string;
+    mainDescription?: string;
+    quote?: string;
+    statsParagraph?: string;
+    recognitionParagraph?: string;
+    truthHeading?: string;
+    truthQuote?: string;
+  };
+}
+
+export const AboutBio: React.FC<AboutBioProps> = ({ content }) => {
+  const data = {
+    image: content?.image || "https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg",
+    heading1: content?.heading1 || "Exactly Like...",
+    heading2: content?.heading2 || "Nobody Else",
+    introBold: content?.introBold || "Most people try to change their life by pushing harder.",
+    introItalic: content?.introItalic || "Sajan Shah teaches something radically different.",
+    mainDescription: content?.mainDescription || "Change how you think… and your life changes automatically. Because the problem is not your effort. The problem is your wiring. And once that changes, everything changes.",
+    quote: content?.quote || "Sajan Shah is one of India’s youngest motivational speakers and is widely known as the Memory Man of India.",
+    statsParagraph: content?.statsParagraph || "A Speaker at the World Parliament of Religions, 3-Time TEDx Speaker, and Author of 8 Transformational Books, he has impacted over 16+ million lives across the globe.",
+    recognitionParagraph: content?.recognitionParagraph || "Recognized and appreciated by global icons including HH Dalai Lama, Tennis Champion Roger Federer, and World Peace Ambassador Acharya Lokesh.",
+    truthHeading: content?.truthHeading || "The Core Truth",
+    truthQuote: content?.truthQuote || "He doesn't just inspire people. <br />He rewires them."
+  };
+
   return (
     <div className="bg-[#fafafa]">
       {/* Narrative Split Section */}
@@ -24,7 +54,7 @@ export const AboutBio: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 transition-opacity duration-700 group-hover:opacity-60"></div>
                 
                 <img 
-                  src="https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg" 
+                  src={data.image} 
                   alt="Sajan Shah" 
                   className="absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
                 />
@@ -39,8 +69,8 @@ export const AboutBio: React.FC = () => {
                 viewport={{ once: true }}
                 className="mt-12 py-10 border-t border-b border-gray-200"
               >
-                <h2 className="text-4xl md:text-6xl font-light mb-3 tracking-tight">Exactly Like...</h2>
-                <h2 className="text-4xl md:text-6xl font-extrabold text-[#f26522] uppercase tracking-tighter leading-none">Nobody Else</h2>
+                <h2 className="text-4xl md:text-6xl font-light mb-3 tracking-tight">{data.heading1}</h2>
+                <h2 className="text-4xl md:text-6xl font-extrabold text-[#f26522] uppercase tracking-tighter leading-none">{data.heading2}</h2>
               </motion.div>
             </div>
 
@@ -55,10 +85,10 @@ export const AboutBio: React.FC = () => {
                 {/* Intro Hook */}
                 <div className="space-y-6">
                   <p className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                    Most people try to change their life by pushing harder.
+                    {data.introBold}
                   </p>
                   <p className="text-2xl md:text-3xl font-light text-[#f26522] leading-tight tracking-tight italic">
-                    Sajan Shah teaches something radically different.
+                    {data.introItalic}
                   </p>
                 </div>
 
@@ -66,29 +96,25 @@ export const AboutBio: React.FC = () => {
                 
                 <div className="space-y-10 text-gray-600 text-xl font-light leading-relaxed">
                   <p className="text-gray-900 font-medium">
-                    Change how you think… and your life changes automatically. Because the problem is not your effort. The problem is your wiring. And once that changes, everything changes.
+                    {data.mainDescription}
                   </p>
                   
                   <div className="border-l-2 border-[#f26522] pl-8 py-3 bg-white/50 backdrop-blur-sm shadow-sm rounded-r-lg">
                     <p className="font-bold text-gray-900 italic text-2xl">
-                      "Sajan Shah is one of India’s youngest motivational speakers and is widely known as the Memory Man of India."
+                      "{data.quote}"
                     </p>
                   </div>
 
                   <div className="space-y-8">
-                    <p>
-                      A Speaker at the World Parliament of Religions, 3-Time TEDx Speaker, and Author of 8 Transformational Books, he has impacted over 16+ million lives across the globe.
+                    <p dangerouslySetInnerHTML={{ __html: data.statsParagraph }}>
                     </p>
-                    <p>
-                      Recognized and appreciated by global icons including <span className="text-gray-900 font-medium">HH Dalai Lama</span>, Tennis Champion <span className="text-gray-900 font-medium">Roger Federer</span>, and World Peace Ambassador <span className="text-gray-900 font-medium">Acharya Lokesh</span>.
+                    <p dangerouslySetInnerHTML={{ __html: data.recognitionParagraph }}>
                     </p>
                   </div>
                   
                   <div className="pt-16 pb-12 border-t border-gray-100 mt-20">
-                    <h4 className="text-gray-400 font-bold mb-6 uppercase tracking-[0.3em] text-[12px]">The Core Truth</h4>
-                    <p className="text-4xl md:text-5xl font-light italic text-gray-300 leading-tight">
-                      "He doesn't just inspire people. <br />
-                      <span className="text-[#f26522] font-bold not-italic text-gray-900">He rewires them.</span>"
+                    <h4 className="text-gray-400 font-bold mb-6 uppercase tracking-[0.3em] text-[12px]">{data.truthHeading}</h4>
+                    <p className="text-4xl md:text-5xl font-light italic text-gray-300 leading-tight" dangerouslySetInnerHTML={{ __html: data.truthQuote }}>
                     </p>
                   </div>
                 </div>

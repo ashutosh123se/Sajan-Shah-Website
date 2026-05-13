@@ -243,3 +243,12 @@ model Lead {
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
+model AboutPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
