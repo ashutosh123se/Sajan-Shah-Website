@@ -78,14 +78,7 @@ export const Testimonials: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-center items-center mt-12 space-x-8 relative z-20">
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev - 1 + testimonials.length) % testimonials.length)}
-              className="p-4 rounded-none border border-gray-800 hover:border-[#f26522] hover:bg-[#151515] transition-colors text-white"
-              aria-label="Previous Testimonial"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
-            </button>
+          <div className="flex justify-center items-center mt-12 relative z-20">
             <div className="flex space-x-3">
               {testimonials.map((_, idx) => (
                 <button 
@@ -96,13 +89,6 @@ export const Testimonials: React.FC = () => {
                 />
               ))}
             </div>
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev + 1) % testimonials.length)}
-              className="p-4 rounded-none border border-gray-800 hover:border-[#f26522] hover:bg-[#151515] transition-colors text-white"
-              aria-label="Next Testimonial"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" /></svg>
-            </button>
           </div>
         </div>
       </div>
