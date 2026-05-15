@@ -35,6 +35,7 @@ export const register = async (req: Request, res: Response) => {
     console.error('Register error:', error);
     sendError(res, 'Internal server error', 500);
   }
+  */
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -43,6 +44,10 @@ export const login = async (req: Request, res: Response) => {
 
     const user = await db.user.findUnique({ where: { email } });
     if (!user) return sendError(res, 'Invalid credentials', 401);
+
+    if (!user.passwordHash) {
+      return sendError(res, 'Account exists but password is not set. Please check your email for a password setup link.', 401);
+    }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) return sendError(res, 'Invalid credentials', 401);

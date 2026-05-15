@@ -23,6 +23,8 @@ import bannersRoutes from './routes/bannersRoutes';
 import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settingsRoutes';
 import leadsRoutes from './routes/leads';
+import aboutRoutes from './routes/aboutRoutes';
+
 
 // Load environment variables
 dotenv.config();
@@ -58,6 +60,8 @@ app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/leads', leadsRoutes);
+app.use('/api/about', aboutRoutes);
+
 
 // Health check
 app.get('/health', (req, res) => {
@@ -74,7 +78,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // 404 handler
-app.use('*splat', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: 'Route not found'
