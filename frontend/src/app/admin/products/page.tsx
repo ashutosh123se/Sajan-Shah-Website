@@ -15,7 +15,8 @@ interface Product {
   currency: string;
   category: string;
   imageUrl?: string;
-  inStock: boolean;
+  stock?: number;
+  isActive: boolean;
   isFeatured: boolean;
 }
 
@@ -34,8 +35,9 @@ export default function AdminProductsPage() {
     slug: '',
     description: '',
     price: '',
+    stock: '10',
     currency: 'INR',
-    category: 'book',
+    category: 'books',
     imageUrl: '',
     inStock: true,
     isFeatured: false,
@@ -75,11 +77,18 @@ export default function AdminProductsPage() {
     e.preventDefault();
     try {
       const payload = {
-        ...formData,
+        title: formData.title,
+        slug: formData.slug,
+        description: formData.description || formData.title,
         price: Number(formData.price),
+        currency: formData.currency,
+        category: formData.category,
+        imageUrl: formData.imageUrl,
+        stock: Number(formData.stock),
         images: [],
         tags: [],
         isActive: formData.inStock,
+        isFeatured: formData.isFeatured,
       };
 
       if (editingProduct) {
@@ -91,8 +100,9 @@ export default function AdminProductsPage() {
       }
       setIsModalOpen(false);
       fetchProducts();
-    } catch (error) {
-      toast.error('Failed to save product');
+    } catch (error: any) {
+      const message = error.response?.data?.error || 'Failed to save product';
+      toast.error(message);
     }
   };
 
@@ -104,10 +114,11 @@ export default function AdminProductsPage() {
         slug: product.slug,
         description: product.description || '',
         price: product.price.toString(),
+        stock: product.stock?.toString() || '0',
         currency: product.currency || 'INR',
-        category: product.category || 'book',
+        category: product.category || 'books',
         imageUrl: product.imageUrl || '',
-        inStock: product.inStock,
+        inStock: product.isActive,
         isFeatured: product.isFeatured,
       });
     } else {
@@ -117,8 +128,9 @@ export default function AdminProductsPage() {
         slug: '',
         description: '',
         price: '',
+        stock: '10',
         currency: 'INR',
-        category: 'book',
+        category: 'books',
         imageUrl: '',
         inStock: true,
         isFeatured: false,
@@ -164,9 +176,14 @@ export default function AdminProductsPage() {
                 
                 <div className="mt-auto flex justify-between items-end mb-4">
                   <div className="text-xl font-bold text-white">₹{product.price}</div>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${product.inStock ? 'text-green-400' : 'text-red-400'}`}>
-                    {product.inStock ? 'In Stock' : 'Out of Stock'}
-                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${product.isActive && (product.stock || 0) > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {product.isActive && (product.stock || 0) > 0 ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">
+                      Qty: {product.stock || 0}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex gap-2 pt-4 border-t border-white/5">
@@ -204,18 +221,32 @@ export default function AdminProductsPage() {
                   <input type="number" required value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3" />
                 </div>
 
+                <div className="col-span-2">
+                  <label className="block text-xs text-gray-400 uppercase tracking-wider mb-2">Description</label>
+                  <textarea required value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3 h-32" />
+                </div>
+
                 <div>
                   <label className="block text-xs text-gray-400 uppercase tracking-wider mb-2">Category</label>
                   <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3">
-                    <option value="book">Book</option>
-                    <option value="merch">Merchandise</option>
-                    <option value="digital">Digital Product</option>
+                    <option value="books">Books</option>
+                    <option value="merchandise">Merchandise</option>
+                    <option value="courses">Courses</option>
+                    <option value="posters">Posters</option>
+                    <option value="bands">Bands</option>
+                    <option value="ai">AI Tools</option>
+                    <option value="bundles">Bundles</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 uppercase tracking-wider mb-2">Stock Quantity</label>
+                  <input type="number" required value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3" />
                 </div>
 
                 <div className="col-span-2">
                   <label className="block text-xs text-gray-400 uppercase tracking-wider mb-2">Image URL</label>
-                  <input type="url" value={formData.imageUrl} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3" />
+                  <input type="url" required value={formData.imageUrl} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} className="w-full bg-[#222] border border-white/10 text-white px-4 py-3" />
                 </div>
 
                 <div className="col-span-2 flex gap-6 mt-2">

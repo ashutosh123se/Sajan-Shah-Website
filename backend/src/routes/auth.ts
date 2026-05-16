@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, logout, refresh, getMe } from '../controllers/authController';
+import { register, login, logout, refresh, getMe, verifyPasswordSetupToken, setPassword } from '../controllers/authController';
 import { verifyToken } from '../middleware/verifyToken';
 import rateLimit from 'express-rate-limit';
 
@@ -20,5 +20,9 @@ router.post('/refresh', refresh);
 // Protected routes
 router.post('/logout', verifyToken, logout);
 router.get('/me', verifyToken, getMe);
+
+// Password setup routes
+router.get('/verify-password-token', authLimiter, verifyPasswordSetupToken as any);
+router.post('/set-password', authLimiter, setPassword as any);
 
 export default router;

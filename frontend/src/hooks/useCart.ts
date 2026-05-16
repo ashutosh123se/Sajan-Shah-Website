@@ -1,4 +1,5 @@
 import { useCartStore } from '@/store/cartStore';
+import toast from 'react-hot-toast';
 
 export const useCart = () => {
   const {
@@ -15,6 +16,7 @@ export const useCart = () => {
 
   const addToCart = (product: any, quantity = 1) => {
     addItem(product, quantity);
+    toast.success(`${product.title} added to cart`);
   };
 
   const removeFromCart = (productId: string) => {

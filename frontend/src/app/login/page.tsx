@@ -76,13 +76,14 @@ export default function LoginPage() {
               <div className="w-12 h-1 bg-[#f26522] mx-auto mt-1"></div>
             </Link>
             <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>
-            <p className="text-gray-500 text-sm font-light">Continue your journey of transformation.</p>
+            <p className="text-gray-500 text-sm font-light">Access your transformation dashboard.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
-                Email Address
+                Identity (Email)
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
@@ -99,13 +100,14 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Password Field */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center px-1">
+              <div className="flex justify-between items-center ml-1">
                 <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
-                  Password
+                  Access Code (Password)
                 </label>
-                <Link href="/forgot-password" size="sm" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
-                  Forgot?
+                <Link href="/forgot-password" size="sm" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#f26522] transition-colors">
+                  Recovery?
                 </Link>
               </div>
               <div className="relative group">
@@ -149,9 +151,9 @@ export default function LoginPage() {
 
           <div className="mt-10 text-center">
             <p className="text-gray-500 text-sm font-light">
-              Don't have an account?{' '}
+              New to the community?{' '}
               <Link href="/signup" className="text-white font-bold hover:text-[#f26522] transition-colors">
-                Create Account
+                Initiate Account
               </Link>
             </p>
           </div>

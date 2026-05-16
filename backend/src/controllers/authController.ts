@@ -4,8 +4,11 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { generateAccessToken, generateRefreshToken } from '../utils/generateToken';
 import { db } from '../utils/database';
+import { EmailService } from '../services/emailService';
 
 export const register = async (req: Request, res: Response) => {
+  return sendError(res, 'Direct registration is disabled. Please purchase a product or register for an event to create an account.', 403);
+  /*
   try {
     const { name, email, password } = req.body;
 
@@ -107,6 +110,68 @@ export const getMe = async (req: any, res: Response) => {
     sendSuccess(res, { user });
   } catch (error) {
     console.error('GetMe error:', error);
+    sendError(res, 'Internal server error', 500);
+  }
+};
+
+export const verifyPasswordSetupToken = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.query;
+    if (!token) return sendError(res, 'Token is required', 400);
+
+    const user = await db.user.findFirst({
+      where: {
+        passwordSetupToken: token as string,
+        passwordSetupExpires: { gt: new Date() }
+      }
+    });
+
+    if (!user) return sendError(res, 'Invalid or expired setup token', 400);
+
+    sendSuccess(res, { email: user.email, name: user.name }, 'Token is valid');
+  } catch (error) {
+    console.error('Verify setup token error:', error);
+    sendError(res, 'Internal server error', 500);
+  }
+};
+
+export const setPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return sendError(res, 'Token and password are required', 400);
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return sendError(res, 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.', 400);
+    }
+
+    const user = await db.user.findFirst({
+      where: {
+        passwordSetupToken: token,
+        passwordSetupExpires: { gt: new Date() }
+      }
+    });
+
+    if (!user) return sendError(res, 'Invalid or expired setup token', 400);
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        passwordSetupToken: null,
+        passwordSetupExpires: null
+      }
+    });
+
+    // Send confirmation email
+    await EmailService.sendPasswordSuccessEmail(user.email, user.name);
+
+    sendSuccess(res, null, 'Password set successfully. You can now login.');
+  } catch (error) {
+    console.error('Set password error:', error);
     sendError(res, 'Internal server error', 500);
   }
 };

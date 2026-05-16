@@ -4,6 +4,18 @@ import React, { useState } from 'react';
 export const IntroVideo: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Handle body scroll locking
+  React.useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
+
   return (
     <section className="py-24 md:py-32 bg-[#0a0a0a] relative overflow-hidden">
       {/* Background Ambient Glow */}
@@ -16,32 +28,25 @@ export const IntroVideo: React.FC = () => {
           Witness the <span className="font-bold">Transformation.</span>
         </h2>
 
-        {/* Cinematic Video Player */}
+        {/* Cinematic Video Player Container */}
         <div 
           className="relative aspect-video w-full max-w-5xl mx-auto shadow-[0_30px_60px_rgba(0,0,0,0.8)] group cursor-pointer mb-24 overflow-hidden border border-gray-900 rounded-sm" 
           onClick={() => setIsModalOpen(true)}
         >
-          {/* Main Thumbnail with Overlay */}
-          <div className="absolute inset-0 bg-[#111]">
-            <img 
-              src="/hero-1.jpg" 
-              alt="Video Thumbnail" 
-              className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" 
+          {/* Main Looping Video Background */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <iframe
+              src="https://www.youtube.com/embed/eoXffsNnsMU?autoplay=1&mute=1&loop=1&playlist=eoXffsNnsMU&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3"
+              className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+              allow="autoplay; encrypted-media"
+              frameBorder="0"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/30"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40"></div>
           </div>
           
-          {/* Premium Play Button */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="relative">
-              {/* Pulse Effect */}
-              <div className="absolute inset-0 rounded-full bg-[#f26522] animate-ping opacity-20"></div>
-              
-              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#f26522] rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(242,101,34,0.4)] transform group-hover:scale-110 transition-transform duration-500 relative z-10 pl-2">
-                <svg className="w-12 h-12 md:w-16 md:h-16 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-            </div>
-            <p className="text-white font-bold tracking-[0.3em] uppercase text-xs mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">Play Showreel</p>
+          {/* Subtle Hover Indicator */}
+          <div className="absolute inset-0 flex items-center justify-center bg-[#f26522]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <p className="text-white font-bold tracking-[0.4em] uppercase text-xs border border-white/20 px-6 py-3 backdrop-blur-md">Expand Showreel</p>
           </div>
           
           {/* Aesthetic Controls Strip */}
@@ -65,14 +70,20 @@ export const IntroVideo: React.FC = () => {
         </div>
 
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}>
-            <div className="relative w-full max-w-5xl aspect-video bg-black shadow-[0_0_100px_rgba(242,101,34,0.2)]" onClick={e => e.stopPropagation()}>
-              <button onClick={() => setIsModalOpen(false)} className="absolute -top-12 right-0 text-white hover:text-[#f26522] z-10 transition-colors flex items-center gap-2 group">
-                <span className="text-[10px] font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Close</span>
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 backdrop-blur-xl" onClick={() => setIsModalOpen(false)}>
+            <div className="relative w-full max-w-6xl aspect-video bg-black shadow-[0_0_100px_rgba(242,101,34,0.3)] border border-white/5" onClick={e => e.stopPropagation()}>
+              {/* Close Button Top Right */}
+              <button 
+                onClick={() => setIsModalOpen(false)} 
+                className="absolute -top-16 right-0 md:-right-12 text-white hover:text-[#f26522] transition-all duration-300 transform hover:rotate-90 p-2"
+              >
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+              
               <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                src="https://www.youtube.com/embed/eoXffsNnsMU?autoplay=1"
                 title="Sajan Shah Transformation"
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
