@@ -25,11 +25,10 @@ export const Navbar: React.FC = () => {
   const navigation = [
     { name: 'HOME', href: '/' },
     { name: 'ABOUT', href: '/about' },
-    { name: 'CONTRIBUTIONS', href: '/contributions' },
-    { name: 'PROGRAMS', href: '/programs' },
+    { name: 'SPEAKING', href: '/speaking' },
     { name: 'PRODUCTS', href: '/products' },
     { name: 'EVENTS', href: '/events' },
-    { name: 'MEMBERS', href: '/members' },
+    { name: 'CONTRIBUTIONS', href: '/contributions' },
     { name: 'CONTACT', href: '/contact' },
   ];
 
@@ -42,19 +41,34 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <nav className="bg-[#0a0a0a] fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b border-gray-900 shadow-2xl">
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-10 pb-6'}`}>
-          
-          {/* Top Centered Logo Section */}
-          <div className={`flex justify-center items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-16 md:h-20 mb-10 opacity-100'}`}>
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-6 pb-6'}`}>
+
+          {/* Top Branding Section */}
+          <div className={`flex justify-center items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-24 md:h-28 mb-6 opacity-100'}`}>
+            
+            {/* Center Brand: Sajan Shah */}
             <Link href="/" className="flex flex-col items-center group">
-              <div className="text-4xl md:text-5xl font-light tracking-tight text-white mb-1 group-hover:text-gray-200 transition-colors">
-                sajan<span className="font-bold">shah</span>
+              <div className="flex items-baseline text-4xl md:text-5xl tracking-tight">
+                <span className="font-light text-white uppercase">sajan</span>
+                <span className="font-light text-white uppercase"><span className="text-[#f26522]">s</span>hah</span>
               </div>
-              <div className="w-12 h-[2px] bg-[#f26522] mb-1"></div>
-              <span className="text-[10px] md:text-xs text-gray-400 uppercase tracking-[0.2em] font-semibold">
-                Transform Your Thinking. Transform Your Life.
-              </span>
+              <div className="flex items-center mt-1">
+                <div className="h-[2px] bg-[#f26522] w-12 md:w-20"></div>
+                <span className="ml-3 text-[10px] md:text-xs text-gray-400 font-medium lowercase tracking-tight">
+                  shift your story. shape your success.
+                </span>
+              </div>
             </Link>
+
+            {/* Right Brand (Absolute Positioned for alignment) */}
+            <div className="hidden lg:flex flex-col items-start leading-[0.85] absolute right-24 xl:right-32 top-1/2 transform -translate-y-1/2 opacity-90">
+               <div className="text-xl md:text-2xl font-black text-white tracking-tighter uppercase whitespace-nowrap">
+                 Neuroscience Drives
+               </div>
+               <div className="text-xl md:text-2xl font-black text-[#f26522] tracking-tighter uppercase whitespace-nowrap flex items-start">
+                 Driven Success<span className="text-[10px] ml-0.5 mt-0.5 font-bold">™</span>
+               </div>
+            </div>
 
             {/* Absolute positioned Cart & Auth for Desktop to keep Logo perfectly centered */}
             <div className="hidden md:flex absolute right-0 items-center space-x-6 top-1/2 transform -translate-y-1/2">
@@ -92,7 +106,7 @@ export const Navbar: React.FC = () => {
 
           {/* Bottom Links Section */}
           <div className="flex justify-between items-center">
-            
+
             {/* Mobile menu button (Left aligned on mobile) */}
             <div className="md:hidden flex items-center">
               <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white hover:text-[#f26522] p-2">
@@ -117,7 +131,7 @@ export const Navbar: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
-              
+
               {/* Admin Links */}
               {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
                 <>
@@ -156,7 +170,7 @@ export const Navbar: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[55] bg-black/95 backdrop-blur-xl flex items-center justify-center">
           <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-8 text-white hover:text-[#f26522]">
-            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <div className="flex flex-col items-center space-y-8">
             {navigation.map((item) => (
@@ -169,9 +183,9 @@ export const Navbar: React.FC = () => {
                 {item.name}
               </Link>
             ))}
-            
+
             <div className="w-24 h-1 bg-gray-800 my-8"></div>
-            
+
             {isAuthenticated ? (
               <div className="flex flex-col items-center space-y-6">
                 <Link

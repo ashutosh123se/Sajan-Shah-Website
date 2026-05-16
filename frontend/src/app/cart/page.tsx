@@ -112,9 +112,23 @@ export default function CartPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-white py-32 px-4 relative overflow-hidden">
-      {/* Background Accent */}
-      <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-white/[0.02] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
+    <div className="min-h-screen bg-[#0C0C0C] text-white pt-52 pb-32 px-4 relative overflow-hidden">
+      {/* Background Logo Watermark */}
+      <div className="fixed inset-0 flex items-center justify-center opacity-[0.1] pointer-events-none select-none z-0 overflow-hidden">
+        <div className="flex flex-col items-center transform -rotate-12 scale-[3.5] md:scale-[5]">
+          <div className="flex items-baseline text-6xl tracking-tighter">
+            <span className="font-light text-white uppercase">sajan</span>
+            <span className="font-black text-white uppercase"><span className="text-[#f26522]">s</span>hah</span>
+          </div>
+          <div className="flex items-center mt-2 w-full">
+            <div className="h-[1px] bg-[#f26522] flex-grow"></div>
+            <span className="mx-4 text-[8px] text-white font-medium lowercase tracking-[0.2em] whitespace-nowrap">
+              shift your story. shape your success.
+            </span>
+            <div className="h-[1px] bg-[#f26522] flex-grow"></div>
+          </div>
+        </div>
+      </div>
       
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Step Indicator */}
@@ -297,7 +311,7 @@ export default function CartPage() {
                         </div>
                       </div>
                       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M20 7h-9m3 3h-3m3 3h-3m3 3h-3m3 3h-3M4 17a3 3 0 106 0 3 3 0 00-6 0zm10 0a3 3 0 106 0 3 3 0 00-6 0zM4 17V6a2 2 0 012-2h12a2 2 0 012 2v11m-10 0h4"/></svg>
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M20 7h-9m3 3h-3m3 3h-3m3 3h-3m3 3h-3M4 17a3 3 0 106 0 3 3 0 00-6 0zm10 0a3 3 0 106 0 3 3 0 00-6 0zM4 17V6a2 2 0 012-2h12a2 2 0 112 2v11m-10 0h4"/></svg>
                       </div>
                     </button>
                   </div>
@@ -360,10 +374,8 @@ export default function CartPage() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   );
 }
-

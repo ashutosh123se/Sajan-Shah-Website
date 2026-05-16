@@ -5,15 +5,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-export default function LoginPage() {
+export default function SignupPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,21 +22,12 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await register(name, email, password);
       if (result?.success) {
-        toast.success('Welcome back!');
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        const role = userData.role;
-        
-        if (['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'SHOP_MANAGER'].includes(role)) {
-          router.push('/admin');
-        } else if (role === 'SUBSCRIBER') {
-          router.push('/member');
-        } else {
-          router.push('/');
-        }
+        toast.success('Account created successfully!');
+        router.push('/login'); // Redirect to login after signup
       } else {
-        toast.error(result?.error || 'Invalid credentials');
+        toast.error(result?.error || 'Failed to register');
       }
     } catch (err: any) {
       toast.error(err.message || 'An unexpected error occurred');
@@ -75,15 +67,35 @@ export default function LoginPage() {
               </h1>
               <div className="w-12 h-1 bg-[#f26522] mx-auto mt-1"></div>
             </Link>
-            <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>
-            <p className="text-gray-500 text-sm font-light">Access your transformation dashboard.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
+            <p className="text-gray-500 text-sm font-light">Join the movement of human transformation.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+                Full Name
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <User className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="Your Name"
+                />
+              </div>
+            </div>
+
             {/* Email Field */}
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
-                Identity (Email)
+                Email Address
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
@@ -102,14 +114,9 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
-                  Access Code (Password)
-                </label>
-                <Link href="/forgot-password" size="sm" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#f26522] transition-colors">
-                  Recovery?
-                </Link>
-              </div>
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+                Password
+              </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
                   <Lock className="w-5 h-5" />
@@ -140,9 +147,9 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-4 rounded-xl shadow-[0_10px_20px_rgba(242,101,34,0.2)] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
               >
-                {isLoading ? 'Authenticating...' : (
+                {isLoading ? 'Creating Account...' : (
                   <>
-                    Sign In <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    Sign Up <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </motion.button>
@@ -151,9 +158,9 @@ export default function LoginPage() {
 
           <div className="mt-10 text-center">
             <p className="text-gray-500 text-sm font-light">
-              New to the community?{' '}
-              <Link href="/signup" className="text-white font-bold hover:text-[#f26522] transition-colors">
-                Initiate Account
+              Already have an account?{' '}
+              <Link href="/login" className="text-white font-bold hover:text-[#f26522] transition-colors">
+                Sign In
               </Link>
             </p>
           </div>
