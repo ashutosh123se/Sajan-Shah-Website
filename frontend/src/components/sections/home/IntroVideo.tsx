@@ -23,11 +23,12 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
 
   const tagline = content?.tagline || "Experience The Energy";
   const title = content?.title || "Witness the <span class=\"font-bold\">Transformation.</span>";
-  const videoUrl = content?.videoUrl || "https://www.youtube.com/embed/eoXffsNnsMU";
+  const videoUrl = content?.videoUrl || "/sajan_intro.mp4";
   const quote = content?.quote || "Sajan was phenomenal! He delivered a message that allowed our audience to view their power to influence in an entirely new light. He has the rare ability to connect to any crowd instantly.";
   const quoteAuthor = content?.quoteAuthor || "Executive Director, Global Leadership Summit";
 
-  const videoId = getYoutubeId(videoUrl);
+  const isYoutube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
+  const videoId = isYoutube ? getYoutubeId(videoUrl) : '';
 
   // Handle body scroll locking
   React.useEffect(() => {
@@ -61,12 +62,23 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
         >
           {/* Main Looping Video Background */}
           <div className="absolute inset-0 z-0 pointer-events-none">
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3`}
-              className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
-              allow="autoplay; encrypted-media"
-              frameBorder="0"
-            />
+            {isYoutube ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3`}
+                className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+                allow="autoplay; encrypted-media"
+                frameBorder="0"
+              />
+            ) : (
+              <video
+                src={videoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40"></div>
           </div>
           
@@ -108,13 +120,22 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
                 </svg>
               </button>
               
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                title="Sajan Shah Transformation"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              {isYoutube ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                  title="Sajan Shah Transformation"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={videoUrl}
+                  controls
+                  autoPlay
+                  className="w-full h-full rounded-sm"
+                />
+              )}
             </div>
           </div>
         )}

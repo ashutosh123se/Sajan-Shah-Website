@@ -25,16 +25,32 @@ export const ContributionsHero: React.FC<ContributionsHeroProps> = ({ content })
 
   return (
     <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-black pt-40">
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop" 
-          alt="Impact Header" 
-          className="w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black"></div>
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+        <motion.div 
+          animate={{ 
+            scale: [1.32, 1.40, 1.28, 1.37, 1.32, 1.32],
+            x: ["-5%", "5%", "-5%", "5%", "-1%", "-5%"],
+            y: ["-5%", "5%", "5%", "-5%", "2%", "-5%"]
+          }}
+          transition={{ 
+            duration: 22, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          className="w-full h-full will-change-transform"
+        >
+          <img 
+            src="/Social Work/CONTRIBUTIONS Hero .jpeg" 
+            alt="Impact Header" 
+            className="w-full h-full object-cover object-center opacity-45"
+          />
+        </motion.div>
+        
+        {/* Soft top-and-bottom dark linear gradient for readability (leaving sides completely clean and clear) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80 z-20 pointer-events-none"></div>
       </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+ 
+      <div className="relative z-30 max-w-7xl mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

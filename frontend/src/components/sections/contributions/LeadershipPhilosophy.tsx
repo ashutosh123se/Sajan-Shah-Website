@@ -46,7 +46,7 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
         <div className="lg:w-1/2">
           <div className="relative group">
             <img 
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop" 
+              src="/CONTRIBUTIONS SIR.jpeg" 
               alt="Sajan Shah" 
               className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl" 
             />

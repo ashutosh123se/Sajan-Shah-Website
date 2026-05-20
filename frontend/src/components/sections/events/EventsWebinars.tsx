@@ -15,6 +15,12 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
   const allWebinars = events;
   const webinars = showAll ? allWebinars : allWebinars.slice(0, 2);
 
+  const bgImages = [
+    '/Sir Event3.jpeg',
+    '/sir Event2.jpeg',
+    '/Sir Event4.jpeg'
+  ];
+
   return (
     <section id="webinars" className="py-24 px-4 md:px-8 max-w-7xl mx-auto border-t border-white/5 relative overflow-hidden">
       {/* Background abstract element */}
@@ -37,8 +43,18 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
             id={`event-card-${webinar.id}`}
             className="group relative w-full bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col md:flex-row hover:border-brand-orange/40 transition-all duration-500 shadow-2xl"
           >
+            {/* Background Image with Overlay */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              <img 
+                src={bgImages[index % bgImages.length]} 
+                alt="Webinar Background" 
+                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-1000 scale-100 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors duration-700"></div>
+            </div>
+
             {/* Left Content Side */}
-            <div className="flex-1 p-8 md:p-14 relative z-20 flex flex-col justify-center bg-gradient-to-r from-black/80 to-transparent">
+            <div className="flex-1 p-8 md:p-14 relative z-20 flex flex-col justify-center opacity-60 group-hover:opacity-100 transition-opacity duration-500 drop-shadow-2xl">
               <div className="flex items-center space-x-3 text-brand-orange font-bold text-xs tracking-[0.2em] uppercase mb-6">
                 <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
                 <span>{webinar.topic || 'Virtual Masterclass'}</span>
@@ -87,8 +103,13 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
             </div>
 
             {/* Right Side Ticket Stub / Registration */}
-            <div className="w-full md:w-[350px] relative bg-[#111] md:bg-[#151515] p-8 md:p-10 flex flex-col justify-center border-t md:border-t-0 md:border-l border-white/5">
-              <div className="absolute top-12 right-6 opacity-10">
+            <div className="w-full md:w-[350px] relative bg-black/30 backdrop-blur-sm p-8 md:p-10 flex flex-col justify-center border-t md:border-t-0 md:border-l border-white/5 opacity-60 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
+              {/* Signature Watermark */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none z-0 flex items-center justify-center overflow-hidden">
+                <img src="/sir sign.png" alt="Signature Watermark" className="w-full h-full object-cover object-center rotate-[-15deg] scale-125" />
+              </div>
+
+              <div className="absolute top-12 right-6 opacity-10 z-10">
                 <div className="text-6xl font-black rotate-90 origin-top-right">0{index + 1}</div>
               </div>
               

@@ -7,28 +7,134 @@ import { useCart } from '@/hooks/useCart';
 
 import api from '@/lib/api';
 
-const staticMerchandise = [
-  { id: 'static-m1', name: 'T-SHIRTS', subtitle: 'Wear Your Mindset', description: 'Apparel designed to reflect discipline, focus, and growth—because what you wear influences how you think.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=T-SHIRTS', buy_url_internal: '#' },
-  { id: 'static-m2', name: 'BOTTLES', subtitle: 'Stay Fueled, Stay Focused', description: 'Hydration meets discipline, carry your mindset wherever you go.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=BOTTLES', buy_url_internal: '#' },
-  { id: 'static-m3', name: 'BANDS', subtitle: 'Wear Your Commitment', description: 'Simple yet powerful reminders on your wrist to stay consistent and focused.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=BANDS', buy_url_internal: '#' },
-  { id: 'static-m4', name: 'EXAM PADS', subtitle: 'Write Your Success Story', description: 'Designed for students to stay organized, focused, and ready to perform.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=EXAM+PADS', buy_url_internal: '#' },
-  { id: 'static-m5', name: 'KEY CHAINS (I-G Series)', subtitle: 'Carry Your Identity', description: 'Keep your mindset close, small reminders that create big shifts.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=KEY+CHAINS', buy_url_internal: '#' },
-  { id: 'static-m6', name: '12-IN-1 PRODUCTIVITY KIT', subtitle: 'Structure Your Day, Upgrade Your Life', description: 'A complete system to improve focus, planning, and execution, built for daily performance.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=PRODUCTIVITY+KIT', buy_url_internal: '#' },
-  { id: 'static-m7', name: 'PLANTABLE PENCILS', subtitle: 'Grow While You Write', description: 'Eco-friendly tools that symbolize growth, write today, plant tomorrow.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=PLANTABLE+PENCILS', buy_url_internal: '#' },
-  { id: 'static-m8', name: 'CAP', subtitle: 'Think Different. Stand Different.', description: 'A bold expression of identity and confidence in everyday life.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=CAP', buy_url_internal: '#' },
-  { id: 'static-m9', name: 'PENS', subtitle: 'Write with Purpose', description: 'More than writing tools, designed to remind you of clarity, focus, and action.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=PENS', buy_url_internal: '#' },
-  { id: 'static-m10', name: 'MUGS', subtitle: 'Start Your Day with Intent', description: 'Every sip becomes a reminder of your goals, discipline, and mindset.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=MUGS', buy_url_internal: '#' },
-  { id: 'static-m11', name: 'CANDLES', subtitle: 'Create Your Focus Space', description: 'Set the environment for clarity, calmness, and deep thinking.', image: 'https://placehold.co/600x600/0a0a0a/f26522?text=CANDLES', buy_url_internal: '#' },
+const staticMerchandise: MerchProduct[] = [
+  {
+    id: 'static-m1',
+    name: 'T-SHIRTS',
+    title: 'T-SHIRTS',
+    subtitle: 'Wear Your Mindset',
+    description: 'Apparel designed to reflect discipline, focus, and growth—because what you wear influences how you think.',
+    image: '/MERCHANDISE/T-Shirt.jpeg',
+    objectPosition: 'center top',
+    hasImage: true,
+  },
+  {
+    id: 'static-m2',
+    name: 'BOTTLES',
+    title: 'BOTTLES',
+    subtitle: 'Stay Fueled, Stay Focused',
+    description: 'Hydration meets discipline, carry your mindset wherever you go.',
+    image: '/MERCHANDISE/Bottle.jpeg',
+    objectPosition: 'center center',
+    hasImage: true,
+  },
+  {
+    id: 'static-m3',
+    name: 'BANDS',
+    title: 'BANDS',
+    subtitle: 'Wear Your Commitment',
+    description: 'Simple yet powerful reminders on your wrist to stay consistent and focused.',
+    image: '/MERCHANDISE/Bands.jpeg',
+    objectPosition: 'center center',
+    hasImage: true,
+  },
+  {
+    id: 'static-m4',
+    name: 'EXAM PADS',
+    title: 'EXAM PADS',
+    subtitle: 'Write Your Success Story',
+    description: 'Designed for students to stay organized, focused, and ready to perform.',
+    image: '',
+    objectPosition: 'center center',
+    hasImage: false,
+  },
+  {
+    id: 'static-m5',
+    name: 'KEY CHAINS (I-G Series)',
+    title: 'KEY CHAINS',
+    subtitle: 'Carry Your Identity',
+    description: 'Keep your mindset close, small reminders that create big shifts.',
+    image: '/MERCHANDISE/Key-chains.jpeg',
+    objectPosition: 'center center',
+    hasImage: true,
+  },
+  {
+    id: 'static-m6',
+    name: '12-IN-1 PRODUCTIVITY KIT',
+    title: 'PRODUCTIVITY KIT',
+    subtitle: 'Structure Your Day, Upgrade Your Life',
+    description: 'A complete system to improve focus, planning, and execution, built for daily performance.',
+    image: '',
+    objectPosition: 'center center',
+    hasImage: false,
+  },
+  {
+    id: 'static-m7',
+    name: 'PLANTABLE PENCILS',
+    title: 'PLANTABLE PENCILS',
+    subtitle: 'Grow While You Write',
+    description: 'Eco-friendly tools that symbolize growth, write today, plant tomorrow.',
+    image: '',
+    objectPosition: 'center center',
+    hasImage: false,
+  },
+  {
+    id: 'static-m8',
+    name: 'CAP',
+    title: 'CAP',
+    subtitle: 'Think Different. Stand Different.',
+    description: 'A bold expression of identity and confidence in everyday life.',
+    image: '/MERCHANDISE/Cap.jpeg',
+    objectPosition: 'center center',
+    objectFit: 'contain',
+    cardBg: '#111111',
+    hasImage: true,
+  },
+  {
+    id: 'static-m9',
+    name: 'PENS',
+    title: 'PENS',
+    subtitle: 'Write with Purpose',
+    description: 'More than writing tools, designed to remind you of clarity, focus, and action.',
+    image: '',
+    objectPosition: 'center center',
+    hasImage: false,
+  },
+  {
+    id: 'static-m10',
+    name: 'MUGS',
+    title: 'MUGS',
+    subtitle: 'Start Your Day with Intent',
+    description: 'Every sip becomes a reminder of your goals, discipline, and mindset.',
+    image: '/MERCHANDISE/Mugs.jpeg',
+    objectPosition: 'center center',
+    hasImage: true,
+  },
+  {
+    id: 'static-m11',
+    name: 'CANDLES',
+    title: 'CANDLES',
+    subtitle: 'Create Your Focus Space',
+    description: 'Set the environment for clarity, calmness, and deep thinking.',
+    image: '/MERCHANDISE/Candels.jpeg',
+    objectPosition: 'center center',
+    hasImage: true,
+  },
 ];
 
 interface MerchProduct {
-  id: string;
+  id: string | number;
   name: string;
+  title?: string;
   subtitle?: string;
   description: string;
   image?: string;
   buy_url_internal?: string;
   price?: number;
+  objectPosition?: string;
+  hasImage?: boolean;
+  objectFit?: 'contain' | 'cover';
+  cardBg?: string;
 }
 
 export const ProductsMerchandise: React.FC = () => {
@@ -38,9 +144,12 @@ export const ProductsMerchandise: React.FC = () => {
   const router = useRouter();
 
   const handleAddToCartAndRedirect = (item: MerchProduct) => {
+    if (item.id.toString().startsWith('static-') && item.hasImage === false) {
+      return;
+    }
     addToCart({
-      id: item.id,
-      title: item.name,
+      id: item.id.toString(),
+      title: item.title || item.name,
       description: item.description,
       price: item.price || 499,
       imageUrl: item.image || '',
@@ -93,6 +202,7 @@ export const ProductsMerchandise: React.FC = () => {
   return (
     <section id="merchandise" className="py-32 bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto px-4">
+        {/* Section Heading */}
         <div className="mb-20 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -102,16 +212,17 @@ export const ProductsMerchandise: React.FC = () => {
           >
             MERCHANDISE BY SAJAN SHAH
           </motion.div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
             className="text-5xl md:text-7xl font-black mb-6 tracking-tighter"
           >
-            Wear the Identity <br />You Want to <span className="text-[#f26522]">Become</span>
+            Wear the Identity <br />You Want to{' '}
+            <span className="text-[#f26522]">Become</span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -122,44 +233,94 @@ export const ProductsMerchandise: React.FC = () => {
           </motion.p>
         </div>
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {activeMerch.map((item: MerchProduct, index: number) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="group relative aspect-square bg-gray-900 rounded-3xl overflow-hidden border border-white/5 cursor-pointer"
-              onClick={() => handleAddToCartAndRedirect(item)}
-            >
-              <img 
-                src={item.image} 
-                alt={item.name}
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:opacity-40"
-              />
-              
-              {/* Overlay Content */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-12 group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black via-black/40 to-transparent">
-                <h3 className="text-xl font-black mb-1 text-white tracking-tight leading-none">{item.name}</h3>
-                <p className="text-[#f26522] text-[10px] font-black tracking-widest uppercase mb-4">{item.subtitle}</p>
-                <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500">
-                  <p className="text-gray-400 text-xs leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-opacity delay-200">
-                    {item.description}
+          {activeMerch.map((item: MerchProduct, index: number) => {
+            const hasImage = item.hasImage !== undefined ? item.hasImage : (!!item.image && !item.image.includes('placeholder') && !item.image.includes('placehold.co'));
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="group relative aspect-square bg-gray-900 rounded-3xl overflow-hidden border border-white/5 cursor-pointer"
+                onClick={() => handleAddToCartAndRedirect(item)}
+              >
+                {/* ── Product visual ── */}
+                {hasImage ? (
+                  <div
+                    className="w-full h-full transition-all duration-700 group-hover:scale-110 group-hover:opacity-40"
+                    style={{ background: item.cardBg || 'transparent' }}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title || item.name}
+                      className="w-full h-full transition-all duration-700"
+                      style={{
+                        objectFit: item.objectFit || 'cover',
+                        objectPosition: item.objectPosition,
+                        padding: item.objectFit === 'contain' ? '12px' : '0',
+                      }}
+                    />
+                  </div>
+                ) : (
+                  /* Premium dark placeholder for items without a photo */
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1c1c1c] via-[#111] to-[#0a0a0a] transition-all duration-700 group-hover:opacity-40">
+                    <div className="w-16 h-16 rounded-2xl border-2 border-[#f26522]/40 flex items-center justify-center mb-3">
+                      <svg
+                        className="w-8 h-8 text-[#f26522]/60"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-[#f26522]/50 text-[10px] font-black tracking-widest uppercase">
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
+
+                {/* ── Slide-up overlay ── */}
+                <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-12 group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black via-black/40 to-transparent">
+                  <h3 className="text-xl font-black mb-1 text-white tracking-tight leading-none">
+                    {item.title || item.name}
+                  </h3>
+                  <p className="text-[#f26522] text-[10px] font-black tracking-widest uppercase mb-4">
+                    {item.subtitle}
                   </p>
+                  <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500">
+                    <p className="text-gray-400 text-xs leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-opacity delay-200">
+                      {item.description}
+                    </p>
+                    {hasImage && (
+                      <span className="inline-flex items-center text-white font-black text-[10px] uppercase tracking-[0.2em] hover:text-[#f26522] transition-colors">
+                        Buy Now →
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              
-              {/* Static Badge */}
-              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                 <div className="w-10 h-10 rounded-full bg-[#f26522] flex items-center justify-center text-white">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                {/* ── Add icon badge (top-right on hover) ── */}
+                {hasImage && (
+                  <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="w-10 h-10 rounded-full bg-[#f26522] flex items-center justify-center text-white">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

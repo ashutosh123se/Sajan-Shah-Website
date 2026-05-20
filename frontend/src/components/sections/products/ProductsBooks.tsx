@@ -44,11 +44,12 @@ const staticBooks = [
     name: 'SMART STUDIES',
     subtitle: 'Study Smarter. Perform Better.',
     description: 'A practical system designed to help students improve focus, retention, and study efficiency using smarter learning techniques.',
-    image_homepage: 'https://placehold.co/600x800/0a0a0a/f26522?text=SMART+STUDIES',
-    image_product_page: '',
+    image_homepage: '/Smart Studies F.jpeg',
+    image_product_page: '/Smart Studies B.jpeg',
     buy_url_flipkart: '#',
     buy_url_amazon: '#',
     is_featured: false,
+    isSoldOut: true,
   },
   {
     id: 'static-5',
@@ -96,6 +97,11 @@ interface BookProduct {
   buy_url_flipkart?: string | null;
   buy_url_amazon?: string | null;
   is_featured: boolean;
+  image?: string;
+  backImage?: string;
+  flipkart?: string;
+  amazon?: string;
+  isSoldOut?: boolean;
 }
 
 export const ProductsBooks: React.FC = () => {
@@ -268,6 +274,11 @@ export const ProductsBooks: React.FC = () => {
                     alt={book.name}
                     className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                   />
+                  {book.isSoldOut && (
+                    <div className="absolute top-4 right-4 bg-[#f26522] text-white px-3 py-1.5 text-[9px] font-black tracking-widest rounded-full uppercase z-30 shadow-lg">
+                      Sold Out
+                    </div>
+                  )}
                 </div>
 
                 {/* Back Side */}
@@ -297,24 +308,38 @@ export const ProductsBooks: React.FC = () => {
                 </div>
 
                 {/* Buttons (Fades in and moves up on hover) */}
-                <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
-                   <a 
-                      href={book.buy_url_flipkart && book.buy_url_flipkart !== '#' ? book.buy_url_flipkart : `https://www.flipkart.com/search?q=Sajan+Shah+${encodeURIComponent(book.name)}`} 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-white text-black py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-[#f26522] hover:text-white transition-colors shadow-lg pointer-events-auto"
-                    >
-                      Buy on Flipkart
-                    </a>
-                    <a 
-                      href={book.buy_url_amazon && book.buy_url_amazon !== '#' ? book.buy_url_amazon : `https://www.amazon.in/s?k=Sajan+Shah+${encodeURIComponent(book.name)}`} 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-transparent border border-white/30 text-white py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors shadow-lg pointer-events-auto"
-                    >
-                      Buy on Amazon
-                    </a>
-                </div>
+                {book.isSoldOut ? (
+                  <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                     <span className="w-full bg-[#f26522]/10 border border-[#f26522]/30 text-[#f26522] py-4 rounded-full font-black text-xs uppercase tracking-widest text-center shadow-lg cursor-not-allowed">
+                       SOLD OUT
+                     </span>
+                  </div>
+                ) : (book.image_product_page || book.backImage || book.buy_url_flipkart || book.buy_url_amazon || book.flipkart || book.amazon) ? (
+                  <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
+                     <a 
+                       href={(book.buy_url_flipkart && book.buy_url_flipkart !== '#') ? book.buy_url_flipkart : (book.flipkart || `https://www.flipkart.com/search?q=Sajan+Shah+${encodeURIComponent(book.name)}`)} 
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="w-full bg-white text-black py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-[#f26522] hover:text-white transition-colors shadow-lg pointer-events-auto"
+                     >
+                       Buy on Flipkart
+                     </a>
+                     <a 
+                       href={(book.buy_url_amazon && book.buy_url_amazon !== '#') ? book.buy_url_amazon : (book.amazon || `https://www.amazon.in/s?k=Sajan+Shah+${encodeURIComponent(book.name)}`)} 
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="w-full bg-transparent border border-white/30 text-white py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors shadow-lg pointer-events-auto"
+                     >
+                       Buy on Amazon
+                     </a>
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                     <p className="text-gray-500 font-bold text-xs tracking-widest uppercase border border-gray-600 px-6 py-3 rounded-full">
+                       Not Yet Available
+                     </p>
+                  </div>
+                )}
 
               </div>
             </motion.div>

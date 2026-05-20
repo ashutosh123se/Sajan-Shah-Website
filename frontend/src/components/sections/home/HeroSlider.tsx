@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface HeroSliderProps {
   content?: {
@@ -23,36 +24,28 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
       headline: "India’s Biggest Memory & Family Transformation Experience",
       subheadline: "One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.",
       ctaText: "Join Now",
-      ctaLink: "https://sol.sajanshah.com",
-      video: "https://cdn.pixabay.com/video/2020/05/25/40149-425251644_large.mp4",
-      image: "/hero-1.jpg"
+      ctaLink: "https://sol.sajanshah.com"
     },
     {
       id: 2,
       headline: "Transform From Home. No Travel Required.",
       subheadline: "Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.",
       ctaText: "Reserve Your Seat",
-      ctaLink: "https://webinar.sajanshah.com",
-      video: "https://cdn.pixabay.com/video/2019/04/17/22818-330691515_large.mp4",
-      image: "/hero-2.jpg"
+      ctaLink: "https://webinar.sajanshah.com"
     },
     {
       id: 3,
       headline: "Upgrade Your Life With Proven Systems",
       subheadline: "Access powerful programs designed to improve thinking, performance, and personal growth - step by step.",
       ctaText: "Explore Programs",
-      ctaLink: "/programs",
-      video: "https://cdn.pixabay.com/video/2019/11/14/29038-372951939_large.mp4",
-      image: "/hero-3.jpg"
+      ctaLink: "/programs"
     },
     {
       id: 4,
       headline: "Live to Inspire. Lead to Serve.",
       subheadline: "Be part of a movement focused on creating real impact through education, awareness, and human transformation.",
       ctaText: "Join the Initiative",
-      ctaLink: "https://unitedfirst.in",
-      video: "https://cdn.pixabay.com/video/2020/03/10/33481-396593414_large.mp4",
-      image: "/hero-4.jpg"
+      ctaLink: "https://unitedfirst.in"
     }
   ];
 
@@ -69,28 +62,40 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
-      {/* Backgrounds */}
-      {slides.map((s, idx) => (
-        <div key={s.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-          {s.video ? (
-            <video className="w-full h-full object-cover opacity-60" src={s.video} autoPlay muted loop playsInline />
-          ) : (
-            <div className="w-full h-full bg-gray-800 opacity-60" style={{ backgroundImage: `url(${s.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-          )}
-          {/* Overlay matching the dark gradient in the reference */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/50 to-transparent" />
-        </div>
-      ))}
+      {/* Loopable Background Video */}
+      <div className="absolute inset-0 z-0 bg-black">
+        <video 
+          className="w-full h-full object-cover opacity-85" 
+          src="/sajan_hero.mp4" 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+        />
+        {/* Soft bottom-to-top dark overlay to make text pop while keeping the video clear */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
+      </div>
 
       {/* Content lower on the screen for better breathing room */}
       <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto pt-48 md:pt-64 pb-12">
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white mb-10 leading-[1.15] tracking-tight drop-shadow-2xl animate-fade-in-up" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-          {slide.headline}
-        </h1>
-        <p className="text-xl md:text-2xl font-light text-gray-200 mb-16 max-w-3xl mx-auto drop-shadow-md animate-fade-in-up animation-delay-200 leading-relaxed">
-          {slide.subheadline}
-        </p>
-        
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Faded white heading (opacity-60) to allow video textures to be primary */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white/60 mb-10 leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+              {slide.headline}
+            </h1>
+            {/* Faded subheadline (opacity-40) */}
+            <p className="text-xl md:text-2xl font-light text-white/40 mb-16 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
+              {slide.subheadline}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Slide Indicators */}

@@ -7,13 +7,13 @@ import { usePathname } from 'next/navigation';
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
+  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   if (pathname?.startsWith('/admin') || pathname?.startsWith('/user')) {
     return null;
   }
 
   const currentYear = new Date().getFullYear();
-  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const blogPosts = [
     { 

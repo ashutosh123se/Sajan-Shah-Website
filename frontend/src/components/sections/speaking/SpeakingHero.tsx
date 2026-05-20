@@ -8,7 +8,7 @@ interface SpeakingHeroProps {
     heading?: string;
     headingItalic?: string;
     headingHighlight?: string;
-    gridImages?: string[];
+    backgroundImageUrl?: string;
     primaryButtonText?: string;
     primaryButtonScrollTarget?: string;
     secondaryButtonText?: string;
@@ -20,11 +20,7 @@ const defaults = {
   heading: "This Isn't Motivation.",
   headingItalic: "This Is",
   headingHighlight: "Transformation.",
-  gridImages: [
-    '/impact.png', '/webinar.png', '/You vs You.png', '/speaking.jpeg',
-    '/sajan sir.png', '/Studenting & Parenting.png',
-    '/Untold Stories of Your Heroes.png', '/impact.png', '/webinar.png', '/speaking.jpeg'
-  ],
+  backgroundImageUrl: "/Speking Hero .jpeg",
   primaryButtonText: "Book Sajan to Speak →",
   primaryButtonScrollTarget: "#message",
   secondaryButtonText: "Virtual Training →",
@@ -36,7 +32,7 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
     heading: content?.heading || defaults.heading,
     headingItalic: content?.headingItalic || defaults.headingItalic,
     headingHighlight: content?.headingHighlight || defaults.headingHighlight,
-    gridImages: content?.gridImages || defaults.gridImages,
+    backgroundImageUrl: content?.backgroundImageUrl || defaults.backgroundImageUrl,
     primaryButtonText: content?.primaryButtonText || defaults.primaryButtonText,
     primaryButtonScrollTarget: content?.primaryButtonScrollTarget || defaults.primaryButtonScrollTarget,
     secondaryButtonText: content?.secondaryButtonText || defaults.secondaryButtonText,
@@ -44,19 +40,15 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-20">
-      {/* Phil M Jones Style Image Grid Background */}
-      <div className="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-5 gap-1 opacity-65">
-        {data.gridImages.map((img, idx) => (
-          <div key={idx} className="relative aspect-video md:aspect-square overflow-hidden group">
-            <img
-              src={img}
-              alt="Speaking"
-              className="w-full h-full object-cover grayscale"
-            />
-          </div>
-        ))}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-36">
+      {/* Background Image with Dark Luxury Overlay */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src={data.backgroundImageUrl}
+          alt="Sajan Shah Speaking Background"
+          className="w-full h-full object-cover object-center filter brightness-90"
+        />
+        <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
       </div>
 
@@ -66,11 +58,11 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-4xl md:text-7xl font-bold text-white mb-8 tracking-tight leading-tight"
+          className="text-4xl md:text-7xl font-light text-white mb-8 tracking-wide leading-tight"
         >
           {data.heading}<br />
-          <span className="italic font-light text-gray-300">{data.headingItalic}</span>{' '}
-          <span className="text-[#f26522]">{data.headingHighlight}</span>
+          <span className="italic font-extralight text-gray-200">{data.headingItalic}</span>{' '}
+          <span className="text-[#f26522] font-semibold">{data.headingHighlight}</span>
         </motion.h1>
 
         <motion.div

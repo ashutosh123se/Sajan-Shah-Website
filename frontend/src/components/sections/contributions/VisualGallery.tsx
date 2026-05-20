@@ -6,7 +6,9 @@ import { motion } from 'framer-motion';
 interface GalleryPhoto {
   cat: string;
   title: string;
-  imageUrl: string;
+  imageUrl?: string;
+  img?: string;
+  pos?: string;
 }
 
 interface VisualGalleryProps {
@@ -19,12 +21,22 @@ interface VisualGalleryProps {
 }
 
 const DEFAULT_PHOTOS: GalleryPhoto[] = [
-  { cat: "Social Impact", title: "United First Initiative", imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132&auto=format&fit=crop" },
-  { cat: "Education", title: "Neuroscience Workshops", imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop" },
-  { cat: "Field Work", title: "Sustainable Tools Drive", imageUrl: "https://images.unsplash.com/photo-1526367790999-0150786486a2?q=80&w=2071&auto=format&fit=crop" },
-  { cat: "Youth Forum", title: "Motivation & Growth", imageUrl: "https://images.unsplash.com/photo-1523580494863-6f30312248f5?q=80&w=2070&auto=format&fit=crop" },
-  { cat: "Eco-Drive", title: "Plantable Pencils", imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop" },
-  { cat: "Community", title: "Legacy of Giving", imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop" }
+  { cat: "Social Impact", title: "Empowering Lives", img: "/Social Work/1.jpeg" },
+  { cat: "Community Support", title: "On-Field Action", img: "/Social Work/2.jpeg" },
+  { cat: "Youth Outreach", title: "Mentorship Drive", img: "/Social Work/3.jpeg" },
+  { cat: "Food & Aid", title: "Supporting Families", img: "/Social Work/4.jpeg" },
+  { cat: "Rural Upliftment", title: "Sustainable Growth", img: "/Social Work/5.jpeg" },
+  { cat: "Social Welfare", title: "United Initiatives", img: "/Social Work/6.jpeg" },
+  { cat: "Education Support", title: "Reaching Out", img: "/Social Work/7.jpeg" },
+  { cat: "Community Care", title: "Empowering Futures", img: "/Social Work/8.jpeg" },
+  { cat: "Daily Assistance", title: "Hands-on Relief", img: "/Social Work/9.jpeg", pos: "object-left" },
+  { cat: "Public Action", title: "Making an Impact", img: "/Social Work/10.jpeg", pos: "object-right" },
+  { cat: "Welfare Drive", title: "Transforming Communities", img: "/Social Work/11.jpeg", pos: "object-bottom" },
+  { cat: "Youth Guidance", title: "Inspirational Field Work", img: "/Social Work/12.jpeg", pos: "object-left" },
+  { cat: "Aid Distribution", title: "Caring for All", img: "/Social Work/13.jpeg" },
+  { cat: "Transformational Care", title: "Sustained Relief", img: "/Social Work/14.jpeg" },
+  { cat: "Compassion Drive", title: "Legacy of Giving", img: "/Social Work/15.jpeg" },
+  { cat: "Social Empowerment", title: "Community Progress", img: "/Social Work/16.jpeg" },
 ];
 
 export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
@@ -33,8 +45,8 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
   const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
   const photos = content?.photos || DEFAULT_PHOTOS;
 
-  // Double/triple the array for infinite loop
-  const duplicatedPhotos = [...photos, ...photos, ...photos];
+  // Double the array for infinite loop
+  const duplicatedPhotos = [...photos, ...photos];
 
   return (
     <section className="py-32 bg-black overflow-hidden">
@@ -55,13 +67,13 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
         <motion.div 
           className="flex gap-6 py-4"
           animate={{
-            x: [0, -1920], // Adjust based on content width
+            x: ["0%", "-50%"],
           }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 40, // Speed of scroll
+              duration: 80, // Speed of scroll
               ease: "linear",
             },
           }}
@@ -72,9 +84,9 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
               className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
             >
               <img 
-                src={item.imageUrl} 
+                src={item.imageUrl || item.img} 
                 alt={item.title} 
-                className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
+                className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 ${item.pos || 'object-center'}`} 
               />
               
               {/* Overlay inspired by reference image */}
