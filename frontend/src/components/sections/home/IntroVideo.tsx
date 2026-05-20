@@ -35,11 +35,13 @@ export const IntroVideo: React.FC = () => {
         >
           {/* Main Looping Video Background */}
           <div className="absolute inset-0 z-0 pointer-events-none">
-            <iframe
-              src="https://www.youtube.com/embed/eoXffsNnsMU?autoplay=1&mute=1&loop=1&playlist=eoXffsNnsMU&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3"
-              className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
-              allow="autoplay; encrypted-media"
-              frameBorder="0"
+            <video
+              src="/sajan_intro.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40"></div>
           </div>
@@ -82,12 +84,11 @@ export const IntroVideo: React.FC = () => {
                 </svg>
               </button>
               
-              <iframe
-                src="https://www.youtube.com/embed/eoXffsNnsMU?autoplay=1"
-                title="Sajan Shah Transformation"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+              <video
+                src="/sajan_intro.mp4"
+                controls
+                autoPlay
+                className="w-full h-full rounded-sm"
               />
             </div>
           </div>

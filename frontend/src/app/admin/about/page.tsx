@@ -170,10 +170,10 @@ export default function AboutManagementPage() {
                 </div>
                 <Button 
                   onClick={() => handleUpdateSection(section.id)}
-                  loading={saving === section.id}
+                  disabled={saving === section.id}
                   className="bg-white text-black hover:bg-[#f26522] hover:text-white rounded-none h-9 px-6 font-bold"
                 >
-                  Save Changes
+                  {saving === section.id ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
             </div>

@@ -44,10 +44,10 @@ export const Navbar: React.FC = () => {
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-6 pb-6'}`}>
 
           {/* Top Branding Section */}
-          <div className={`flex justify-center items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-24 md:h-28 mb-6 opacity-100'}`}>
+          <div className={`flex justify-start items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-24 md:h-28 mb-6 opacity-100'}`}>
             
-            {/* Center Brand: Sajan Shah */}
-            <Link href="/" className="flex flex-col items-center group">
+            {/* Left Brand: Sajan Shah */}
+            <Link href="/" className="flex flex-col items-start group ml-8 md:ml-12">
               <div className="flex items-baseline text-4xl md:text-5xl tracking-tight">
                 <span className="font-light text-white uppercase">sajan</span>
                 <span className="font-light text-white uppercase"><span className="text-[#f26522]">s</span>hah</span>
@@ -60,12 +60,12 @@ export const Navbar: React.FC = () => {
               </div>
             </Link>
 
-            {/* Right Brand (Absolute Positioned for alignment) */}
-            <div className="hidden lg:flex flex-col items-start leading-[0.85] absolute right-24 xl:right-32 top-1/2 transform -translate-y-1/2 opacity-90">
-               <div className="text-xl md:text-2xl font-black text-white tracking-tighter uppercase whitespace-nowrap">
+            {/* Center Brand (Shifted from Right) */}
+            <div className="hidden lg:flex flex-col items-center leading-[0.85] absolute left-[55%] transform -translate-x-1/2 -translate-y-1/2 top-1/2 opacity-90">
+               <div className="text-2xl md:text-3xl font-black text-white tracking-[0.15em] uppercase whitespace-nowrap">
                  Neuroscience Drives
                </div>
-               <div className="text-xl md:text-2xl font-black text-[#f26522] tracking-tighter uppercase whitespace-nowrap flex items-start">
+               <div className="text-2xl md:text-3xl font-black text-[#f26522] tracking-[0.15em] uppercase whitespace-nowrap flex items-start">
                  Driven Success<span className="text-[10px] ml-0.5 mt-0.5 font-bold">™</span>
                </div>
             </div>

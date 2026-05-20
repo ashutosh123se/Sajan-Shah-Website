@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-export default function SetPasswordPage() {
+function SetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
@@ -171,5 +171,17 @@ export default function SetPasswordPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function SetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-xs uppercase tracking-[0.4em] animate-pulse">Loading secure environment...</div>
+      </div>
+    }>
+      <SetPasswordContent />
+    </Suspense>
   );
 }

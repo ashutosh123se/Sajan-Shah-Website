@@ -39,9 +39,11 @@ const books = [
     title: 'SMART STUDIES',
     subtitle: 'Study Smarter. Perform Better.',
     description: 'A practical system designed to help students improve focus, retention, and study efficiency using smarter learning techniques.',
-    image: 'https://placehold.co/600x800/0a0a0a/f26522?text=SMART+STUDIES',
+    image: '/Smart Studies F.jpeg',
+    backImage: '/Smart Studies B.jpeg',
     flipkart: '#',
     amazon: '#',
+    isSoldOut: true,
   },
   {
     id: 5,
@@ -196,6 +198,11 @@ export const ProductsBooks: React.FC = () => {
                     alt={book.title}
                     className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                   />
+                  {book.isSoldOut && (
+                    <div className="absolute top-4 right-4 bg-[#f26522] text-white px-3 py-1.5 text-[9px] font-black tracking-widest rounded-full uppercase z-30 shadow-lg">
+                      Sold Out
+                    </div>
+                  )}
                 </div>
 
                 {/* Back Side */}
@@ -236,7 +243,13 @@ export const ProductsBooks: React.FC = () => {
                 </div>
 
                 {/* Buttons (Fades in and moves up on hover) */}
-                {book.backImage ? (
+                {book.isSoldOut ? (
+                  <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                     <span className="w-full bg-[#f26522]/10 border border-[#f26522]/30 text-[#f26522] py-4 rounded-full font-black text-xs uppercase tracking-widest text-center shadow-lg cursor-not-allowed">
+                       SOLD OUT
+                     </span>
+                  </div>
+                ) : book.backImage ? (
                   <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
                      <a href={book.flipkart} className="w-full bg-white text-black py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-[#f26522] hover:text-white transition-colors shadow-lg">
                        Buy on Flipkart
