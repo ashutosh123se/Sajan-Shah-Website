@@ -30,18 +30,18 @@ interface AboutMovementProps {
 export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
   const data = {
     mainTitle: content?.mainTitle || "And then what?",
-    row1Image1: content?.row1Image1 || "https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg",
+    row1Image1: content?.row1Image1 || "/about 2.jpeg",
     row1Tagline: content?.row1Tagline || "From Speaker to",
     row1Heading: content?.row1Heading || "Movement Builder",
     row1Description: content?.row1Description || "Sajan Shah is not just a speaker — he is a catalyst for global change, driving transformation at the individual, institutional, and societal level.",
     row1SubTagline: content?.row1SubTagline || "United First Initiative",
     row1SubDescription: content?.row1SubDescription || "Driving global impact aligned with UN Sustainable Development Goals (SDG 2030).",
-    row1Image2: content?.row1Image2 || "https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg",
+    row1Image2: content?.row1Image2 || "/about 3.jpeg",
     row2Text1Heading: content?.row2Text1Heading || "From Learning to Execution",
     row2Text1Description: content?.row2Text1Description || "Most people know what to do. Very few actually do it. Sajan bridges that gap through action-driven frameworks and daily execution systems. Knowledge without execution is useless.",
     row2Text1SubTagline: content?.row2Text1SubTagline || "Live to Inspire Trust",
     row2Text1SubDescription: content?.row2Text1SubDescription || "Transforming communities through education, awareness, and massive youth empowerment.",
-    row2Image3: content?.row2Image3 || "https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg",
+    row2Image3: content?.row2Image3 || "/about 1.jpeg",
     row2Image3Tagline: content?.row2Image3Tagline || "Global Stage",
     row2Image3Heading: content?.row2Image3Heading || "16+ Million Lives Impacted",
     row2Text2Heading: content?.row2Text2Heading || "Global Impact at Scale",
@@ -54,7 +54,7 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
     <section className="py-32 bg-[#0a0a0a] text-white px-4 overflow-hidden">
 
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Title */}
         <div className="mb-24 text-center">
           <h2 className="text-5xl md:text-8xl font-light tracking-tight italic text-white">{data.mainTitle}</h2>
@@ -63,17 +63,17 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
 
         {/* Editorial Magazine Grid */}
         <div className="space-y-8">
-          
+
           {/* Row 1: Image | Text | Image */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-            
+
             {/* Image 1 - Left (Tall) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative overflow-hidden group"
+              className="relative overflow-hidden group w-full"
               style={{ aspectRatio: '3/4' }}
             >
               <img
@@ -113,13 +113,13 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative overflow-hidden group"
-              style={{ aspectRatio: '4/3' }}
+              className="relative overflow-hidden group w-full"
+              style={{ aspectRatio: '3/4' }}
             >
               <img
                 src={data.row1Image2}
                 alt="Sajan Shah with Leader"
-                className="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-105"
+                className="w-full h-full object-cover object-center transition-all duration-1000 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
             </motion.div>
@@ -157,7 +157,7 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.15 }}
-              className="relative overflow-hidden group"
+              className="relative overflow-hidden group w-full"
               style={{ aspectRatio: '3/4' }}
             >
               <img

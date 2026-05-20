@@ -106,7 +106,7 @@ export default function LoginPage() {
                 <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
                   Access Code (Password)
                 </label>
-                <Link href="/forgot-password" size="sm" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#f26522] transition-colors">
+                <Link href="/forgot-password" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#f26522] transition-colors">
                   Recovery?
                 </Link>
               </div>

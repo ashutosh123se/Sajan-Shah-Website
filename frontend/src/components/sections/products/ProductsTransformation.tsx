@@ -4,11 +4,23 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const stories = [
-  { id: 1, image: 'https://placehold.co/800x600/0a0a0a/f26522?text=STORY+1' },
-  { id: 2, image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=STORY+2' },
-  { id: 3, image: 'https://placehold.co/800x600/0a0a0a/10b981?text=STORY+3' },
-  { id: 4, image: 'https://placehold.co/800x600/0a0a0a/f26522?text=STORY+4' },
-  { id: 5, image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=STORY+5' },
+  { id: 1, image: '/Stories of Transformation/1.jpeg' },
+  { id: 2, image: '/Stories of Transformation/2.jpeg' },
+  { id: 3, image: '/Stories of Transformation/3.jpeg' },
+  { id: 4, image: '/Stories of Transformation/4.jpeg' },
+  { id: 5, image: '/Stories of Transformation/5.jpeg' },
+  { id: 6, image: '/Stories of Transformation/6.jpeg' },
+  { id: 7, image: '/Stories of Transformation/7.jpeg' },
+  { id: 8, image: '/Stories of Transformation/8.jpeg' },
+  { id: 9, image: '/Stories of Transformation/9.jpeg' },
+  { id: 10, image: '/Stories of Transformation/10.jpeg' },
+  { id: 11, image: '/Stories of Transformation/11.jpeg' },
+  { id: 13, image: '/Stories of Transformation/13.jpeg' },
+  { id: 14, image: '/Stories of Transformation/14.jpeg' },
+  { id: 15, image: '/Stories of Transformation/15.jpeg' },
+  { id: 16, image: '/Stories of Transformation/16.jpeg' },
+  { id: 17, image: '/Stories of Transformation/17.jpeg' },
+  { id: 18, image: '/Stories of Transformation/18.jpeg' },
 ];
 
 export const ProductsTransformation: React.FC = () => {
@@ -37,28 +49,35 @@ export const ProductsTransformation: React.FC = () => {
       </div>
 
       {/* Horizontal Scrolling Slider */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <motion.div 
-          animate={{ x: [0, -1000] }}
+          animate={{ x: ["0%", "-50%"] }}
           transition={{ 
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 30,
+              duration: 60,
               ease: "linear",
             },
           }}
-          className="flex gap-8 whitespace-nowrap"
+          className="flex gap-8 whitespace-nowrap w-max"
         >
           {[...stories, ...stories].map((story, index) => (
             <div 
               key={`${story.id}-${index}`} 
-              className="w-[400px] md:w-[600px] aspect-video bg-gray-100 rounded-[40px] overflow-hidden shadow-xl border border-gray-100 shrink-0"
+              className="relative w-[260px] md:w-[320px] h-[360px] md:h-[450px] bg-[#0a0a0a] rounded-[24px] md:rounded-[32px] overflow-hidden shadow-2xl border border-gray-100/10 shrink-0 flex items-center justify-center group"
             >
+              {/* Premium blurred backdrop to fill aspect ratio without ugly bars */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center blur-3xl opacity-60 scale-125 group-hover:scale-150 group-hover:opacity-80 transition-all duration-1000 ease-out"
+                style={{ backgroundImage: `url('${story.image}')` }}
+              />
+              <div className="absolute inset-0 bg-black/20 z-0"></div>
+              {/* Main uncropped image */}
               <img 
                 src={story.image} 
                 alt="Transformation Story"
-                className="w-full h-full object-cover"
+                className="relative z-10 w-full h-full object-contain drop-shadow-2xl"
               />
             </div>
           ))}

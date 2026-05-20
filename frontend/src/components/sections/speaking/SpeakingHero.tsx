@@ -4,35 +4,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export const SpeakingHero: React.FC = () => {
-  // Array of images for the grid background (Phil M Jones style)
-  const gridImages = [
-    '/impact.png',
-    '/webinar.png',
-    '/You vs You.png',
-    '/speaking.jpeg',
-    '/sajan sir.png',
-    '/Studenting & Parenting.png',
-    '/Untold Stories of Your Heroes.png',
-    '/impact.png',
-    '/webinar.png',
-    '/speaking.jpeg'
-  ];
-
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-20">
-      {/* Phil M Jones Style Image Grid Background */}
-      <div className="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-5 gap-1 opacity-65">
-        {gridImages.map((img, idx) => (
-          <div key={idx} className="relative aspect-video md:aspect-square overflow-hidden group">
-            <img 
-              src={img} 
-              alt="Speaking" 
-              className="w-full h-full object-cover grayscale"
-            />
-          </div>
-        ))}
-        {/* Fill rest if needed with overlay to ensure dark theme */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-36">
+      {/* Background Image with Dark Luxury Overlay */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src="/Speking Hero .jpeg"
+          alt="Sajan Shah Speaking Background"
+          className="w-full h-full object-cover object-center filter brightness-90"
+        />
+        <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
       </div>
 
@@ -42,10 +23,10 @@ export const SpeakingHero: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-4xl md:text-7xl font-bold text-white mb-8 tracking-tight leading-tight"
+          className="text-4xl md:text-7xl font-light text-white mb-8 tracking-wide leading-tight"
         >
           This Isn’t Motivation.<br />
-          <span className="italic font-light text-gray-300">This Is</span> <span className="text-[#f26522]">Transformation.</span>
+          <span className="italic font-extralight text-gray-200">This Is</span> <span className="text-[#f26522] font-semibold">Transformation.</span>
         </motion.h1>
 
         <motion.div 
