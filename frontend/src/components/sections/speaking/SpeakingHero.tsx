@@ -3,13 +3,48 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const SpeakingHero: React.FC = () => {
+interface SpeakingHeroProps {
+  content?: {
+    heading?: string;
+    headingItalic?: string;
+    headingHighlight?: string;
+    backgroundImageUrl?: string;
+    primaryButtonText?: string;
+    primaryButtonScrollTarget?: string;
+    secondaryButtonText?: string;
+    secondaryButtonUrl?: string;
+  };
+}
+
+const defaults = {
+  heading: "This Isn't Motivation.",
+  headingItalic: "This Is",
+  headingHighlight: "Transformation.",
+  backgroundImageUrl: "/Speking Hero .jpeg",
+  primaryButtonText: "Book Sajan to Speak →",
+  primaryButtonScrollTarget: "#message",
+  secondaryButtonText: "Virtual Training →",
+  secondaryButtonUrl: "https://webinar.sajanshah.com"
+};
+
+export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
+  const data = {
+    heading: content?.heading || defaults.heading,
+    headingItalic: content?.headingItalic || defaults.headingItalic,
+    headingHighlight: content?.headingHighlight || defaults.headingHighlight,
+    backgroundImageUrl: content?.backgroundImageUrl || defaults.backgroundImageUrl,
+    primaryButtonText: content?.primaryButtonText || defaults.primaryButtonText,
+    primaryButtonScrollTarget: content?.primaryButtonScrollTarget || defaults.primaryButtonScrollTarget,
+    secondaryButtonText: content?.secondaryButtonText || defaults.secondaryButtonText,
+    secondaryButtonUrl: content?.secondaryButtonUrl || defaults.secondaryButtonUrl
+  };
+
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-36">
       {/* Background Image with Dark Luxury Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="/Speking Hero .jpeg"
+          src={data.backgroundImageUrl}
           alt="Sajan Shah Speaking Background"
           className="w-full h-full object-cover object-center filter brightness-90"
         />
@@ -19,33 +54,37 @@ export const SpeakingHero: React.FC = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-4xl md:text-7xl font-light text-white mb-8 tracking-wide leading-tight"
         >
-          This Isn’t Motivation.<br />
-          <span className="italic font-extralight text-gray-200">This Is</span> <span className="text-[#f26522] font-semibold">Transformation.</span>
+          {data.heading}<br />
+          <span className="italic font-extralight text-gray-200">{data.headingItalic}</span>{' '}
+          <span className="text-[#f26522] font-semibold">{data.headingHighlight}</span>
         </motion.h1>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-col md:flex-row items-center justify-center gap-4 mt-12"
         >
-          <button 
-            onClick={() => window.location.href = '#message'}
+          <button
+            onClick={() => {
+              const el = document.querySelector(data.primaryButtonScrollTarget);
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className="w-full md:w-auto bg-[#f26522] hover:bg-[#d95a1e] text-white px-10 py-5 font-bold tracking-widest uppercase transition-all duration-300 shadow-[0_0_20px_rgba(242,101,34,0.3)]"
           >
-            Book Sajan to Speak →
+            {data.primaryButtonText}
           </button>
-          <button 
-            onClick={() => window.open('https://webinar.sajanshah.com', '_blank')}
+          <button
+            onClick={() => window.open(data.secondaryButtonUrl, '_blank')}
             className="w-full md:w-auto bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 px-10 py-5 font-bold tracking-widest uppercase transition-all duration-300"
           >
-            Virtual Training →
+            {data.secondaryButtonText}
           </button>
         </motion.div>
       </div>

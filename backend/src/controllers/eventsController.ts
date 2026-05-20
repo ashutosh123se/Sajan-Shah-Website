@@ -63,7 +63,7 @@ export const getEventById = async (req: Request, res: Response) => {
 export const createEvent = async (req: Request, res: Response) => {
   try {
     const {
-      title, slug, description, posterUrl, cloudinaryPublicId,
+      title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
       webinarUrl, eventDate, city, venue, eventType, isPast,
       isFree, price, capacity, isActive
     } = req.body;
@@ -74,6 +74,7 @@ export const createEvent = async (req: Request, res: Response) => {
         slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
         description,
         posterUrl,
+        homepageImageUrl,
         cloudinaryPublicId,
         webinarUrl,
         eventDate: new Date(eventDate),
@@ -98,7 +99,7 @@ export const updateEvent = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
     const {
-      title, slug, description, posterUrl, cloudinaryPublicId,
+      title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
       webinarUrl, eventDate, city, venue, eventType, isPast,
       isFree, price, capacity, isActive
     } = req.body;
@@ -110,6 +111,7 @@ export const updateEvent = async (req: Request, res: Response) => {
         slug,
         description,
         posterUrl,
+        homepageImageUrl,
         cloudinaryPublicId,
         webinarUrl,
         eventDate: eventDate ? new Date(eventDate) : undefined,

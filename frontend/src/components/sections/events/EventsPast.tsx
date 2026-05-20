@@ -1,11 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { Calendar as CalendarIcon, MapPin, Play } from 'lucide-react';
 import { format } from 'date-fns';
-import { MOCK_EVENTS } from './eventsData';
+import { SajanEvent } from './eventsData';
 
-export default function EventsPast() {
+interface EventsPastProps {
+  events: SajanEvent[];
+}
+
+export default function EventsPast({ events }: EventsPastProps) {
   const [pastTagFilter, setPastTagFilter] = useState('All');
-  const pastEvents = useMemo(() => MOCK_EVENTS.filter(e => e.isPast), []);
+  const pastEvents = events;
 
   const filteredPast = useMemo(() => {
     if (pastTagFilter === 'All') return pastEvents;
@@ -13,7 +17,7 @@ export default function EventsPast() {
   }, [pastEvents, pastTagFilter]);
 
   return (
-    <section className="py-32 bg-[#0a0a0a]">
+    <section id="past-events" className="py-32 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-normal mb-8 leading-[1.1]">Past Events <span className="text-brand-orange">& Gallery</span></h2>
@@ -32,7 +36,7 @@ export default function EventsPast() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPast.map(event => (
-            <div key={event.id} className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#111] border border-white/10">
+            <div key={event.id} id={`event-card-${event.id}`} className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#111] border border-white/10 transition-all duration-300">
                <div className="absolute inset-0 bg-[#222] group-hover:scale-105 transition-transform duration-700" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                

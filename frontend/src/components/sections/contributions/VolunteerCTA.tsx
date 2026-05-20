@@ -2,15 +2,36 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 
-export const VolunteerCTA: React.FC = () => {
+interface VolunteerCTAProps {
+  content?: {
+    heading?: string;
+    paragraph?: string;
+    buttonText?: string;
+  };
+}
+
+export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
+  const heading = content?.heading || "BECOME AN AMBASSADOR";
+  const paragraph = content?.paragraph || "We are looking for passionate individuals, CSR partners, and ESG advocates to join us in our mission to transform education and social welfare.";
+  const buttonText = content?.buttonText || "Apply Now";
+
+  const renderHeading = () => {
+    if (heading.includes('<br') || heading.includes('\n')) {
+      return <span dangerouslySetInnerHTML={{ __html: heading }} />;
+    }
+    return heading;
+  };
+
   return (
     <section className="py-32 bg-black border-y border-gray-900">
       <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-20 items-center">
         <div className="lg:w-1/2">
           <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-sm mb-4">Join The Movement</h2>
-          <h3 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase leading-none">BECOME AN <br /> AMBASSADOR</h3>
+          <h3 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase leading-none">
+            {renderHeading()}
+          </h3>
           <p className="text-gray-400 text-lg font-light leading-relaxed mb-10">
-            We are looking for passionate individuals, CSR partners, and ESG advocates to join us in our mission to transform education and social welfare.
+            {paragraph}
           </p>
           <div className="space-y-6">
             {[
@@ -46,7 +67,7 @@ export const VolunteerCTA: React.FC = () => {
               <option value="esg">ESG Partner</option>
             </select>
             <button type="submit" className="w-full bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs">
-              Apply Now
+              {buttonText}
             </button>
           </form>
         </div>

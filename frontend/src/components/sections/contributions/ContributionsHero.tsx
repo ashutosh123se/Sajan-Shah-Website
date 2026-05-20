@@ -2,7 +2,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const ContributionsHero: React.FC = () => {
+interface ContributionsHeroProps {
+  content?: {
+    heading?: string;
+    subHeading?: string;
+    paragraph?: string;
+  };
+}
+
+export const ContributionsHero: React.FC<ContributionsHeroProps> = ({ content }) => {
+  const heading = content?.heading || "IMPACT BEYOND BOUNDARIES";
+  const subHeading = content?.subHeading || "Our Contributions";
+  const paragraph = content?.paragraph || "We don't just build careers; we build legacies through education, empowerment, and sustainable social change.";
+
+  // Format heading if it contains a break or is plain
+  const renderHeading = () => {
+    if (heading.includes('<br') || heading.includes('\n')) {
+      return <span dangerouslySetInnerHTML={{ __html: heading }} />;
+    }
+    return heading;
+  };
+
   return (
     <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-black pt-40">
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
@@ -36,13 +56,12 @@ export const ContributionsHero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-sm mb-4">Our Contributions</h2>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter uppercase">
-            IMPACT BEYOND <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">BOUNDARIES</span>
+          <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-sm mb-4">{subHeading}</h2>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter uppercase leading-[1.1]">
+            {renderHeading()}
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed italic">
-            "We don't just build careers; we build legacies through education, empowerment, and sustainable social change."
+            "{paragraph}"
           </p>
         </motion.div>
       </div>

@@ -1,10 +1,26 @@
 'use client';
 import React, { useState } from 'react';
 
-export const TransformationForm: React.FC = () => {
+interface TransformationFormProps {
+  content?: {
+    tagline?: string;
+    title?: string;
+    description?: string;
+    email?: string;
+    phone?: string;
+  };
+}
+
+export const TransformationForm: React.FC<TransformationFormProps> = ({ content }) => {
   const [formData, setFormData] = useState({
     name: '', org: '', email: '', phone: '', startDate: '', endDate: '', location: '', info: ''
   });
+
+  const tagline = content?.tagline || "Booking & Inquiries";
+  const title = content?.title || "Start Your <br /><span class=\"font-bold\">Transformation Conversation.</span>";
+  const description = content?.description || "Tell us about your event, audience, or requirement. Let’s design an experience that drives real impact, not just motivation.";
+  const email = content?.email || "info@sajanshah.com";
+  const phone = content?.phone || "+91 8511363376";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,12 +41,13 @@ export const TransformationForm: React.FC = () => {
 
           {/* Left: Persuasive Text */}
           <div className="lg:w-2/5">
-            <p className="text-[#f26522] font-bold text-sm tracking-[0.3em] uppercase mb-6">Booking & Inquiries</p>
-            <h2 className="text-4xl md:text-5xl font-light text-white mb-8 leading-[1.2] tracking-tight">
-              Start Your <br /><span className="font-bold">Transformation Conversation.</span>
-            </h2>
+            <p className="text-[#f26522] font-bold text-sm tracking-[0.3em] uppercase mb-6">{tagline}</p>
+            <h2 
+              className="text-4xl md:text-5xl font-light text-white mb-8 leading-[1.2] tracking-tight"
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
             <p className="text-gray-400 text-lg md:text-xl font-light leading-relaxed mb-10">
-              Tell us about your event, audience, or requirement. Let’s design an experience that drives real impact, not just motivation.
+              {description}
             </p>
 
             <div className="space-y-6">
@@ -40,7 +57,7 @@ export const TransformationForm: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Email Us</p>
-                  <p className="text-lg font-light">info@sajanshah.com</p>
+                  <p className="text-lg font-light">{email}</p>
                 </div>
               </div>
 
@@ -50,7 +67,7 @@ export const TransformationForm: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Call Us</p>
-                  <p className="text-lg font-light">+91 8511363376</p>
+                  <p className="text-lg font-light">{phone}</p>
                 </div>
               </div>
             </div>

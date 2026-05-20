@@ -1,26 +1,49 @@
 'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const VisualGallery: React.FC = () => {
-  const photos = [
-    { cat: "Social Impact", title: "Empowering Lives", img: "/Social Work/1.jpeg" },
-    { cat: "Community Support", title: "On-Field Action", img: "/Social Work/2.jpeg" },
-    { cat: "Youth Outreach", title: "Mentorship Drive", img: "/Social Work/3.jpeg" },
-    { cat: "Food & Aid", title: "Supporting Families", img: "/Social Work/4.jpeg" },
-    { cat: "Rural Upliftment", title: "Sustainable Growth", img: "/Social Work/5.jpeg" },
-    { cat: "Social Welfare", title: "United Initiatives", img: "/Social Work/6.jpeg" },
-    { cat: "Education Support", title: "Reaching Out", img: "/Social Work/7.jpeg" },
-    { cat: "Community Care", title: "Empowering Futures", img: "/Social Work/8.jpeg" },
-    { cat: "Daily Assistance", title: "Hands-on Relief", img: "/Social Work/9.jpeg", pos: "object-left" },
-    { cat: "Public Action", title: "Making an Impact", img: "/Social Work/10.jpeg", pos: "object-right" },
-    { cat: "Welfare Drive", title: "Transforming Communities", img: "/Social Work/11.jpeg", pos: "object-bottom" },
-    { cat: "Youth Guidance", title: "Inspirational Field Work", img: "/Social Work/12.jpeg", pos: "object-left" },
-    { cat: "Aid Distribution", title: "Caring for All", img: "/Social Work/13.jpeg" },
-    { cat: "Transformational Care", title: "Sustained Relief", img: "/Social Work/14.jpeg" },
-    { cat: "Compassion Drive", title: "Legacy of Giving", img: "/Social Work/15.jpeg" },
-    { cat: "Social Empowerment", title: "Community Progress", img: "/Social Work/16.jpeg" },
-  ];
+interface GalleryPhoto {
+  cat: string;
+  title: string;
+  imageUrl?: string;
+  img?: string;
+  pos?: string;
+}
+
+interface VisualGalleryProps {
+  content?: {
+    heading?: string;
+    subHeading?: string;
+    paragraph?: string;
+    photos?: GalleryPhoto[];
+  };
+}
+
+const DEFAULT_PHOTOS: GalleryPhoto[] = [
+  { cat: "Social Impact", title: "Empowering Lives", img: "/Social Work/1.jpeg" },
+  { cat: "Community Support", title: "On-Field Action", img: "/Social Work/2.jpeg" },
+  { cat: "Youth Outreach", title: "Mentorship Drive", img: "/Social Work/3.jpeg" },
+  { cat: "Food & Aid", title: "Supporting Families", img: "/Social Work/4.jpeg" },
+  { cat: "Rural Upliftment", title: "Sustainable Growth", img: "/Social Work/5.jpeg" },
+  { cat: "Social Welfare", title: "United Initiatives", img: "/Social Work/6.jpeg" },
+  { cat: "Education Support", title: "Reaching Out", img: "/Social Work/7.jpeg" },
+  { cat: "Community Care", title: "Empowering Futures", img: "/Social Work/8.jpeg" },
+  { cat: "Daily Assistance", title: "Hands-on Relief", img: "/Social Work/9.jpeg", pos: "object-left" },
+  { cat: "Public Action", title: "Making an Impact", img: "/Social Work/10.jpeg", pos: "object-right" },
+  { cat: "Welfare Drive", title: "Transforming Communities", img: "/Social Work/11.jpeg", pos: "object-bottom" },
+  { cat: "Youth Guidance", title: "Inspirational Field Work", img: "/Social Work/12.jpeg", pos: "object-left" },
+  { cat: "Aid Distribution", title: "Caring for All", img: "/Social Work/13.jpeg" },
+  { cat: "Transformational Care", title: "Sustained Relief", img: "/Social Work/14.jpeg" },
+  { cat: "Compassion Drive", title: "Legacy of Giving", img: "/Social Work/15.jpeg" },
+  { cat: "Social Empowerment", title: "Community Progress", img: "/Social Work/16.jpeg" },
+];
+
+export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
+  const heading = content?.heading || "VISUAL PROOF";
+  const subHeading = content?.subHeading || "Gallery Archive";
+  const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
+  const photos = content?.photos || DEFAULT_PHOTOS;
 
   // Double the array for infinite loop
   const duplicatedPhotos = [...photos, ...photos];
@@ -30,11 +53,11 @@ export const VisualGallery: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 mb-20">
         <div className="flex flex-col md:flex-row justify-between items-end gap-12 border-b border-gray-900 pb-12">
           <div>
-            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-xs mb-4">Gallery Archive</h2>
-            <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tighter uppercase leading-none">VISUAL <br /> PROOF</h3>
+            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-xs mb-4">{subHeading}</h2>
+            <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tighter uppercase leading-none">{heading}</h3>
           </div>
           <p className="text-gray-500 font-light max-w-xs text-sm leading-relaxed italic">
-            Capturing the raw essence of transformation on the field.
+            {paragraph}
           </p>
         </div>
       </div>
@@ -61,7 +84,7 @@ export const VisualGallery: React.FC = () => {
               className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
             >
               <img 
-                src={item.img} 
+                src={item.imageUrl || item.img} 
                 alt={item.title} 
                 className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 ${item.pos || 'object-center'}`} 
               />

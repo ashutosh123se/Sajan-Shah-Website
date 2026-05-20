@@ -35,7 +35,7 @@ export const updateAboutSection: any = async (req: Request, res: Response) => {
     const { title, content, order, isActive } = req.body;
 
     const section = await db.aboutPageSection.update({
-      where: { id },
+      where: { id: id as string },
       data: {
         title,
         content: content as Prisma.InputJsonValue,
@@ -75,7 +75,7 @@ export const createAboutSection: any = async (req: Request, res: Response) => {
 export const deleteAboutSection: any = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await db.aboutPageSection.delete({ where: { id } });
+    await db.aboutPageSection.delete({ where: { id: id as string } });
     sendSuccess(res, null, 'Section deleted successfully');
   } catch (error) {
     console.error('Delete about section error:', error);

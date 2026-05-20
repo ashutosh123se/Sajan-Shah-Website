@@ -48,7 +48,14 @@ export const ProductCategories: React.FC = () => {
           {/* Card 1 - Books */}
           <div
             className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
-            onClick={() => (window.location.href = '/products/books')}
+            onClick={() => {
+              const el = document.getElementById('books');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                window.location.href = '/products#books';
+              }
+            }}
           >
             <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
               
@@ -96,7 +103,14 @@ export const ProductCategories: React.FC = () => {
           {/* Card 2 - Courses */}
           <div
             className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
-            onClick={() => (window.location.href = '/products/courses')}
+            onClick={() => {
+              const el = document.getElementById('courses');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                window.location.href = '/products#courses';
+              }
+            }}
           >
             <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
               
@@ -141,7 +155,14 @@ export const ProductCategories: React.FC = () => {
           {/* Card 3 - Merchandise */}
           <div
             className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
-            onClick={() => (window.location.href = '/products/merchandise')}
+            onClick={() => {
+              const el = document.getElementById('merchandise');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                window.location.href = '/products#merchandise';
+              }
+            }}
           >
             <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
               

@@ -9,8 +9,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth';
 import productsRoutes from './routes/products';
 import eventsRoutes from './routes/events';
-import programsRoutes from './routes/programs';
 import contactRoutes from './routes/contact';
+import homePageRoutes from './routes/homePage';
 import membersRoutes from './routes/members';
 import newsletterRoutes from './routes/newsletter';
 import ordersRoutes from './routes/orders';
@@ -24,6 +24,10 @@ import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settingsRoutes';
 import leadsRoutes from './routes/leads';
 import aboutRoutes from './routes/aboutRoutes';
+import eventsPageRoutes from './routes/eventsPage';
+import contributionsPageRoutes from './routes/contributionsPage';
+import v1ProductsRoutes from './routes/v1Products';
+import speakingRoutes from './routes/speaking';
 
 
 // Load environment variables
@@ -46,8 +50,8 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/events', eventsRoutes);
-app.use('/api/programs', programsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/home-page', homePageRoutes);
 app.use('/api/members', membersRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -61,6 +65,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/leads', leadsRoutes);
 app.use('/api/about', aboutRoutes);
+app.use('/api/events-page', eventsPageRoutes);
+app.use('/api/contributions-page', contributionsPageRoutes);
+app.use('/api/v1', v1ProductsRoutes);
+app.use('/api/speaking', speakingRoutes);
 
 
 // Health check
