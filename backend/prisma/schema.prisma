@@ -44,20 +44,22 @@ model User {
 
 model Product {
   id                 String      @id @default(cuid())
-  title              String
-  slug               String      @default("")
-  description        String
-  price              Float
-  currency           String      @default("INR")
-  imageUrl           String
-  images             String[]
-  category           String      // books | merchandise | courses | posters | bands | ai | bundles
-  tags               String[]
-  stock              Int?
-  isActive           Boolean     @default(true)
-  isFeatured         Boolean     @default(false)
-  cloudinaryPublicId String?
+  name               String      @default("")
+  slug               String      @unique
+  category           String      // book | course | merchandise
+  description        String      @db.Text
+  short_description  String?     @db.Text
+  is_active          Boolean     @default(true)
+  is_featured        Boolean     @default(false)
+  featured_order     Int?
+  image_homepage     String?     @db.Text
+  image_product_page String?     @db.Text
+  buy_url_amazon     String?     @db.Text
+  buy_url_flipkart   String?     @db.Text
+  buy_url_internal   String?     @db.Text
+  price              Float?
   createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @default(now()) @updatedAt
   orderItems         OrderItem[]
 }
 
@@ -67,6 +69,7 @@ model Event {
   slug               String   @unique @default("")
   description        String?
   posterUrl          String
+  homepageImageUrl   String?
   cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
@@ -113,21 +116,14 @@ model Contributor {
   order              Int    @default(0)
 }
 
-model Program {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  description    String
-  pitch          String
-  price          Float
-  currency       String   @default("INR")
-  thumbnailUrl   String?
-  videoUrl       String?
-  curriculum     String
-  targetAudience String[]
-  isActive       Boolean  @default(true)
-  isFeatured     Boolean  @default(false)
-  createdAt      DateTime @default(now())
+model SpeakingPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
+  title     String?
+  content   Json?    // Stores structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }
 
 model Contact {
@@ -252,3 +248,35 @@ model AboutPageSection {
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
+
+model EventsPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'cta'
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model ContributionsPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'donate', etc.
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model HomePageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+

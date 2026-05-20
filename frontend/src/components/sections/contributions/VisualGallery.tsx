@@ -1,18 +1,39 @@
 'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const VisualGallery: React.FC = () => {
-  const photos = [
-    { cat: "Social Impact", title: "United First Initiative", img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132&auto=format&fit=crop" },
-    { cat: "Education", title: "Neuroscience Workshops", img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop" },
-    { cat: "Field Work", title: "Sustainable Tools Drive", img: "https://images.unsplash.com/photo-1526367790999-0150786486a2?q=80&w=2071&auto=format&fit=crop" },
-    { cat: "Youth Forum", title: "Motivation & Growth", img: "https://images.unsplash.com/photo-1523580494863-6f30312248f5?q=80&w=2070&auto=format&fit=crop" },
-    { cat: "Eco-Drive", title: "Plantable Pencils", img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop" },
-    { cat: "Community", title: "Legacy of Giving", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop" },
-  ];
+interface GalleryPhoto {
+  cat: string;
+  title: string;
+  imageUrl: string;
+}
 
-  // Double the array for infinite loop
+interface VisualGalleryProps {
+  content?: {
+    heading?: string;
+    subHeading?: string;
+    paragraph?: string;
+    photos?: GalleryPhoto[];
+  };
+}
+
+const DEFAULT_PHOTOS: GalleryPhoto[] = [
+  { cat: "Social Impact", title: "United First Initiative", imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132&auto=format&fit=crop" },
+  { cat: "Education", title: "Neuroscience Workshops", imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop" },
+  { cat: "Field Work", title: "Sustainable Tools Drive", imageUrl: "https://images.unsplash.com/photo-1526367790999-0150786486a2?q=80&w=2071&auto=format&fit=crop" },
+  { cat: "Youth Forum", title: "Motivation & Growth", imageUrl: "https://images.unsplash.com/photo-1523580494863-6f30312248f5?q=80&w=2070&auto=format&fit=crop" },
+  { cat: "Eco-Drive", title: "Plantable Pencils", imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop" },
+  { cat: "Community", title: "Legacy of Giving", imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop" }
+];
+
+export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
+  const heading = content?.heading || "VISUAL PROOF";
+  const subHeading = content?.subHeading || "Gallery Archive";
+  const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
+  const photos = content?.photos || DEFAULT_PHOTOS;
+
+  // Double/triple the array for infinite loop
   const duplicatedPhotos = [...photos, ...photos, ...photos];
 
   return (
@@ -20,11 +41,11 @@ export const VisualGallery: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 mb-20">
         <div className="flex flex-col md:flex-row justify-between items-end gap-12 border-b border-gray-900 pb-12">
           <div>
-            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-xs mb-4">Gallery Archive</h2>
-            <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tighter uppercase leading-none">VISUAL <br /> PROOF</h3>
+            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-xs mb-4">{subHeading}</h2>
+            <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tighter uppercase leading-none">{heading}</h3>
           </div>
           <p className="text-gray-500 font-light max-w-xs text-sm leading-relaxed italic">
-            Capturing the raw essence of transformation on the field.
+            {paragraph}
           </p>
         </div>
       </div>
@@ -51,7 +72,7 @@ export const VisualGallery: React.FC = () => {
               className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
             >
               <img 
-                src={item.img} 
+                src={item.imageUrl} 
                 alt={item.title} 
                 className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
               />

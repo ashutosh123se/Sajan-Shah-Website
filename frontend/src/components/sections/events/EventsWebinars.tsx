@@ -4,11 +4,15 @@ import React, { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Calendar as CalendarIcon, Clock, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
-import { MOCK_EVENTS } from './eventsData';
+import { SajanEvent } from './eventsData';
 
-export default function EventsWebinars() {
+interface EventsWebinarsProps {
+  events: SajanEvent[];
+}
+
+export default function EventsWebinars({ events }: EventsWebinarsProps) {
   const [showAll, setShowAll] = useState(false);
-  const allWebinars = useMemo(() => MOCK_EVENTS.filter(e => e.isWebinar), []);
+  const allWebinars = events;
   const webinars = showAll ? allWebinars : allWebinars.slice(0, 2);
 
   return (
@@ -30,6 +34,7 @@ export default function EventsWebinars() {
         {webinars.map((webinar, index) => (
           <div 
             key={webinar.id} 
+            id={`event-card-${webinar.id}`}
             className="group relative w-full bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col md:flex-row hover:border-brand-orange/40 transition-all duration-500 shadow-2xl"
           >
             {/* Left Content Side */}
@@ -48,7 +53,10 @@ export default function EventsWebinars() {
               </p>
               
               <div className="flex flex-wrap items-center gap-x-10 gap-y-6 mt-auto">
-                <Button className="rounded-full bg-white text-black hover:bg-brand-orange hover:text-white font-black px-10 py-4 uppercase tracking-widest text-xs transition-all shadow-lg hover:shadow-brand-orange/20">
+                <Button 
+                  onClick={() => document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="rounded-full bg-white text-black hover:bg-brand-orange hover:text-white font-black px-10 py-4 uppercase tracking-widest text-xs transition-all shadow-lg hover:shadow-brand-orange/20"
+                >
                   Learn More
                 </Button>
                 
@@ -93,7 +101,10 @@ export default function EventsWebinars() {
                 </div>
 
                 <div className="mt-8">
-                  <Button className="w-full bg-brand-orange text-white hover:bg-white hover:text-black font-black uppercase tracking-widest py-4 text-xs rounded-xl shadow-[0_0_20px_rgba(239,111,15,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all">
+                  <Button 
+                    onClick={() => document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full bg-brand-orange text-white hover:bg-white hover:text-black font-black uppercase tracking-widest py-4 text-xs rounded-xl shadow-[0_0_20px_rgba(239,111,15,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all"
+                  >
                     Register Free
                   </Button>
                 </div>

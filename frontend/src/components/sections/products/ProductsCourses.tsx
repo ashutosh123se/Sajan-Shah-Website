@@ -1,39 +1,94 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const courses = [
+import api from '@/lib/api';
+
+const staticCourses = [
   {
-    id: 1,
-    title: 'PARENTING PROGRAM',
+    id: 'static-c1',
+    name: 'PARENTING PROGRAM',
     subtitle: 'Build a Strong, Positive Home Environment',
     description: 'A practical system to help parents understand their child better, improve communication, and create a growth-driven, stress-free home culture.',
     image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=PARENTING+PROGRAM',
-    cta: 'Explore Course →',
+    buy_url_internal: '#',
     isSoldOut: false,
   },
   {
-    id: 2,
-    title: 'MEMORY PROGRAM',
+    id: 'static-c2',
+    name: 'MEMORY PROGRAM',
     subtitle: 'Unlock Your Brain’s True Potential',
     description: 'Learn proven techniques to improve memory, focus, and retention—so you can learn faster and perform better in academics and life.',
     image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=MEMORY+PROGRAM',
-    cta: 'Explore Course →',
+    buy_url_internal: '#',
     isSoldOut: false,
   },
   {
-    id: 3,
-    title: 'TRAIN THE TRAINER',
+    id: 'static-c3',
+    name: 'TRAIN THE TRAINER',
     subtitle: 'Become a Powerful Speaker & Influencer',
     description: 'A structured program to help you develop communication skills, stage confidence, and the ability to impact and influence others.',
     image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=TRAIN+THE+TRAINER',
-    cta: 'Sold Out',
+    buy_url_internal: '#',
     isSoldOut: true,
   },
 ];
 
+interface CourseProduct {
+  id: string;
+  name: string;
+  subtitle?: string;
+  description: string;
+  image?: string;
+  buy_url_internal?: string;
+  isSoldOut: boolean;
+}
+
 export const ProductsCourses: React.FC = () => {
+  const [coursesList, setCoursesList] = useState<CourseProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await api.get('/v1/products');
+        const dbProducts = response.data.data.products || [];
+        const dbCourses = dbProducts.filter((p: any) => p.category === 'course');
+        
+        if (dbCourses.length > 0) {
+          setCoursesList(dbCourses.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            subtitle: c.short_description || 'A Premium Course',
+            description: c.description,
+            image: c.image_product_page || c.image_homepage || 'https://placehold.co/800x600/0a0a0a/3b82f6?text=COURSE',
+            buy_url_internal: c.buy_url_internal || '#',
+            isSoldOut: !c.is_active,
+          })));
+        } else {
+          setCoursesList(staticCourses);
+        }
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+        setCoursesList(staticCourses);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  const activeCourses = coursesList.length > 0 ? coursesList : staticCourses;
+
+  if (loading) {
+    return (
+      <div className="py-24 text-center text-gray-500 bg-[#0a0a0a]">
+        Loading Courses...
+      </div>
+    );
+  }
+
   return (
     <section id="courses" className="py-24 bg-[#0a0a0a] relative overflow-hidden">
 
@@ -75,7 +130,7 @@ export const ProductsCourses: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-          {courses.map((course, index) => (
+          {activeCourses.map((course: CourseProduct, index: number) => (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 40 }}
@@ -88,7 +143,7 @@ export const ProductsCourses: React.FC = () => {
 
                 <img 
                   src={course.image} 
-                  alt={course.title}
+                  alt={course.name}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
                 />
                 
@@ -113,7 +168,7 @@ export const ProductsCourses: React.FC = () => {
 
                 <div className="relative z-10 flex flex-col flex-grow">
                   <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight leading-none group-hover:text-[#f26522] transition-colors">
-                    {course.title}
+                    {course.name}
                   </h3>
                   <p className="text-[#f26522] font-bold text-[10px] mb-6 tracking-widest uppercase">
                     {course.subtitle}
@@ -128,7 +183,7 @@ export const ProductsCourses: React.FC = () => {
                           Next Batch Coming Soon
                        </div>
                      ) : (
-                       <a href="#" className="inline-flex items-center text-white font-black text-sm uppercase tracking-widest hover:text-[#f26522] transition-colors group/link">
+                       <a href={`/products/${course.id}`} className="inline-flex items-center text-white font-black text-sm uppercase tracking-widest hover:text-[#f26522] transition-colors group/link">
                           Explore Course 
                           <svg className="ml-2 w-5 h-5 transform group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

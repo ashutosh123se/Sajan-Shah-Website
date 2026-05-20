@@ -1,10 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Calendar as CalendarIcon, MapPin, CheckCircle2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
-import { MOCK_EVENTS, currentDate } from './eventsData';
+import { SajanEvent, currentDate } from './eventsData';
 
-export default function EventsCalendar() {
+interface EventsCalendarProps {
+  events: SajanEvent[];
+  allEvents: SajanEvent[];
+}
+
+export default function EventsCalendar({ events, allEvents }: EventsCalendarProps) {
   const [viewMode, setViewMode] = useState<'month' | 'list'>('month');
   
   // Filters for Upcoming Events
@@ -13,7 +18,7 @@ export default function EventsCalendar() {
   const [formatFilter, setFormatFilter] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('');
 
-  const upcomingEvents = useMemo(() => MOCK_EVENTS.filter(e => !e.isPast && !e.isWebinar), []);
+  const upcomingEvents = events;
 
   const filteredUpcoming = useMemo(() => {
     return upcomingEvents.filter(e => {
@@ -26,6 +31,81 @@ export default function EventsCalendar() {
   }, [upcomingEvents, cityFilter, categoryFilter, formatFilter, availabilityFilter]);
 
   const [startMonthOffset, setStartMonthOffset] = useState(0);
+
+  const scrollToEventCard = (eventId: string, isWebinar?: boolean, isPast?: boolean) => {
+    const isUpcoming = upcomingEvents.some(e => String(e.id) === eventId);
+    
+    if (viewMode === 'month' && isUpcoming) {
+      setViewMode('list');
+      setTimeout(() => {
+        const el = document.getElementById(`event-card-${eventId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+          setTimeout(() => {
+            el.classList.remove('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+          }, 2000);
+        }
+      }, 300);
+      return;
+    }
+
+    const el = document.getElementById(`event-card-${eventId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Temporary orange glow effect to guide user attention
+      el.classList.add('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+      setTimeout(() => {
+        el.classList.remove('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+      }, 2000);
+    } else {
+      // Fallbacks
+      if (isWebinar) {
+        document.getElementById('webinars')?.scrollIntoView({ behavior: 'smooth' });
+      } else if (isPast) {
+        document.getElementById('past-events')?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#event-card-')) {
+        const eventId = hash.replace('#event-card-', '');
+        
+        // Find if it's an upcoming event (in the calendar view component)
+        const isUpcoming = upcomingEvents.some(e => String(e.id) === eventId);
+        const event = allEvents.find(e => String(e.id) === eventId);
+        
+        if (isUpcoming) {
+          setViewMode('list');
+        }
+        
+        setTimeout(() => {
+          const el = document.getElementById(`event-card-${eventId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+            setTimeout(() => {
+              el.classList.remove('ring-4', 'ring-[#f26522]', 'ring-offset-4', 'ring-offset-black', 'scale-[1.02]');
+            }, 2000);
+          } else if (event) {
+            if (event.isWebinar) {
+              document.getElementById('webinars')?.scrollIntoView({ behavior: 'smooth' });
+            } else if (event.isPast) {
+              document.getElementById('past-events')?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        }, 300);
+      }
+    };
+
+    handleHashChange();
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [upcomingEvents, allEvents]);
 
   const renderMonthCalendar = (offset: number) => {
     const monthDate = addMonths(currentDate, offset);
@@ -68,12 +148,19 @@ export default function EventsCalendar() {
             const primaryColor = hasEvent ? dayEvents[0].colorCode : '';
 
             return (
-              <div 
+              <button 
                 key={day.toString()} 
-                className={`h-8 w-8 mx-auto flex items-center justify-center rounded-full text-sm ${hasEvent ? primaryColor + ' font-bold' : 'text-gray-300'}`}
+                onClick={() => {
+                  if (hasEvent) {
+                    scrollToEventCard(dayEvents[0].id, dayEvents[0].isWebinar, dayEvents[0].isPast);
+                  }
+                }}
+                disabled={!hasEvent}
+                className={`h-8 w-8 mx-auto flex items-center justify-center rounded-full text-sm transition-all border-none outline-none ${hasEvent ? `${primaryColor} font-bold cursor-pointer hover:scale-110 active:scale-95 shadow-md` : 'text-zinc-600 bg-transparent cursor-default'}`}
+                title={hasEvent ? dayEvents.map(e => e.title).join(', ') : undefined}
               >
                 {format(day, 'd')}
-              </div>
+              </button>
             );
           })}
         </div>
@@ -93,7 +180,10 @@ export default function EventsCalendar() {
                   <div className={`w-2 h-2 rounded-full mr-2 ${event.colorCode.split(' ')[0]}`}></div>
                   {event.format.toUpperCase()}: {event.city.toUpperCase()}
                 </div>
-                <Button className="w-full rounded-full bg-white text-black hover:bg-brand-orange hover:text-white transition-all text-xs font-bold py-2">
+                <Button 
+                  onClick={() => scrollToEventCard(event.id, event.isWebinar, event.isPast)}
+                  className="w-full rounded-full bg-white text-black hover:bg-brand-orange hover:text-white transition-all text-xs font-bold py-2"
+                >
                   View event
                 </Button>
               </div>
@@ -105,7 +195,7 @@ export default function EventsCalendar() {
   };
 
   return (
-    <>
+    <div id="events-calendar-section">
       <section className="py-8 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="flex flex-col w-full lg:w-64 space-y-2">
@@ -125,10 +215,18 @@ export default function EventsCalendar() {
 
           <div className="flex flex-wrap gap-3 flex-1">
             <div className="px-4 py-2 rounded-full border border-white/20 text-sm font-bold hover:bg-white/10 cursor-pointer">All</div>
-            {Array.from(new Set(MOCK_EVENTS.map(e => e.title))).slice(0, 6).map((title, idx) => {
-              const event = MOCK_EVENTS.find(e => e.title === title);
+            {Array.from(new Set(allEvents.map(e => e.title))).slice(0, 6).map((title, idx) => {
+              const event = allEvents.find(e => e.title === title);
               return (
-                <div key={idx} className="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 cursor-pointer flex items-center">
+                <div 
+                  key={idx} 
+                  onClick={() => {
+                    if (event) {
+                      scrollToEventCard(event.id, event.isWebinar, event.isPast);
+                    }
+                  }}
+                  className="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 cursor-pointer flex items-center"
+                >
                   <span className={`w-2 h-2 rounded-full mr-2 ${event?.colorCode.split(' ')[0]}`}></span>
                   <span className="truncate max-w-[200px]">{title}</span>
                 </div>
@@ -178,7 +276,7 @@ export default function EventsCalendar() {
                 <div className="col-span-full py-12 text-center text-gray-500">No events found matching filters.</div>
              ) : (
                filteredUpcoming.map(event => (
-                 <div key={event.id} className="bg-[#111] border border-white/10 p-6 rounded-xl hover:border-brand-orange transition-all">
+                 <div key={event.id} id={`event-card-${event.id}`} className="bg-[#111] border border-white/10 p-6 rounded-xl hover:border-brand-orange transition-all duration-300">
                     <div className="flex items-center mb-4">
                       <div className={`w-3 h-3 rounded-full mr-3 ${event.colorCode.split(' ')[0]}`}></div>
                       <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">{event.format} - {event.category}</span>
@@ -189,7 +287,12 @@ export default function EventsCalendar() {
                       <div className="flex items-center"><MapPin className="w-4 h-4 mr-3 text-brand-orange" /> {event.city}</div>
                       <div className="flex items-center"><CheckCircle2 className="w-4 h-4 mr-3 text-brand-orange" /> {event.availability}</div>
                     </div>
-                    <Button className="w-full bg-white text-black hover:bg-brand-orange hover:text-white">
+                    <Button 
+                      onClick={() => {
+                        document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="w-full bg-white text-black hover:bg-brand-orange hover:text-white"
+                    >
                       View Details
                     </Button>
                  </div>
@@ -198,6 +301,6 @@ export default function EventsCalendar() {
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

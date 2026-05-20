@@ -61,8 +61,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       roles: ['SUPER_ADMIN'],
     },
     {
-      title: 'Programs',
-      href: '/admin/programs',
+      title: 'Speaking Page',
+      href: '/admin/speaking',
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4 20.777 5.168 21 6.751 21h8.5C16.832 21 17.5 21s2.168-.223 2.5-1.247V6.253C19 5.477 17.832 5 16.25 5s-2.168.477-2.5 1.253z"/>
@@ -141,6 +141,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       roles: ['SUPER_ADMIN', 'ADMIN', 'EDITOR'],
     },
     {
+      title: 'Home Page',
+      href: '/admin/home',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      ),
+      roles: ['SUPER_ADMIN', 'ADMIN', 'EDITOR'],
+    },
+    {
       title: 'Settings',
       href: '/admin/settings',
       icon: (
@@ -171,10 +181,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-white flex font-sans selection:bg-white selection:text-black">
+    <div className="pt-[176px] lg:pt-[196px] min-h-screen bg-[#0C0C0C] text-white flex font-sans selection:bg-white selection:text-black">
       {/* Sidebar */}
-      <div className="w-64 bg-[#141414] border-r border-white/10 min-h-screen flex flex-col">
-        <div className="p-6 flex-1">
+      <div className="w-64 bg-[#141414] border-r border-white/10 h-[calc(100vh-176px)] lg:h-[calc(100vh-196px)] sticky top-[176px] lg:top-[196px] flex flex-col">
+        <div className="p-6 flex-1 overflow-y-auto no-scrollbar">
           <h2 className="text-2xl font-extrabold text-white tracking-tight mb-8">
             Admin<span className="text-gray-500">Panel</span>
           </h2>
@@ -185,20 +195,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <p className="font-semibold text-white truncate">{user.name}</p>
             <p className="text-xs text-gray-400 mt-1">{user.role.replace('_', ' ')}</p>
           </div>
-
+ 
           {/* Navigation */}
           <nav className="space-y-1">
             {filteredSidebarItems.map((item) => {
               const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/admin');
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center space-x-3 px-4 py-3 transition-all duration-200 border-l-2 ${
-                    isActive
-                      ? 'bg-white/10 text-white border-white'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'
-                  }`}
+                   key={item.href}
+                   href={item.href}
+                   className={`flex items-center space-x-3 px-4 py-3 transition-all duration-200 border-l-2 ${
+                     isActive
+                       ? 'bg-white/10 text-white border-white'
+                       : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'
+                   }`}
                 >
                   {item.icon}
                   <span className="font-medium tracking-wide">{item.title}</span>
@@ -219,9 +229,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Button>
         </div>
       </div>
-
+ 
       {/* Main Content */}
-      <div className="flex-1 max-h-screen overflow-y-auto bg-[#0C0C0C]">
+      <div className="flex-1 bg-[#0C0C0C]">
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>
