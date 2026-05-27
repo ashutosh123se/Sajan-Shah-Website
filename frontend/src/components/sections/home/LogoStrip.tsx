@@ -1,14 +1,37 @@
 'use client';
 import React from 'react';
 
-export const LogoStrip: React.FC = () => {
-  const logos = ["Forbes", "TEDx", "Times of India", "BBC", "CNN", "Economic Times", "Fortune", "Hindustan Times"];
+interface LogoStripProps {
+  content?: {
+    logosHeading?: string;
+    logos?: string[];
+    subscribeQuote?: string;
+    subscribeDesc?: string;
+    subscribeSubtext?: string;
+  };
+}
+
+export const LogoStrip: React.FC<LogoStripProps> = ({ content }) => {
+  const logosHeading = content?.logosHeading || "Recognized Globally & Trusted by Millions";
+  const logos = content?.logos || ["Forbes", "TEDx", "Times of India", "BBC", "CNN", "Economic Times", "Fortune", "Hindustan Times"];
+  const subscribeQuote = content?.subscribeQuote || "Master your mind. Master your performance.";
+  const subscribeDesc = content?.subscribeDesc || "Get weekly neuroscience-backed insights and strategies directly from Sajan Shah. No fluff, just pure transformation.";
+  const subscribeSubtext = content?.subscribeSubtext || "Join 100k+ subscribers on the journey.";
+
+  // Format quotes dynamically if needed
+  const formattedQuote = subscribeQuote.replace(
+    /(mind)/gi, 
+    '<span class="font-bold">mind</span>'
+  ).replace(
+    /(performance)/gi, 
+    '<span class="font-bold text-[#f26522]">performance</span>'
+  );
 
   return (
     <section className="bg-black pt-24 pb-0 overflow-hidden">
       {/* Logos Section - Infinite Scroll Style */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24 overflow-hidden">
-        <h2 className="text-center text-xs md:text-sm text-gray-600 uppercase tracking-[0.4em] font-bold mb-16">Recognized Globally & Trusted by Millions</h2>
+        <h2 className="text-center text-xs md:text-sm text-gray-600 uppercase tracking-[0.4em] font-bold mb-16">{logosHeading}</h2>
         
         <div className="relative group overflow-hidden">
           {/* Faded edges overlay */}
@@ -63,10 +86,14 @@ export const LogoStrip: React.FC = () => {
           {/* Right: Persuasive Call to Action */}
           <div className="lg:w-1/2 text-center lg:text-left">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-10 leading-[1.2] tracking-tight italic">
-              "Master your <span className="font-bold">mind</span>. Master your <span className="font-bold text-[#f26522]">performance</span>."
+              "{subscribeQuote.includes('mind') ? (
+                <span dangerouslySetInnerHTML={{ __html: formattedQuote }} />
+              ) : (
+                subscribeQuote
+              )}"
             </h2>
             <p className="text-gray-400 text-lg mb-12 font-light leading-relaxed max-w-xl">
-              Get weekly neuroscience-backed insights and strategies directly from Sajan Shah. No fluff, just pure transformation.
+              {subscribeDesc}
             </p>
             
             <form 
@@ -124,13 +151,13 @@ export const LogoStrip: React.FC = () => {
                 </button>
               </div>
             </form>
-            <p className="text-[10px] text-gray-600 mt-6 uppercase tracking-widest font-bold">Join 100k+ subscribers on the journey.</p>
+            <p className="text-[10px] text-gray-600 mt-6 uppercase tracking-widest font-bold">{subscribeSubtext}</p>
           </div>
           
         </div>
       </div>
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes scroll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -141,7 +168,7 @@ export const LogoStrip: React.FC = () => {
         .animate-scroll:hover {
           animation-play-state: paused;
         }
-      `}</style>
+      `}} />
     </section>
   );
 };

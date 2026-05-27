@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface Product {
   id: string;
@@ -25,66 +26,73 @@ interface CartState {
   getTotalPrice: () => number;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: [],
-  isOpen: false,
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      isOpen: false,
 
-  addItem: (product: Product, quantity = 1) => {
-    set((state) => {
-      const existingItem = state.items.find(item => item.product.id === product.id);
-      
-      if (existingItem) {
-        return {
+      addItem: (product: Product, quantity = 1) => {
+        set((state) => {
+          const existingItem = state.items.find(item => item.product.id === product.id);
+          
+          if (existingItem) {
+            return {
+              items: state.items.map(item =>
+                item.product.id === product.id
+                  ? { ...item, quantity: item.quantity + quantity }
+                  : item
+              )
+            };
+          } else {
+            return {
+              items: [...state.items, { product, quantity }]
+            };
+          }
+        });
+      },
+
+      removeItem: (productId: string) => {
+        set((state) => ({
+          items: state.items.filter(item => item.product.id !== productId)
+        }));
+      },
+
+      updateQuantity: (productId: string, quantity: number) => {
+        if (quantity <= 0) {
+          get().removeItem(productId);
+          return;
+        }
+
+        set((state) => ({
           items: state.items.map(item =>
-            item.product.id === product.id
-              ? { ...item, quantity: item.quantity + quantity }
+            item.product.id === productId
+              ? { ...item, quantity }
               : item
           )
-        };
-      } else {
-        return {
-          items: [...state.items, { product, quantity }]
-        };
-      }
-    });
-  },
+        }));
+      },
 
-  removeItem: (productId: string) => {
-    set((state) => ({
-      items: state.items.filter(item => item.product.id !== productId)
-    }));
-  },
+      clearCart: () => {
+        set({ items: [] });
+      },
 
-  updateQuantity: (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      get().removeItem(productId);
-      return;
+      toggleCart: () => {
+        set((state) => ({ isOpen: !state.isOpen }));
+      },
+
+      getTotalItems: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + item.quantity, 0);
+      },
+
+      getTotalPrice: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      },
+    }),
+    {
+      name: 'sajan-cart-storage', // key in localStorage
     }
-
-    set((state) => ({
-      items: state.items.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity }
-          : item
-      )
-    }));
-  },
-
-  clearCart: () => {
-    set({ items: [] });
-  },
-
-  toggleCart: () => {
-    set((state) => ({ isOpen: !state.isOpen }));
-  },
-
-  getTotalItems: () => {
-    const { items } = get();
-    return items.reduce((total, item) => total + item.quantity, 0);
-  },
-
-  getTotalPrice: () => {
-    const { items } = get();
-    return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-  },
-}));
+  )
+);

@@ -4,9 +4,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export const HeroSlider: React.FC = () => {
+interface HeroSliderProps {
+  content?: {
+    slides?: Array<{
+      id: number | string;
+      headline: string;
+      subheadline: string;
+      ctaText: string;
+      ctaLink: string;
+      video?: string;
+      image?: string;
+    }>;
+  };
+}
+
+export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [
+  const defaultSlides = [
     {
       id: 1,
       headline: "India’s Biggest Memory & Family Transformation Experience",
@@ -36,6 +50,8 @@ export const HeroSlider: React.FC = () => {
       ctaLink: "https://unitedfirst.in"
     }
   ];
+
+  const slides = content?.slides || defaultSlides;
 
   useEffect(() => {
     const interval = setInterval(() => {

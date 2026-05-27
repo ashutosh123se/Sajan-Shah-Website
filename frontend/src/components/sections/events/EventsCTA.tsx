@@ -1,7 +1,19 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 
-export default function EventsCTA() {
+interface EventsCTAProps {
+  content?: {
+    heading?: string;
+    paragraph?: string;
+    buttonText?: string;
+  };
+}
+
+export default function EventsCTA({ content }: EventsCTAProps) {
+  const heading = content?.heading || "Invite Sajan Shah for an Event";
+  const paragraph = content?.paragraph || "Transform your organisation, school, or corporate team with a highly customized and impactful session by Sajan Shah.";
+  const buttonText = content?.buttonText || "Book Sajan For Your Event";
+
   return (
     <section id="book-sajan" className="py-32 relative overflow-hidden bg-[#ebebeb] text-black">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-16 items-center">
@@ -12,8 +24,8 @@ export default function EventsCTA() {
 
         {/* Right Side: Content & Form */}
         <div className="text-left flex flex-col justify-center">
-          <h2 className="text-5xl md:text-6xl font-black uppercase tracking-normal mb-6 leading-[1.1]">Invite Sajan Shah for <br /> an <span className="text-brand-orange">Event</span></h2>
-          <p className="text-lg text-gray-600 mb-10 max-w-xl">Transform your organisation, school, or corporate team with a highly customized and impactful session by Sajan Shah.</p>
+          <h2 className="text-5xl md:text-6xl font-black uppercase tracking-normal mb-6 leading-[1.1]" dangerouslySetInnerHTML={{ __html: heading.replace(/Event/i, '<span class="text-brand-orange">Event</span>').replace(/\bfor\b/i, 'for <br />') }}></h2>
+          <p className="text-lg text-gray-600 mb-10 max-w-xl">{paragraph}</p>
 
           <div className="w-full">
             <form className="space-y-8">
@@ -55,7 +67,7 @@ export default function EventsCTA() {
               </div>
 
               <Button className="w-full bg-brand-orange text-white hover:bg-black hover:text-white font-black uppercase tracking-widest py-4 text-sm rounded-xl transition-all">
-                Book Sajan For Your Event
+                {buttonText}
               </Button>
             </form>
           </div>

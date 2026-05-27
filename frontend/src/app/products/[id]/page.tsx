@@ -46,7 +46,21 @@ export default function ProductDetailPage() {
   const fetchProduct = async () => {
     try {
       const response = await api.get(`/products/${id}`);
-      setProduct(response.data.data.product);
+      const rawProduct = response.data.data.product;
+      if (rawProduct) {
+        setProduct({
+          id: rawProduct.id,
+          title: rawProduct.name || rawProduct.title || '',
+          description: rawProduct.description || '',
+          price: rawProduct.price !== null ? Number(rawProduct.price) : 0,
+          imageUrl: rawProduct.image_product_page || rawProduct.image_homepage || rawProduct.imageUrl || '',
+          category: rawProduct.category || '',
+          stock: 100 // virtual stock for digital products/merchandise
+        });
+      } else {
+        toast.error('Product not found');
+        router.push('/products');
+      }
     } catch (error) {
       toast.error('Product not found');
       router.push('/products');
@@ -100,7 +114,7 @@ export default function ProductDetailPage() {
                 orderId
               });
               toast.success('Payment successful!');
-              router.push('/user');
+              router.push(`/products/order-success?orderId=${orderId}&method=RAZORPAY`);
             } catch (err) {
               toast.error('Payment verification failed');
             }
@@ -116,7 +130,7 @@ export default function ProductDetailPage() {
         rzp.open();
       } else {
         toast.success('Order placed successfully (COD)');
-        router.push('/user');
+        router.push(`/products/order-success?orderId=${orderId}&method=COD`);
       }
     } catch (error) {
       toast.error('Failed to create order');

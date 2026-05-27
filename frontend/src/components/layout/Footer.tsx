@@ -3,10 +3,17 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
   const [selectedPost, setSelectedPost] = useState<any>(null);
+
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/user')) {
+    return null;
+  }
+
+  const currentYear = new Date().getFullYear();
 
   const blogPosts = [
     { 
@@ -183,9 +190,28 @@ export const Footer: React.FC = () => {
             <p className="text-sm text-gray-400 mb-6 leading-relaxed font-light">
               Actionable insights, neuroscience-backed strategies, and powerful shifts, designed to improve focus, confidence, and performance.
             </p>
-            <form className="space-y-3" onSubmit={e => e.preventDefault()}>
-              <input type="text" placeholder="Name" className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#333] focus:border-[#f26522] outline-none text-white placeholder-gray-500 transition-colors" required />
-              <input type="email" placeholder="Email Address" className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#333] focus:border-[#f26522] outline-none text-white placeholder-gray-500 transition-colors" required />
+            <form 
+              className="space-y-3" 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const name = (e.target as any).elements.name.value;
+                const email = (e.target as any).elements.email.value;
+                if (!email) return;
+                try {
+                  const api = (await import('@/lib/api')).default;
+                  const toast = (await import('react-hot-toast')).default;
+                  await api.post('/newsletter', { name, email, source: 'footer-subscribe' });
+                  toast.success('Welcome aboard!');
+                  (e.target as any).elements.name.value = '';
+                  (e.target as any).elements.email.value = '';
+                } catch (err) {
+                  const toast = (await import('react-hot-toast')).default;
+                  toast.error('Failed to subscribe');
+                }
+              }}
+            >
+              <input type="text" name="name" placeholder="Name" className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#333] focus:border-[#f26522] outline-none text-white placeholder-gray-500 transition-colors" required />
+              <input type="email" name="email" placeholder="Email Address" className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#333] focus:border-[#f26522] outline-none text-white placeholder-gray-500 transition-colors" required />
               <button type="submit" className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-4 uppercase tracking-widest text-xs transition-colors mt-4">
                 Subscribe Now
               </button>

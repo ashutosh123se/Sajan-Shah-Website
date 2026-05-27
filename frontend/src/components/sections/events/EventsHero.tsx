@@ -2,7 +2,21 @@ import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 
-export default function EventsHero() {
+interface EventsHeroProps {
+  content?: {
+    heading?: string;
+    subHeading?: string;
+    paragraph?: string;
+    buttonText?: string;
+  };
+}
+
+export default function EventsHero({ content }: EventsHeroProps) {
+  const heading = content?.heading || "Sajan Shah";
+  const subHeading = content?.subHeading || "events calendar";
+  const paragraph = content?.paragraph || "Create your own success story through the massive impact of a Sajan Shah event.";
+  const buttonText = content?.buttonText || "View all events";
+
   return (
     <section className="relative min-h-screen flex items-center pt-32 pb-24 px-4 md:px-8 overflow-hidden">
       {/* Animated Background Image */}
@@ -32,14 +46,19 @@ export default function EventsHero() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div>
             <h1 className="text-5xl md:text-7xl font-black tracking-normal leading-[1.1] mb-8 text-white">
-              Sajan Shah <br />
-              <span className="text-[#f26522]">events calendar</span>
+              {heading} <br />
+              <span className="text-[#f26522]">{subHeading}</span>
             </h1>
           </div>
           <div className="max-w-xs">
-            <p className="text-gray-300 mb-6 font-light">Create your own success story through the massive impact of a Sajan Shah event.</p>
-            <Button className="rounded-full bg-white text-black hover:bg-[#f26522] hover:text-white font-bold px-8 transition-all duration-300">
-              View all events
+            <p className="text-gray-300 mb-6 font-light">{paragraph}</p>
+            <Button 
+              onClick={() => {
+                document.getElementById('events-calendar-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="rounded-full bg-white text-black hover:bg-[#f26522] hover:text-white font-bold px-8 transition-all duration-300"
+            >
+              {buttonText}
             </Button>
           </div>
         </div>

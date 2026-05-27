@@ -1,11 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useCart } from '@/hooks/useCart';
 
-const merchandise = [
+import api from '@/lib/api';
+
+const staticMerchandise: MerchProduct[] = [
   {
-    id: 1,
+    id: 'static-m1',
+    name: 'T-SHIRTS',
     title: 'T-SHIRTS',
     subtitle: 'Wear Your Mindset',
     description: 'Apparel designed to reflect discipline, focus, and growth—because what you wear influences how you think.',
@@ -14,7 +19,8 @@ const merchandise = [
     hasImage: true,
   },
   {
-    id: 2,
+    id: 'static-m2',
+    name: 'BOTTLES',
     title: 'BOTTLES',
     subtitle: 'Stay Fueled, Stay Focused',
     description: 'Hydration meets discipline, carry your mindset wherever you go.',
@@ -23,7 +29,8 @@ const merchandise = [
     hasImage: true,
   },
   {
-    id: 3,
+    id: 'static-m3',
+    name: 'BANDS',
     title: 'BANDS',
     subtitle: 'Wear Your Commitment',
     description: 'Simple yet powerful reminders on your wrist to stay consistent and focused.',
@@ -32,7 +39,8 @@ const merchandise = [
     hasImage: true,
   },
   {
-    id: 4,
+    id: 'static-m4',
+    name: 'EXAM PADS',
     title: 'EXAM PADS',
     subtitle: 'Write Your Success Story',
     description: 'Designed for students to stay organized, focused, and ready to perform.',
@@ -41,7 +49,8 @@ const merchandise = [
     hasImage: false,
   },
   {
-    id: 5,
+    id: 'static-m5',
+    name: 'KEY CHAINS (I-G Series)',
     title: 'KEY CHAINS',
     subtitle: 'Carry Your Identity',
     description: 'Keep your mindset close, small reminders that create big shifts.',
@@ -50,7 +59,8 @@ const merchandise = [
     hasImage: true,
   },
   {
-    id: 6,
+    id: 'static-m6',
+    name: '12-IN-1 PRODUCTIVITY KIT',
     title: 'PRODUCTIVITY KIT',
     subtitle: 'Structure Your Day, Upgrade Your Life',
     description: 'A complete system to improve focus, planning, and execution, built for daily performance.',
@@ -59,7 +69,8 @@ const merchandise = [
     hasImage: false,
   },
   {
-    id: 7,
+    id: 'static-m7',
+    name: 'PLANTABLE PENCILS',
     title: 'PLANTABLE PENCILS',
     subtitle: 'Grow While You Write',
     description: 'Eco-friendly tools that symbolize growth, write today, plant tomorrow.',
@@ -68,18 +79,20 @@ const merchandise = [
     hasImage: false,
   },
   {
-    id: 8,
+    id: 'static-m8',
+    name: 'CAP',
     title: 'CAP',
     subtitle: 'Think Different. Stand Different.',
     description: 'A bold expression of identity and confidence in everyday life.',
     image: '/MERCHANDISE/Cap.jpeg',
     objectPosition: 'center center',
-    objectFit: 'contain' as const,
+    objectFit: 'contain',
     cardBg: '#111111',
     hasImage: true,
   },
   {
-    id: 9,
+    id: 'static-m9',
+    name: 'PENS',
     title: 'PENS',
     subtitle: 'Write with Purpose',
     description: 'More than writing tools, designed to remind you of clarity, focus, and action.',
@@ -88,7 +101,8 @@ const merchandise = [
     hasImage: false,
   },
   {
-    id: 10,
+    id: 'static-m10',
+    name: 'MUGS',
     title: 'MUGS',
     subtitle: 'Start Your Day with Intent',
     description: 'Every sip becomes a reminder of your goals, discipline, and mindset.',
@@ -97,7 +111,8 @@ const merchandise = [
     hasImage: true,
   },
   {
-    id: 11,
+    id: 'static-m11',
+    name: 'CANDLES',
     title: 'CANDLES',
     subtitle: 'Create Your Focus Space',
     description: 'Set the environment for clarity, calmness, and deep thinking.',
@@ -107,7 +122,83 @@ const merchandise = [
   },
 ];
 
+interface MerchProduct {
+  id: string | number;
+  name: string;
+  title?: string;
+  subtitle?: string;
+  description: string;
+  image?: string;
+  buy_url_internal?: string;
+  price?: number;
+  objectPosition?: string;
+  hasImage?: boolean;
+  objectFit?: 'contain' | 'cover';
+  cardBg?: string;
+}
+
 export const ProductsMerchandise: React.FC = () => {
+  const [merchList, setMerchList] = useState<MerchProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const router = useRouter();
+
+  const handleAddToCartAndRedirect = (item: MerchProduct) => {
+    if (item.id.toString().startsWith('static-') && item.hasImage === false) {
+      return;
+    }
+    addToCart({
+      id: item.id.toString(),
+      title: item.title || item.name,
+      description: item.description,
+      price: item.price || 499,
+      imageUrl: item.image || '',
+      category: 'merchandise',
+      stock: 100
+    }, 1);
+    router.push('/cart');
+  };
+
+  useEffect(() => {
+    const fetchMerchandise = async () => {
+      try {
+        const response = await api.get('/v1/products');
+        const dbProducts = response.data.data.products || [];
+        const dbMerch = dbProducts.filter((p: any) => p.category === 'merchandise');
+        
+        if (dbMerch.length > 0) {
+          setMerchList(dbMerch.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            subtitle: m.short_description || 'Exclusive Merchandise',
+            description: m.description,
+            image: m.image_homepage || m.image_product_page || 'https://placehold.co/600x600/0a0a0a/f26522?text=MERCHANDISE',
+            buy_url_internal: m.buy_url_internal || '#',
+            price: m.price !== null ? Number(m.price) : 499,
+          })));
+        } else {
+          setMerchList(staticMerchandise);
+        }
+      } catch (error) {
+        console.error('Failed to fetch merchandise:', error);
+        setMerchList(staticMerchandise);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMerchandise();
+  }, []);
+
+  const activeMerch = merchList.length > 0 ? merchList : staticMerchandise;
+
+  if (loading) {
+    return (
+      <div className="py-24 text-center text-gray-500 bg-[#0a0a0a]">
+        Loading Merchandise...
+      </div>
+    );
+  }
+
   return (
     <section id="merchandise" className="py-32 bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto px-4">
@@ -144,87 +235,92 @@ export const ProductsMerchandise: React.FC = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {merchandise.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="group relative aspect-square bg-gray-900 rounded-3xl overflow-hidden border border-white/5"
-            >
-              {/* ── Product visual ── */}
-              {item.hasImage ? (
-                <div
-                  className="w-full h-full transition-all duration-700 group-hover:scale-110 group-hover:opacity-40"
-                  style={{ background: (item as any).cardBg || 'transparent' }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full transition-all duration-700"
-                    style={{
-                      objectFit: (item as any).objectFit || 'cover',
-                      objectPosition: item.objectPosition,
-                      padding: (item as any).objectFit === 'contain' ? '12px' : '0',
-                    }}
-                  />
-                </div>
-              ) : (
-                /* Premium dark placeholder for items without a photo */
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1c1c1c] via-[#111] to-[#0a0a0a] transition-all duration-700 group-hover:opacity-40">
-                  <div className="w-16 h-16 rounded-2xl border-2 border-[#f26522]/40 flex items-center justify-center mb-3">
-                    <svg
-                      className="w-8 h-8 text-[#f26522]/60"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-[#f26522]/50 text-[10px] font-black tracking-widest uppercase">
-                    Coming Soon
-                  </span>
-                </div>
-              )}
-
-              {/* ── Slide-up overlay ── */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-12 group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black via-black/40 to-transparent">
-                <h3 className="text-xl font-black mb-1 text-white tracking-tight leading-none">
-                  {item.title}
-                </h3>
-                <p className="text-[#f26522] text-[10px] font-black tracking-widest uppercase mb-4">
-                  {item.subtitle}
-                </p>
-                <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500">
-                  <p className="text-gray-400 text-xs leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-opacity delay-200">
-                    {item.description}
-                  </p>
-                  <a
-                    href="#"
-                    className="inline-flex items-center text-white font-black text-[10px] uppercase tracking-[0.2em] hover:text-[#f26522] transition-colors"
+          {activeMerch.map((item: MerchProduct, index: number) => {
+            const hasImage = item.hasImage !== undefined ? item.hasImage : (!!item.image && !item.image.includes('placeholder') && !item.image.includes('placehold.co'));
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="group relative aspect-square bg-gray-900 rounded-3xl overflow-hidden border border-white/5 cursor-pointer"
+                onClick={() => handleAddToCartAndRedirect(item)}
+              >
+                {/* ── Product visual ── */}
+                {hasImage ? (
+                  <div
+                    className="w-full h-full transition-all duration-700 group-hover:scale-110 group-hover:opacity-40"
+                    style={{ background: item.cardBg || 'transparent' }}
                   >
-                    Buy Now →
-                  </a>
-                </div>
-              </div>
+                    <img
+                      src={item.image}
+                      alt={item.title || item.name}
+                      className="w-full h-full transition-all duration-700"
+                      style={{
+                        objectFit: item.objectFit || 'cover',
+                        objectPosition: item.objectPosition,
+                        padding: item.objectFit === 'contain' ? '12px' : '0',
+                      }}
+                    />
+                  </div>
+                ) : (
+                  /* Premium dark placeholder for items without a photo */
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1c1c1c] via-[#111] to-[#0a0a0a] transition-all duration-700 group-hover:opacity-40">
+                    <div className="w-16 h-16 rounded-2xl border-2 border-[#f26522]/40 flex items-center justify-center mb-3">
+                      <svg
+                        className="w-8 h-8 text-[#f26522]/60"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-[#f26522]/50 text-[10px] font-black tracking-widest uppercase">
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
 
-              {/* ── Add icon badge (top-right on hover) ── */}
-              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="w-10 h-10 rounded-full bg-[#f26522] flex items-center justify-center text-white">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
+                {/* ── Slide-up overlay ── */}
+                <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-12 group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black via-black/40 to-transparent">
+                  <h3 className="text-xl font-black mb-1 text-white tracking-tight leading-none">
+                    {item.title || item.name}
+                  </h3>
+                  <p className="text-[#f26522] text-[10px] font-black tracking-widest uppercase mb-4">
+                    {item.subtitle}
+                  </p>
+                  <div className="overflow-hidden h-0 group-hover:h-auto transition-all duration-500">
+                    <p className="text-gray-400 text-xs leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-opacity delay-200">
+                      {item.description}
+                    </p>
+                    {hasImage && (
+                      <span className="inline-flex items-center text-white font-black text-[10px] uppercase tracking-[0.2em] hover:text-[#f26522] transition-colors">
+                        Buy Now →
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                {/* ── Add icon badge (top-right on hover) ── */}
+                {hasImage && (
+                  <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="w-10 h-10 rounded-full bg-[#f26522] flex items-center justify-center text-white">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

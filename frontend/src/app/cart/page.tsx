@@ -14,17 +14,29 @@ export default function CartPage() {
   const { user, isAuthenticated } = useAuth();
   const { items, updateItemQuantity, removeFromCart, getTotalPrice, clearAllItems } = useCart();
   
+  const [mounted, setMounted] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
   const [paymentMethod, setPaymentMethod] = useState<'RAZORPAY' | 'COD'>('RAZORPAY');
   
   const [shippingData, setShippingData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
+    name: '',
+    email: '',
     phone: '',
     address: '',
     city: '',
     zip: ''
   });
+
+  React.useEffect(() => {
+    setMounted(true);
+    if (user) {
+      setShippingData(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -81,7 +93,7 @@ export default function CartPage() {
               });
               toast.success('Payment successful!');
               clearAllItems();
-              router.push('/user');
+              router.push(`/products/order-success?orderId=${orderId}&method=RAZORPAY`);
             } catch (err) {
               toast.error('Payment verification failed');
             }
@@ -98,7 +110,7 @@ export default function CartPage() {
       } else {
         toast.success('Order placed successfully (COD)');
         clearAllItems();
-        router.push('/user');
+        router.push(`/products/order-success?orderId=${orderId}&method=COD`);
       }
     } catch (error) {
       toast.error('Failed to create order');
@@ -110,6 +122,14 @@ export default function CartPage() {
     { id: 'shipping', label: 'Shipping' },
     { id: 'payment', label: 'Payment' }
   ];
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#0C0C0C] text-white flex items-center justify-center font-mono text-[10px] uppercase tracking-[0.3em]">
+        Authenticating Cart Summary...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0C0C0C] text-white pt-52 pb-32 px-4 relative overflow-hidden">
@@ -189,14 +209,14 @@ export default function CartPage() {
                                 <h3 className="text-2xl font-black uppercase tracking-tighter mb-1">{item.product.title}</h3>
                                 <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em]">{item.product.category}</p>
                               </div>
-                              <button onClick={() => removeFromCart(item.product.id)} className="text-gray-600 hover:text-white transition-colors h-fit p-1">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                              <button onClick={() => removeFromCart(item.product.id)} className="text-gray-600 hover:text-[#f26522] transition-colors h-fit p-1" title="Remove item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                               </button>
                             </div>
                             
                             <div className="flex justify-between items-center mt-8">
                               <div className="flex items-center bg-white/[0.03] border border-white/10 px-1 py-1">
-                                <button onClick={() => updateItemQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">-</button>
+                                <button onClick={() => updateItemQuantity(item.product.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">-</button>
                                 <span className="w-10 text-center text-xs font-black tracking-tighter">{item.quantity}</span>
                                 <button onClick={() => updateItemQuantity(item.product.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">+</button>
                               </div>

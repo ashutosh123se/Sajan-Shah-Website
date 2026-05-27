@@ -37,6 +37,23 @@ export const subscribe = async (req: Request, res: Response) => {
         }
       }
     });
+
+    // Also save as a Member in the Members table so they appear in the Members admin section
+    const existingMember = await db.member.findFirst({
+      where: { email }
+    });
+
+    if (!existingMember) {
+      await db.member.create({
+        data: {
+          name: name || email.split('@')[0],
+          email,
+          photoUrl: 'https://res.cloudinary.com/dztxhvx1e/image/upload/v1625068285/default-avatar.png',
+          bio: 'Subscribed to updates / newsletter from website.',
+          tier: 'Community'
+        }
+      });
+    }
     
     // TODO: Send welcome email
     
