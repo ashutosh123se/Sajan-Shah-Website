@@ -36,13 +36,13 @@ export const SpeakingHero: React.FC = () => {
           className="flex flex-col md:flex-row items-center justify-center gap-4 mt-12"
         >
           <button 
-            onClick={() => window.location.href = '#message'}
+            onClick={() => window.location.href = '/events#book-sajan'}
             className="w-full md:w-auto bg-[#f26522] hover:bg-[#d95a1e] text-white px-10 py-5 font-bold tracking-widest uppercase transition-all duration-300 shadow-[0_0_20px_rgba(242,101,34,0.3)]"
           >
             Book Sajan to Speak →
           </button>
           <button 
-            onClick={() => window.open('https://webinar.sajanshah.com', '_blank')}
+            onClick={() => window.location.href = '/products#courses'}
             className="w-full md:w-auto bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 px-10 py-5 font-bold tracking-widest uppercase transition-all duration-300"
           >
             Virtual Training →

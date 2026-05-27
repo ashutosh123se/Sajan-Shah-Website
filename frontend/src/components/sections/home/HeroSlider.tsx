@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export const HeroSlider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -24,7 +26,7 @@ export const HeroSlider: React.FC = () => {
       headline: "Upgrade Your Life With Proven Systems",
       subheadline: "Access powerful programs designed to improve thinking, performance, and personal growth - step by step.",
       ctaText: "Explore Programs",
-      ctaLink: "/programs"
+      ctaLink: "/products"
     },
     {
       id: 4,
@@ -48,13 +50,13 @@ export const HeroSlider: React.FC = () => {
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
       {/* Loopable Background Video */}
       <div className="absolute inset-0 z-0 bg-black">
-        <video 
-          className="w-full h-full object-cover opacity-85" 
-          src="/sajan_hero.mp4" 
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
+        <video
+          className="w-full h-full object-cover opacity-85"
+          src="/sajan_hero.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
         />
         {/* Soft bottom-to-top dark overlay to make text pop while keeping the video clear */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
@@ -75,9 +77,17 @@ export const HeroSlider: React.FC = () => {
               {slide.headline}
             </h1>
             {/* Faded subheadline (opacity-40) */}
-            <p className="text-xl md:text-2xl font-light text-white/40 mb-16 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
+            <p className="text-xl md:text-2xl font-light text-white/40 mb-10 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
               {slide.subheadline}
             </p>
+            {/* CTA Button */}
+            <Link
+              href={slide.ctaLink}
+              className="inline-flex items-center text-[#f26522] hover:text-white uppercase tracking-widest text-sm font-bold transition-colors group mb-12"
+            >
+              {slide.ctaText}
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+            </Link>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -85,11 +95,11 @@ export const HeroSlider: React.FC = () => {
       {/* Slide Indicators */}
       <div className="absolute bottom-10 left-0 right-0 z-30 flex justify-center space-x-4">
         {slides.map((_, idx) => (
-          <button 
-            key={idx} 
-            onClick={() => setCurrentSlide(idx)} 
-            className={`h-1.5 transition-all ${idx === currentSlide ? 'w-12 bg-[#f26522]' : 'w-8 bg-white/40 hover:bg-white/80'}`} 
-            aria-label={`Slide ${idx + 1}`} 
+          <button
+            key={idx}
+            onClick={() => setCurrentSlide(idx)}
+            className={`h-1.5 transition-all ${idx === currentSlide ? 'w-12 bg-[#f26522]' : 'w-8 bg-white/40 hover:bg-white/80'}`}
+            aria-label={`Slide ${idx + 1}`}
           />
         ))}
       </div>

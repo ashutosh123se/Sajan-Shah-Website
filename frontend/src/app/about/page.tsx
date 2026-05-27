@@ -53,7 +53,7 @@ export default function AboutPage() {
   const finalPositioning = getSection('final_positioning') || {
     quote: "You don't need more motivation.<br />You need a rewired mind.",
     ctaText: "Start Your Transformation",
-    ctaLink: "/contact"
+    ctaLink: "/products"
   };
 
   return (

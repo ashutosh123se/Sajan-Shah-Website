@@ -15,7 +15,7 @@ export const PartnershipModels: React.FC = () => {
           {[
             { title: "Academic", desc: "Neuroscience-backed workshops and student development programs.", type: "School Partners" },
             { title: "Corporate", desc: "Employee engagement and dedicated CSR initiatives.", type: "CSR Partners" },
-            { title: "Institutional", desc: "Collaborations for large-scale social welfare and advocacy.", type: "NGO Partners" },
+            { title: "Social Organization", desc: "Collaborations for large-scale social welfare and advocacy.", type: "NGO Partners" },
           ].map((item, idx) => (
             <div key={idx} className="p-10 bg-gray-900/30 border border-gray-800 rounded-[2rem] hover:bg-[#f26522] transition-all duration-500 group cursor-pointer">
               <div className="text-gray-500 font-bold text-[10px] uppercase tracking-[0.3em] mb-4 group-hover:text-white/70">{item.type}</div>

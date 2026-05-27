@@ -35,7 +35,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12" />
       </div>
     );
   }

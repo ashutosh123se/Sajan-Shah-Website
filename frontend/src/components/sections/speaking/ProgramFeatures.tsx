@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FileText, 
-  Download, 
-  MessageSquare, 
-  PhoneCall, 
+import {
+  FileText,
+  Download,
+  MessageSquare,
+  PhoneCall,
   UserPlus,
   PlayCircle,
   ExternalLink
@@ -14,28 +14,10 @@ import {
 export const ProgramFeatures: React.FC = () => {
   const features = [
     {
-      title: "Program Topic Pages",
-      desc: "Each program features a dedicated landing page with a 30-40 second video snippet, high-level pitch, and key results.",
-      icon: <PlayCircle size={32} />,
-      linkText: "Explore Topics"
-    },
-    {
-      title: "Centralized Brochures",
-      desc: "Access PDF brochures for all 11 programs in one place, or grab the complete ecosystem with a one-click ZIP download.",
-      icon: <Download size={32} />,
-      linkText: "Download All ZIP"
-    },
-    {
-      title: "Impact Stories",
-      desc: "Browse 6–12 detailed case studies featuring real-world transformations, anonymized data, and narrative summaries.",
+      title: "Rapid Response",
+      desc: "Connect directly for event scheduling and technical requirements.",
       icon: <MessageSquare size={32} />,
-      linkText: "View Case Studies"
-    },
-    {
-      title: "Invite Sajan to Speak",
-      desc: "Direct booking portal for institutions. Connect via form or instant WhatsApp for rapid event scheduling.",
-      icon: <PhoneCall size={32} />,
-      linkText: "Booking Portal"
+      linkText: "WhatsApp Now"
     },
     {
       title: "Full Speaker Kit",
@@ -61,7 +43,7 @@ export const ProgramFeatures: React.FC = () => {
           <div className="lg:w-1/2 grid grid-cols-2 gap-4">
             <div className="aspect-square bg-gray-900/50 rounded-3xl border border-gray-800 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">13+</div>
+                <div className="text-4xl font-bold text-white mb-2">12+</div>
                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">Programs</div>
               </div>
             </div>
@@ -76,7 +58,7 @@ export const ProgramFeatures: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, idx) => (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -95,17 +77,18 @@ export const ProgramFeatures: React.FC = () => {
               </div>
             </motion.div>
           ))}
-          
-          {/* WhatsApp Quick Connect Card */}
-          <motion.div 
+
+          {/* Booking Portal Card */}
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            className="p-12 bg-gradient-to-br from-[#f26522] to-[#c54b15] rounded-[3rem] flex flex-col justify-center text-center shadow-2xl shadow-[#f26522]/20 group"
+            className="p-12 bg-gradient-to-br from-[#f26522] to-[#c54b15] rounded-[3rem] flex flex-col justify-center text-center shadow-2xl shadow-[#f26522]/20 group cursor-pointer"
+            onClick={() => window.location.href = '/events#book-sajan'}
           >
-            <h4 className="text-white font-bold text-xl mb-4 uppercase tracking-tight">Rapid Response</h4>
-            <p className="text-white/80 text-sm font-light mb-10">Connect directly for event scheduling and technical requirements.</p>
+            <h4 className="text-white font-bold text-xl mb-4 uppercase tracking-tight">Invite Sajan to Speak</h4>
+            <p className="text-white/80 text-sm font-light mb-10">Direct booking portal for institutions. Connect via form or instant WhatsApp for rapid event scheduling.</p>
             <button className="bg-white text-black font-bold py-4 px-8 rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-transform flex items-center justify-center gap-3">
-              <PhoneCall size={16} /> WhatsApp Now
+              <PhoneCall size={16} /> Booking Portal
             </button>
           </motion.div>
         </div>

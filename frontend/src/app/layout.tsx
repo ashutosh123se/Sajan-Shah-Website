@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins, Open_Sans } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { Toaster } from 'react-hot-toast';
+import ClientToaster from '@/components/common/ClientToaster';
 import EventPopup from '@/components/common/EventPopup';
 import './globals.css';
 
@@ -67,6 +67,16 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  icons: {
+    icon: [
+      { url: '/favicon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon-192.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon-192.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-192.png', sizes: '32x32', type: 'image/png' },
+    ],
+    shortcut: '/favicon-192.png',
+    apple: '/favicon-192.png',
+  },
 };
 
 export default function RootLayout({
@@ -78,6 +88,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'} />
+        <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+        <link rel="icon" href="/favicon-192.png" sizes="96x96" type="image/png" />
+        <link rel="icon" href="/favicon-192.png" sizes="48x48" type="image/png" />
+        <link rel="icon" href="/favicon-192.png" sizes="32x32" type="image/png" />
+        <link rel="shortcut icon" href="/favicon-192.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon-192.png" sizes="192x192" />
         <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </head>
       <body className={`${poppins.variable} ${openSans.variable} font-body antialiased`}>
@@ -88,25 +104,10 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#4ade80',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
+        <ClientToaster />
         <EventPopup />
       </body>
     </html>
   );
 }
+

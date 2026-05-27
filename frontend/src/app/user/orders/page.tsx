@@ -53,7 +53,7 @@ export default function MyOrdersPage() {
       <div className="bg-[#141414] border border-white/10 p-8 shadow-2xl">
         {loading ? (
           <div className="text-center py-24">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12 mx-auto mb-4" />
             <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">Fetching orders...</p>
           </div>
         ) : orders.length > 0 ? (

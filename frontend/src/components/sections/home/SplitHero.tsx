@@ -173,7 +173,7 @@ export const SplitHero: React.FC = () => {
           {/* Card 3 - Impact */}
           <div
             className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
-            onClick={() => (window.location.href = '/impact')}
+            onClick={() => (window.location.href = '/contributions')}
           >
             <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
               

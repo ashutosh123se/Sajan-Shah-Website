@@ -118,7 +118,9 @@ export const ImpactStatistics: React.FC = () => {
           <p className="text-xl md:text-2xl font-light text-gray-300">
             Every effort is a <span className="text-white font-medium">step towards</span> a better future.
           </p>
-          <button className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-12 py-5 font-bold uppercase tracking-widest text-xs transition-all shadow-2xl">
+          <button 
+            onClick={() => document.getElementById('newsletter-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-12 py-5 font-bold uppercase tracking-widest text-xs transition-all shadow-2xl">
             join the Community
           </button>
         </div>
