@@ -127,7 +127,7 @@ export default function HomeManagementPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-16 w-16 mx-auto" />
       </div>
     );
   }

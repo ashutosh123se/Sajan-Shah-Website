@@ -111,7 +111,10 @@ function OrderSuccessContent() {
 
 export default function OrderSuccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#0C0C0C] text-white">Loading order summary...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-32 w-32" />
+        <div className="font-mono text-xs uppercase tracking-[0.3em]">Loading....</div>
+      </div>}>
       <OrderSuccessContent />
     </Suspense>
   );

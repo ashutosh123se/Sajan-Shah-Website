@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { BulkOrderModal } from './BulkOrderModal';
 
 export const ProductsBulkOrders: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section className="py-20 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
@@ -16,11 +19,9 @@ export const ProductsBulkOrders: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="relative w-full"
             >
-              <a
-                href="https://forms.gle/your-google-form-link"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block relative group transition-all duration-500 [transform-style:preserve-3d] hover:[transform:translateY(-5px)]"
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full text-left block relative group transition-all duration-500 [transform-style:preserve-3d] hover:[transform:translateY(-5px)]"
               >
                 {/* Background Shadow/Glow */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#f26522] to-blue-600 rounded-[40px] blur opacity-10 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
@@ -51,7 +52,7 @@ export const ProductsBulkOrders: React.FC = () => {
                         For schools, colleges, organizations, and large events
                       </p>
                       <p className="text-gray-500 text-lg leading-relaxed">
-                        Get special pricing and structured delivery support tailored to your unique impact goals. Click here to fill the inquiry form.
+                        Get special pricing and structured delivery support tailored to your unique impact goals. Click here to open the inquiry form.
                       </p>
                     </div>
                   </div>
@@ -69,11 +70,16 @@ export const ProductsBulkOrders: React.FC = () => {
                   {/* Decorative Subtle Blobs */}
                   <div className="absolute top-[-20%] right-[-10%] w-[40%] h-[120%] bg-[#f26522]/5 rounded-full blur-[100px] -z-10 group-hover:bg-[#f26522]/10 transition-colors"></div>
                 </div>
-              </a>
+              </button>
             </motion.div>
           </div>
         </div>
       </div>
+
+      <BulkOrderModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 };

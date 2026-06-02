@@ -8,7 +8,6 @@ import { ProductsBooks } from '@/components/sections/products/ProductsBooks';
 import { ProductsCourses } from '@/components/sections/products/ProductsCourses';
 import { ProductsMerchandise } from '@/components/sections/products/ProductsMerchandise';
 import { ProductCategories } from '@/components/sections/products/ProductCategories';
-import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 
 export default function ProductsPage() {
   return (
@@ -33,9 +32,6 @@ export default function ProductsPage() {
 
       {/* Detailed Merchandise Section */}
       <ProductsMerchandise />
-
-      {/* Transformation Stories Slider */}
-      <ProductsTransformation />
     </main>
   );
 }

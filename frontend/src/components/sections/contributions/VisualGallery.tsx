@@ -21,26 +21,26 @@ interface VisualGalleryProps {
 }
 
 const DEFAULT_PHOTOS: GalleryPhoto[] = [
-  { cat: "Social Impact", title: "Empowering Lives", img: "/Social Work/1.jpeg" },
-  { cat: "Community Support", title: "On-Field Action", img: "/Social Work/2.jpeg" },
-  { cat: "Youth Outreach", title: "Mentorship Drive", img: "/Social Work/3.jpeg" },
-  { cat: "Food & Aid", title: "Supporting Families", img: "/Social Work/4.jpeg" },
-  { cat: "Rural Upliftment", title: "Sustainable Growth", img: "/Social Work/5.jpeg" },
-  { cat: "Social Welfare", title: "United Initiatives", img: "/Social Work/6.jpeg" },
-  { cat: "Education Support", title: "Reaching Out", img: "/Social Work/7.jpeg" },
-  { cat: "Community Care", title: "Empowering Futures", img: "/Social Work/8.jpeg" },
-  { cat: "Daily Assistance", title: "Hands-on Relief", img: "/Social Work/9.jpeg", pos: "object-left" },
-  { cat: "Public Action", title: "Making an Impact", img: "/Social Work/10.jpeg", pos: "object-right" },
-  { cat: "Welfare Drive", title: "Transforming Communities", img: "/Social Work/11.jpeg", pos: "object-bottom" },
-  { cat: "Youth Guidance", title: "Inspirational Field Work", img: "/Social Work/12.jpeg", pos: "object-left" },
-  { cat: "Aid Distribution", title: "Caring for All", img: "/Social Work/13.jpeg" },
-  { cat: "Transformational Care", title: "Sustained Relief", img: "/Social Work/14.jpeg" },
-  { cat: "Compassion Drive", title: "Legacy of Giving", img: "/Social Work/15.jpeg" },
-  { cat: "Social Empowerment", title: "Community Progress", img: "/Social Work/16.jpeg" },
+  { cat: "Food & Aid", title: "Neighborhood Relief", img: "/Social Work/1.jpeg" },
+  { cat: "Community Support", title: "COVID-19 Relief Drive", img: "/Social Work/2.jpeg" },
+  { cat: "Awareness Campaign", title: "Community Interaction", img: "/Social Work/3.jpeg" },
+  { cat: "Public Action", title: "Media & Awareness", img: "/Social Work/4.jpeg" },
+  { cat: "Safety Drive", title: "Empowering Sanitation Workers", img: "/Social Work/5.jpeg" },
+  { cat: "Local Support", title: "Empowering Street Vendors", img: "/Social Work/6.jpeg" },
+  { cat: "Sanitation Support", title: "Assisting Frontline Workers", img: "/Social Work/7.jpeg" },
+  { cat: "Welfare Drive", title: "Nighttime Aid Distribution", img: "/Social Work/8.jpeg" },
+  { cat: "Animal Welfare", title: "Supporting Gaushalas", img: "/Social Work/9.jpeg", pos: "object-left" },
+  { cat: "Youth Outreach", title: "Mega Yoga Session", img: "/Social Work/10.jpeg", pos: "object-right" },
+  { cat: "Community Engagement", title: "Slum Outreach", img: "/Social Work/11.jpeg", pos: "object-bottom" },
+  { cat: "Appreciation Drive", title: "Honoring Local Workers", img: "/Social Work/12.jpeg", pos: "object-left" },
+  { cat: "Safety Drive", title: "Distributing Safety Gear", img: "/Social Work/13.jpeg" },
+  { cat: "Food & Aid", title: "Street Food Distribution", img: "/Social Work/14.jpeg" },
+  { cat: "Volunteer Action", title: "Youth Relief Team", img: "/Social Work/15.jpeg" },
+  { cat: "Hunger Relief", title: "Midnight Food Drive", img: "/Social Work/16.jpeg" },
 ];
 
 export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
-  const heading = content?.heading || "VISUAL PROOF";
+  const heading = content?.heading || "Impact in Action";
   const subHeading = content?.subHeading || "Gallery Archive";
   const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
   const photos = content?.photos || DEFAULT_PHOTOS;
@@ -64,7 +64,7 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
 
       {/* Marquee Container */}
       <div className="relative flex whitespace-nowrap overflow-hidden">
-        <motion.div 
+        <motion.div
           className="flex gap-6 py-4"
           animate={{
             x: ["0%", "-50%"],
@@ -79,16 +79,16 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
           }}
         >
           {duplicatedPhotos.map((item, idx) => (
-            <div 
+            <div
               key={idx}
               className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
             >
-              <img 
-                src={item.imageUrl || item.img} 
-                alt={item.title} 
-                className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100 ${item.pos || 'object-center'}`} 
+              <img
+                src={item.imageUrl || item.img}
+                alt={item.title}
+                className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.15] group-hover:scale-[1.10] ${item.pos || 'object-center'}`}
               />
-              
+
               {/* Overlay inspired by reference image */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-10">
                 <div className="mb-4">
@@ -96,14 +96,14 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
                     <span className="text-white group-hover:text-black text-lg">👁</span>
                   </div>
                 </div>
-                
-                <h4 className="text-white text-3xl font-black tracking-tighter uppercase leading-tight mb-2 group-hover:text-[#f26522] transition-colors">
+
+                <h4 className="text-white text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight mb-2 group-hover:text-[#f26522] transition-colors break-words">
                   {item.title}
                 </h4>
                 <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
                   {item.cat}
                 </p>
-                
+
                 <div className="mt-8 pt-6 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="text-[10px] text-white uppercase tracking-[0.3em] font-medium">
                     Documentation Archive

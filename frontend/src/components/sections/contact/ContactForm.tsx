@@ -22,7 +22,7 @@ export const ContactForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Please fill in all required fields');
       return;
@@ -34,7 +34,7 @@ export const ContactForm: React.FC = () => {
     }
 
     setLoading(true);
-    
+
     try {
       await api.post('/contact', {
         name: formData.name,
@@ -43,7 +43,7 @@ export const ContactForm: React.FC = () => {
         subject: formData.subject,
         message: formData.message,
       });
-      
+
       toast.success('Message sent successfully! We\'ll get back to you soon.');
       setFormData({
         name: '',
@@ -64,8 +64,12 @@ export const ContactForm: React.FC = () => {
     <div className="lg:col-span-7">
       <div className="mb-10 text-gray-700">
         <p className="text-lg font-light leading-relaxed mb-8">
-          To discuss booking Sajan to speak at your event or for media purposes, then please either complete the form on this page or call his management:
+          Whether you’re looking to host a transformational session, collaborate, or seek support,
+          you’re at the right place.
+          <br></br>
         </p>
+        <p>  This is not just a contact page.</p>
+        <b>This is where meaningful transformation begins.</b>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

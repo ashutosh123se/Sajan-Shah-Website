@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import EventsHero from './EventsHero';
 import EventsCalendar from './EventsCalendar';
 import EventsWebinars from './EventsWebinars';
 import EventsPast from './EventsPast';
-import EventsTopImpact from './EventsTopImpact';
 import EventsCTA from './EventsCTA';
+import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
 import { SajanEvent, EventFormat, EventCategory, MOCK_EVENTS } from './eventsData';
 
@@ -89,14 +90,12 @@ export default function EventsSection() {
   const upcomingEvents = activeEvents.filter(e => !e.isPast && !e.isWebinar);
   const webinars = activeEvents.filter(e => e.isWebinar);
   const pastEvents = activeEvents.filter(e => e.isPast);
-  const topEvents = pastEvents.filter(e => e.isTop5).length > 0 
-    ? pastEvents.filter(e => e.isTop5) 
-    : pastEvents.slice(0, 5);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-dark text-white flex items-center justify-center font-mono text-xs uppercase tracking-[0.3em]">
-        Loading Events Calendar...
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-32 w-32" />
+        <div className="font-mono text-xs uppercase tracking-[0.3em]">Loading....</div>
       </div>
     );
   }
@@ -107,8 +106,29 @@ export default function EventsSection() {
       <EventsCalendar events={upcomingEvents} allEvents={activeEvents} />
       <EventsWebinars events={webinars} />
       <EventsPast events={pastEvents} />
-      <EventsTopImpact events={topEvents} />
       <EventsCTA content={getSection('cta')} />
+      <ProductsTransformation />
+
+      {/* Final Quote Section */}
+      <section className="pt-10 pb-6 bg-black text-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-6xl mx-auto px-4"
+        >
+          <h3 className="text-3xl md:text-5xl font-light text-white italic mb-10 leading-tight">
+            "Change your mental patterns.<br className="hidden md:block" /> Your results will follow."
+          </h3>
+          <div className="w-20 h-1 bg-[#f26522] mx-auto mb-12"></div>
+          <a
+            href="/contact"
+            className="inline-block bg-[#f26522] hover:bg-white hover:text-black text-white font-bold uppercase tracking-[0.3em] text-xs px-12 py-5 transition-all duration-300 shadow-[0_25px_50px_-12px_rgba(242,101,34,0.4)] hover:shadow-none"
+          >
+            Get In Touch
+          </a>
+        </motion.div>
+      </section>
     </div>
   );
 }

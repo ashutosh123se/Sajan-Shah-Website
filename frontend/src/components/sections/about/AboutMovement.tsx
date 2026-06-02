@@ -29,11 +29,11 @@ interface AboutMovementProps {
 
 export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
   const data = {
-    mainTitle: content?.mainTitle || "And then what?",
+    mainTitle: content?.mainTitle || "And then comes RiseX Sajan",
     row1Image1: content?.row1Image1 || "/about 2.jpeg",
     row1Tagline: content?.row1Tagline || "From Speaker to",
     row1Heading: content?.row1Heading || "Movement Builder",
-    row1Description: content?.row1Description || "Sajan Shah is not just a speaker — he is a catalyst for global change, driving transformation at the individual, institutional, and societal level.",
+    row1Description: content?.row1Description || "Sajan Shah is not just a speaker - he is a catalyst for global change, driving transformation at the individual, institutional, and societal level.",
     row1SubTagline: content?.row1SubTagline || "United First Initiative",
     row1SubDescription: content?.row1SubDescription || "Driving global impact aligned with UN Sustainable Development Goals (SDG 2030).",
     row1Image2: content?.row1Image2 || "/about 3.jpeg",
@@ -46,8 +46,8 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
     row2Image3Heading: content?.row2Image3Heading || "16+ Million Lives Impacted",
     row2Text2Heading: content?.row2Text2Heading || "Global Impact at Scale",
     row2Text2Description: content?.row2Text2Description || "Whether speaking to students, parents, institutions, or world leaders, the mission remains absolute: Break patterns. Build clarity. Create extraordinary results.",
-    row2Text2SubTagline: content?.row2Text2SubTagline || "The Mission",
-    row2Text2SubDescription: content?.row2Text2SubDescription || "Every talk, every workshop, every book — one singular aim: permanently shift the way people think, decide, and act."
+    row2Text2SubTagline: content?.row2Text2SubTagline || "The Movement",
+    row2Text2SubDescription: content?.row2Text2SubDescription || "Every talk, every workshop, every book-one singular aim: permanently shift the way people think, decide, and act."
   };
 
   return (
@@ -57,7 +57,10 @@ export const AboutMovement: React.FC<AboutMovementProps> = ({ content }) => {
 
         {/* Title */}
         <div className="mb-24 text-center">
-          <h2 className="text-5xl md:text-8xl font-light tracking-tight italic text-white">{data.mainTitle}</h2>
+          <h2 className="text-5xl md:text-8xl font-light tracking-tight italic text-white">
+            And then comes <br />
+            <span className="text-[#f26522]">RiseX Sajan</span>
+          </h2>
           <div className="w-16 h-1 bg-[#f26522] mx-auto mt-8"></div>
         </div>
 

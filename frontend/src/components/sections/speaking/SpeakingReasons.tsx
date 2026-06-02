@@ -45,24 +45,33 @@ const defaults: ReasonsContent = {
   highlightWord2: "LOVE",
   reasonsLabel2: "working with Sajan",
   reasons: [
-    { number: '1', title: 'Customized', description: 'Every session is personally crafted by Sajan to suit your unique audience, industry, and desired outcomes.' },
-    { number: '2', title: 'Impactful', description: "Sajan's deep understanding of human psychology ensures your audience experiences a shift that lasts." },
-    { number: '3', title: 'Experienced', description: 'With over a decade of global speaking experience, Sajan has the expertise to handle any audience.' },
-    { number: '4', title: 'Professional', description: "Dedicated to serving your objectives through meticulous pre-event briefings and post-event engagement." },
-    { number: '5', title: 'Relatable', description: 'A unique ability to connect and resonate with everyone from students to high-level CEOs.' },
-    { number: '6', title: 'Results-Driven', description: "Delivers transformations, not just speeches. Focused on driving real action and tangible results." }
+    { number: '1', title: 'Think Differently', description: 'Transforming outcomes begins by transforming thought patterns. Sajan helps audiences identify and rewire the mental habits that influence performance and success.' },
+    { number: '2', title: 'Easy Action Steps', description: 'Complex human behavior is translated into simple, practical actions that can be implemented immediately and consistently.' },
+    { number: '3', title: 'Neuroscience-Backed', description: 'Every strategy is grounded in neuroscience, psychology, and proven behavioral research rather than theory or motivation alone.' },
+    { number: '4', title: 'Lasting Transformation', description: 'The goal is not temporary inspiration but sustainable shifts in mindset, habits, decision-making, and daily performance.' },
+    { number: '5', title: 'Universal Connection', description: 'Whether speaking to students, parents, educators, professionals, or CEOs, Sajan creates messages that resonate deeply and personally.' },
+    { number: '6', title: 'Action Creates Results', description: "Audiences don't leave with notes. They leave with clear actions, measurable next steps, and the confidence to execute them." }
   ],
   marqueeSectionLabel: "Live from the Stage",
   marqueeSectionTitle: "Speaker Moments",
   marqueeImages: [
-    "https://images.unsplash.com/photo-1475721027785-f74dea327912?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?q=80&w=2070&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop"
+    "/Live from the Stage/1.jpeg",
+    "/Live from the Stage/2.jpeg",
+    "/Live from the Stage/3.jpeg",
+    "/Live from the Stage/4.png",
+    "/Live from the Stage/5.png",
+    "/Live from the Stage/6.jpeg",
+    "/Live from the Stage/7.jpeg",
+    "/Live from the Stage/8.jpeg",
+    "/Live from the Stage/9.jpeg",
+    "/Live from the Stage/10.png",
+    "/Live from the Stage/11.png",
+    "/Live from the Stage/12.jpeg",
+    "/Live from the Stage/13.jpeg",
+    "/Live from the Stage/14.jpeg",
+    "/Live from the Stage/15.png"
   ],
-  marqueeEventName: "World Transformation Summit 2024",
+  marqueeEventName: "",
   logoImage: "/LOGO2.png"
 };
 
@@ -132,14 +141,14 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
 
         <div className="flex overflow-hidden">
           <motion.div
-            animate={{ x: [0, -1920] }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="flex gap-8 whitespace-nowrap"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+            className="flex w-max"
           >
-            {[...data.marqueeImages, ...data.marqueeImages, ...data.marqueeImages].map((img, idx) => (
+            {[...data.marqueeImages, ...data.marqueeImages].map((img, idx) => (
               <div
                 key={idx}
-                className="relative w-[320px] h-[570px] flex-shrink-0 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group bg-gray-50"
+                className="relative w-[320px] h-[570px] flex-shrink-0 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group bg-gray-50 mr-8"
               >
                 <img
                   src={img}

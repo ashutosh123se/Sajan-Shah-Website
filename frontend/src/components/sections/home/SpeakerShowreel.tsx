@@ -86,7 +86,7 @@ export const SpeakerShowreel: React.FC = () => {
             <div className="pt-6">
               <Button 
                 size="lg"
-                onClick={() => window.location.href = '/contact'}
+                onClick={() => window.location.href = '/events#book-sajan'}
                 className="bg-[#f26522] hover:bg-[#d95a1e] text-white"
               >
                 Invite Sajan to Speak

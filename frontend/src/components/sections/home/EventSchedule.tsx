@@ -127,7 +127,7 @@ const CARDS: CardDef[] = [
   {
     platform: 'YouTube',
     handle: 'Sajan Shah',
-    stat: '1M',
+    stat: '98.9K',
     label: 'Subscribers',
     url: 'https://www.youtube.com/@SajanShah',
     iconBg: '#ff0000',
