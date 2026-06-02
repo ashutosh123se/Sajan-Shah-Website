@@ -3,29 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  SUPER_ADMIN
-  ADMIN
-  EDITOR
-  SHOP_MANAGER
-  SUBSCRIBER
-  CUSTOMER
-}
 
-enum OrderStatus {
-  PENDING
-  PAID
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  FAILED
-  REFUNDED
-}
+
+
 
 model User {
   id                   String    @id @default(cuid())
@@ -34,7 +18,7 @@ model User {
   passwordHash         String?
   passwordSetupToken   String?   @unique
   passwordSetupExpires DateTime?
-  role                 UserRole  @default(CUSTOMER)
+  role String @default("CUSTOMER")
   photoUrl             String?
   phone                String?
   isActive             Boolean   @default(true)
@@ -47,16 +31,16 @@ model Product {
   name               String      @default("")
   slug               String      @unique
   category           String      // book | course | merchandise
-  description        String      @db.Text
-  short_description  String?     @db.Text
+  description        String      
+  short_description  String?     
   is_active          Boolean     @default(true)
   is_featured        Boolean     @default(false)
   featured_order     Int?
-  image_homepage     String?     @db.Text
-  image_product_page String?     @db.Text
-  buy_url_amazon     String?     @db.Text
-  buy_url_flipkart   String?     @db.Text
-  buy_url_internal   String?     @db.Text
+  image_homepage     String?     
+  image_product_page String?     
+  buy_url_amazon     String?     
+  buy_url_flipkart   String?     
+  buy_url_internal   String?     
   price              Float?
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @default(now()) @updatedAt
@@ -120,7 +104,7 @@ model SpeakingPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
   title     String?
-  content   Json?    // Stores structured data for that specific section
+  content   String?    // Stores structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -158,7 +142,7 @@ model Order {
   amountPaise     Int
   paymentId       String?
   razorpayOrderId String?
-  status          OrderStatus @default(PENDING)
+  status String @default("PENDING")
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
   shippingNotes   String?
@@ -223,7 +207,7 @@ model PopupBanner {
 model Setting {
   id        String   @id @default(cuid())
   key       String   @unique
-  value     String   @db.Text
+  value     String   
   group     String   // website, smtp, payment, social
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -235,7 +219,7 @@ model Lead {
   email     String
   phone     String?
   source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
-  data      Json?    // to store additional fields like message, subject, organization, etc.
+  data      String?    // to store additional fields like message, subject, organization, etc.
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
@@ -243,7 +227,7 @@ model AboutPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   String?    // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -253,7 +237,7 @@ model EventsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'cta'
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   String?    // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -263,7 +247,7 @@ model ContributionsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'donate', etc.
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   String?    // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -273,10 +257,11 @@ model HomePageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   String?    // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
+
 
 

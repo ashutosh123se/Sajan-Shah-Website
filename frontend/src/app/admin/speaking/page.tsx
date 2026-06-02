@@ -248,7 +248,7 @@ export default function AdminSpeakingPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <RefreshCw className="animate-spin text-[#f26522]" size={32} />
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mx-auto" />
       </div>
     );
   }

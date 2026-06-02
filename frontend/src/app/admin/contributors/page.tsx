@@ -408,7 +408,7 @@ export default function AdminContributorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               <div className="col-span-full py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
-                <RefreshCw className="animate-spin text-[#f26522]" size={20} /> Loading contributors...
+                <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading contributors...
               </div>
             ) : contributors.length > 0 ? (
               contributors.sort((a,b) => a.order - b.order).map(contrib => (
@@ -456,7 +456,7 @@ export default function AdminContributorsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {loading ? (
               <div className="col-span-full py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
-                <RefreshCw className="animate-spin text-[#f26522]" size={20} /> Loading initiatives...
+                <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading initiatives...
               </div>
             ) : initiatives.length > 0 ? (
               initiatives.map((init) => (
@@ -524,7 +524,7 @@ export default function AdminContributorsPage() {
           <div className="space-y-6">
             {loading ? (
               <div className="py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
-                <RefreshCw className="animate-spin text-[#f26522]" size={20} /> Loading sections...
+                <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading sections...
               </div>
             ) : sections.map((section) => (
               <div

@@ -22,7 +22,7 @@ const DEFAULT_PILLARS = [
 export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ content }) => {
   const heading = content?.heading || "WHY WE CONTRIBUTE";
   const subHeading = content?.subHeading || "Leadership Philosophy";
-  const quote = content?.quote || "Social responsibility is not an option; it's a debt we owe to the future. Our contribution model is built on three pillars: Neuroscience, Sustainable Education, and Global Empowerment.";
+  const quote = content?.quote || "Social responsibility is not an option; it's a debt we owe to the future. Our contribution model, aligned with the UNSDG 2030 India vision, is built on three pillars: Neuroscience, Sustainable Education, and Global Empowerment.";
   const boxQuote = content?.boxQuote || "Real education is giving back.";
   const pillars = content?.pillars || DEFAULT_PILLARS;
 
@@ -45,10 +45,10 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
       <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-20 items-center">
         <div className="lg:w-1/2">
           <div className="relative group">
-            <img 
-              src="/CONTRIBUTIONS SIR.jpeg" 
-              alt="Sajan Shah" 
-              className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl" 
+            <img
+              src="/CONTRIBUTIONS SIR.jpeg"
+              alt="Sajan Shah"
+              className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl"
             />
             <div className="absolute -bottom-10 -right-10 bg-[#f26522] p-10 rounded-[3rem] hidden md:block shadow-2xl">
               <div className="text-white text-2xl font-bold tracking-tighter leading-none italic">

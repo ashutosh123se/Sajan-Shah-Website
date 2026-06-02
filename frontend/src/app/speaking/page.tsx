@@ -43,8 +43,9 @@ export default function SpeakingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#f26522] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-32 w-32" />
+        <div className="font-mono text-xs uppercase tracking-[0.3em]">Loading....</div>
       </div>
     );
   }
@@ -59,9 +60,24 @@ export default function SpeakingPage() {
         <SpeakingHero content={getSection('hero')} />
         <SpeakingLogos content={getSection('logos')} />
         <SpeakingMessage content={getSection('message')} />
-        <SpeakingReasons content={getSection('reasons')} />
         <ProgramCatalog content={getSection('catalog')} />
+        <SpeakingReasons content={getSection('reasons')} />
         <ProgramFeatures content={getSection('features')} />
+
+        {/* Final Quote Section */}
+        <section className="py-32 bg-white text-center px-4 border-t border-gray-100">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-6xl mx-auto px-4"
+          >
+            <h3 className="text-3xl md:text-5xl font-light text-gray-400 italic mb-10 leading-tight">
+              "Confidence is not built by motivation.<br className="hidden md:block" /> It is built by evidence and action."
+            </h3>
+            <div className="w-20 h-1 bg-[#f26522] mx-auto"></div>
+          </motion.div>
+        </section>
       </motion.div>
     </main>
   );

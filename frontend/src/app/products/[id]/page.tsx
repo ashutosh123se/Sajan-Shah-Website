@@ -137,7 +137,10 @@ export default function ProductDetailPage() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
+  if (loading) return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-32 w-32" />
+        <div className="font-mono text-xs uppercase tracking-[0.3em]">Loading....</div>
+      </div>;
   if (!product) return null;
 
   return (

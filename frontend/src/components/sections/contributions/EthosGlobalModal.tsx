@@ -55,7 +55,7 @@ export const EthosGlobalModal: React.FC<EthosGlobalModalProps> = ({ isOpen, onCl
                 {/* HERO SECTION */}
                 <div className="relative w-full min-h-[500px] flex items-center justify-center shrink-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1454165833767-0275ef20356e?q=80&w=2070&auto=format&fit=crop" 
+                    src="/Our Core Initiatives/Ethos Global Advisory cover.png" 
                     alt="Sustainable Corporate Ecosystems" 
                     className="absolute inset-0 w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-1000"
                   />
@@ -297,12 +297,15 @@ export const EthosGlobalModal: React.FC<EthosGlobalModalProps> = ({ isOpen, onCl
                     </h3>
                     <p className="text-xl text-[#9ca3af] italic mb-10">“The Companies That Will Lead Tomorrow Are Creating Impact Today.”</p>
                     
-                    <div className="w-full max-w-4xl mx-auto aspect-video bg-[#0a0a0a] border border-[#1f2937] rounded-3xl overflow-hidden relative flex items-center justify-center group cursor-pointer mb-8">
-                      {/* Placeholder for actual Video/Reel */}
-                      <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop" alt="Corporate Responsibility Video" className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0" />
-                      <div className="w-20 h-20 rounded-full bg-[#000000]/80 backdrop-blur-md flex items-center justify-center border border-[#f26522] z-10 group-hover:bg-[#f26522] transition-colors">
-                        <Video size={32} className="text-white" />
-                      </div>
+                    <div className="w-full max-w-4xl mx-auto aspect-video bg-[#111] border border-[#1f2937] rounded-3xl overflow-hidden relative group mb-8 flex items-center justify-center">
+                      <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)]"></div>
+                      <iframe
+                        src="https://www.instagram.com/p/DOA9LXOkgsA/embed/?hidecaption=true"
+                        className="absolute inset-0 w-full h-full border-0 scale-[1.3] origin-center pointer-events-auto"
+                        scrolling="no"
+                        allowTransparency={true}
+                        allow="encrypted-media"
+                      />
                     </div>
                   </div>
 
@@ -312,11 +315,10 @@ export const EthosGlobalModal: React.FC<EthosGlobalModalProps> = ({ isOpen, onCl
                       Building Business <span className="text-[#f26522]">With Responsibility</span>
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {/* Using placeholders for gallery */}
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2069&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1542744094-24638ea0b34e?q=80&w=2070&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/Ethos Global Advisory 1.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/Ethos Global Advisory2.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/Ethos Global Advisory3.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/Ethos Global Advisory4.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
                     </div>
                   </div>
 
@@ -355,10 +357,10 @@ export const EthosGlobalModal: React.FC<EthosGlobalModalProps> = ({ isOpen, onCl
                     <p className="text-[#f26522] font-semibold text-sm uppercase tracking-widest mb-8">ESG | CSR | Sustainability | Impact Consulting</p>
                     
                     <div className="flex gap-4 mb-12">
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IG</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">YT</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IN</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">FB</a>
+                      <a href="https://www.instagram.com/sajan_shahh/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IG</a>
+                      <a href="https://www.youtube.com/@SajanShah" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">YT</a>
+                      <a href="https://www.linkedin.com/in/sajan-shah-7840244a/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IN</a>
+                      <a href="https://www.facebook.com/SajanShahPage" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">FB</a>
                     </div>
 
                     <div className="max-w-3xl mx-auto space-y-4 text-xl md:text-2xl text-[#9ca3af] font-light italic leading-relaxed">

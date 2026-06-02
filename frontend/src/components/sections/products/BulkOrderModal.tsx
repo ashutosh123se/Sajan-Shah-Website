@@ -253,7 +253,7 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
                       className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-5 rounded-xl uppercase tracking-widest text-sm transition-all duration-300 shadow-[0_10px_20px_rgba(242,101,34,0.3)] hover:shadow-[0_15px_30px_rgba(242,101,34,0.4)] disabled:opacity-70 flex items-center justify-center"
                     >
                       {isSubmitting ? (
-                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-10 w-10 inline-block" />
                       ) : (
                         "Submit Inquiry"
                       )}

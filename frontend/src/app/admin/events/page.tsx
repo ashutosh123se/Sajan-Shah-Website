@@ -293,7 +293,7 @@ export default function AdminEventsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {loadingEvents ? (
               <div className="col-span-full py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
-                <RefreshCw className="animate-spin text-[#f26522]" size={20} /> Loading events list...
+                <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading events list...
               </div>
             ) : events.length > 0 ? (
               events.map((event) => (
@@ -367,7 +367,7 @@ export default function AdminEventsPage() {
           <div className="space-y-6">
             {loadingSections ? (
               <div className="py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
-                <RefreshCw className="animate-spin text-[#f26522]" size={20} /> Loading sections editor...
+                <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading sections editor...
               </div>
             ) : sections.map((section) => (
               <div

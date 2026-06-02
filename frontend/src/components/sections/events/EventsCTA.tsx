@@ -19,7 +19,15 @@ export default function EventsCTA({ content }: EventsCTAProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-16 items-center">
         {/* Left Side: Image */}
         <div className="relative w-full h-full flex items-center justify-start lg:-ml-24">
-          <img src="/an Event.png" alt="Sajan Shah Event" className="w-[135%] h-auto max-h-[850px] object-contain object-left scale-110" />
+          <img 
+            src="/an Event.png" 
+            alt="Sajan Shah Event" 
+            className="w-[135%] h-auto max-h-[850px] object-contain object-left scale-110"
+            style={{ 
+              WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', 
+              maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' 
+            }}
+          />
         </div>
 
         {/* Right Side: Content & Form */}

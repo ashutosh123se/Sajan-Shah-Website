@@ -4,8 +4,9 @@ import React from 'react';
 export const TransformationStories: React.FC = () => {
   const images = [
     "1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg", "5.jpeg", "6.jpeg",
-    "7.jpeg", "8.jpeg", "9.jpeg", "10.jpeg", "11.jpeg", "13.jpeg",
-    "14.jpeg", "15.jpeg", "16.jpeg", "17.jpeg", "18.jpeg"
+    "7.jpeg", "8.jpeg", "9.jpeg", "10.jpeg", "11.jpeg", "12.jpeg", 
+    "13.jpeg", "14.jpeg", "15.jpeg", "16.jpeg", "17.jpeg", "19.jpeg",
+    "20.jpeg", "21.jpeg", "22.jpeg", "23.jpeg", "24.jpeg", "25.jpeg"
   ];
 
   // Duplicate for seamless infinite loop
@@ -17,7 +18,7 @@ export const TransformationStories: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-light text-white mb-6 tracking-wide">
-            Stories of Transformation
+            Blessed by Global Leaders
           </h2>
           <div className="w-16 h-1 bg-[#f26522] mx-auto"></div>
         </div>

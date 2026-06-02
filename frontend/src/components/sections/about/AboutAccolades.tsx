@@ -18,10 +18,10 @@ export const AboutAccolades: React.FC<AboutAccoladesProps> = ({ content }) => {
     heading2: content?.heading2 || "accolades include:",
     awardImage: content?.awardImage || "/image.png",
     list: content?.list || [
-      "India's Youngest Motivational Speaker with global impact",
+      "India's Youngest Motivational Speaker and Bussiness Coach",
       "Known as the Memory Man of India for brain mastery",
       "Speaker at the World Parliament of Religions",
-      "3-Time TEDx Speaker delivering high-impact ideas",
+      "4 -Time TEDx Speaker delivering high-impact ideas",
       "Suryadatta National Awardee for Best Motivational Speaker",
       "Honored with 30 Under 30 Nationwide Award by BusinessMint",
       "Author of 8 Transformational Books",

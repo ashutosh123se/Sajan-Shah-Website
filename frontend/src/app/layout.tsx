@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import ClientToaster from '@/components/common/ClientToaster';
 import EventPopup from '@/components/common/EventPopup';
+import DailyCardDeck from '@/components/common/DailyCardDeck';
 import './globals.css';
 
 const poppins = Poppins({ 
@@ -106,6 +107,7 @@ export default function RootLayout({
         </div>
         <ClientToaster />
         <EventPopup />
+        <DailyCardDeck />
       </body>
     </html>
   );

@@ -55,7 +55,7 @@ export const UVGlassesModal: React.FC<UVGlassesModalProps> = ({ isOpen, onClose 
                 {/* HERO SECTION */}
                 <div className="relative w-full min-h-[500px] flex items-center justify-center shrink-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1511499767390-a73355326627?q=80&w=2070&auto=format&fit=crop" 
+                    src="/Our Core Initiatives/UV Glasses Drive cover.jpeg" 
                     alt="UV Glasses & Mask Distribution" 
                     className="absolute inset-0 w-full h-full object-cover opacity-60"
                   />
@@ -310,12 +310,15 @@ export const UVGlassesModal: React.FC<UVGlassesModalProps> = ({ isOpen, onClose 
                     </h3>
                     <p className="text-xl text-[#9ca3af] italic mb-10">"The People Who Clean Our Cities Deserve To Breathe Safely."</p>
                     
-                    <div className="w-full max-w-4xl mx-auto aspect-video bg-[#0a0a0a] border border-[#1f2937] rounded-3xl overflow-hidden relative flex items-center justify-center group cursor-pointer mb-8">
-                      {/* Placeholder for actual Video/Reel */}
-                      <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop" alt="Video Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0" />
-                      <div className="w-20 h-20 rounded-full bg-[#000000]/80 backdrop-blur-md flex items-center justify-center border border-[#f26522] z-10 group-hover:bg-[#f26522] transition-colors">
-                        <Video size={32} className="text-white" />
-                      </div>
+                    <div className="w-full max-w-sm mx-auto aspect-[9/16] bg-[#111] border border-[#1f2937] rounded-3xl overflow-hidden relative group mb-8 flex items-center justify-center">
+                      <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)]"></div>
+                      <iframe
+                        src="https://www.instagram.com/p/C7TFMy3pQBt/embed/?hidecaption=true"
+                        className="absolute inset-0 w-[110%] h-[110%] -top-[5%] -left-[5%] border-0 pointer-events-auto"
+                        scrolling="no"
+                        allowTransparency={true}
+                        allow="encrypted-media"
+                      />
                     </div>
                   </div>
 
@@ -324,14 +327,9 @@ export const UVGlassesModal: React.FC<UVGlassesModalProps> = ({ isOpen, onClose 
                     <h3 className="text-3xl md:text-4xl font-black text-white mb-10 uppercase tracking-tight text-center">
                       Moments Of <span className="text-[#f26522]">Humanity & Respect</span>
                     </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {/* Using placeholders for gallery */}
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=1931&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1464638681273-0962e9b53566?q=80&w=2070&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b0?q=80&w=2056&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
-                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1854&auto=format&fit=crop" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/UV Glasses Drive 1.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
+                      <div className="aspect-square rounded-2xl bg-[#0a0a0a] border border-[#1f2937] overflow-hidden"><img src="/Our Core Initiatives/UV Glasses Drive2.jpeg" alt="Gallery" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 grayscale hover:grayscale-0"/></div>
                     </div>
                   </div>
 
@@ -368,10 +366,10 @@ export const UVGlassesModal: React.FC<UVGlassesModalProps> = ({ isOpen, onClose 
                     <p className="text-[#f26522] font-semibold text-sm uppercase tracking-widest mb-8">A United First Initiative</p>
                     
                     <div className="flex gap-4 mb-12">
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IG</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">YT</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IN</a>
-                      <a href="#" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">FB</a>
+                      <a href="https://www.instagram.com/sajan_shahh/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IG</a>
+                      <a href="https://www.youtube.com/@SajanShah" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">YT</a>
+                      <a href="https://www.linkedin.com/in/sajan-shah-7840244a/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">IN</a>
+                      <a href="https://www.facebook.com/SajanShahPage" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f2937] flex items-center justify-center text-[#9ca3af] hover:text-white hover:border-[#f26522] transition-colors font-bold text-xs">FB</a>
                     </div>
 
                     <div className="max-w-2xl mx-auto space-y-2 text-xl md:text-2xl text-[#9ca3af] font-light italic leading-relaxed">

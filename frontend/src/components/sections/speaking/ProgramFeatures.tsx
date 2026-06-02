@@ -15,7 +15,7 @@ export const ProgramFeatures: React.FC = () => {
   const features = [
     {
       title: "Rapid Response",
-      desc: "Connect directly for event scheduling and technical requirements.",
+      desc: "Connect directly for event scheduling, technical coordination, and essential requirements.",
       icon: <MessageSquare size={32} />,
       linkText: "WhatsApp Now"
     },

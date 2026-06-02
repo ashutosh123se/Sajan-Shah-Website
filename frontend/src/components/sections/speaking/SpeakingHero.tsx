@@ -9,9 +9,9 @@ export const SpeakingHero: React.FC = () => {
       {/* Background Image with Dark Luxury Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="/Speking Hero .jpeg"
+          src="/Speking Hero.jpeg"
           alt="Sajan Shah Speaking Background"
-          className="w-full h-full object-cover object-center filter brightness-90"
+          className="w-full h-full object-cover object-top filter brightness-90"
         />
         <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>

@@ -119,7 +119,7 @@ export default function AboutManagementPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8" />
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-16 w-16 mx-auto" />
       </div>
     );
   }
