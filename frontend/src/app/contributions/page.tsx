@@ -49,6 +49,7 @@ export default function ContributionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-32 w-32" />
         <div className="font-mono text-xs uppercase tracking-[0.3em]">Loading....</div>
       </div>

@@ -2,7 +2,11 @@
 import React from 'react';
 import { FileCheck } from 'lucide-react';
 
-export const DownloadCentre: React.FC = () => {
+interface DownloadCentreProps {
+  content?: any;
+}
+
+export const DownloadCentre: React.FC<DownloadCentreProps> = ({ content }) => {
   return (
     <section className="py-24 bg-black">
       <div className="max-w-7xl mx-auto px-4">

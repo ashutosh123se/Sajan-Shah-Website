@@ -111,7 +111,7 @@ export const applyForMember = async (req: Request, res: Response) => {
         email,
         phone,
         source: 'membership-application',
-        data: { bio, whyJoin }
+        data: JSON.stringify({ bio, whyJoin })
       }
     });
 

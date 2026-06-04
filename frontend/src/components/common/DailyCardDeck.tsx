@@ -132,10 +132,10 @@ export default function DailyCardDeck() {
       id: 4,
       type: 'daily',
       front: (
-        <img 
-          src={`/weekly-cards/card-${currentWeekNum}.jpg`} 
-          alt="Weekly Card" 
-          className="w-full h-full object-fill rounded-xl" 
+        <img
+          src={`/weekly-cards/card-${currentWeekNum}.jpg`}
+          alt="Weekly Card"
+          className="w-full h-full object-fill rounded-xl"
         />
       ),
       backClass: "bg-black border-zinc-800",
@@ -156,7 +156,7 @@ export default function DailyCardDeck() {
             onClick={handleClose}
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-80" />
-            <button 
+            <button
               onClick={handleClose}
               className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2"
             >
@@ -166,11 +166,11 @@ export default function DailyCardDeck() {
         )}
       </AnimatePresence>
 
-      <motion.div 
+      <motion.div
         className={cn(
           "fixed z-[101] transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] [perspective:1200px]",
-          isOpen 
-            ? "inset-0 flex items-center justify-center p-4 md:p-10 pointer-events-none" 
+          isOpen
+            ? "inset-0 flex items-center justify-center p-4 md:p-10 pointer-events-none"
             : "bottom-6 right-6 md:bottom-10 md:right-10 w-16 md:w-20 aspect-[1054/1492] cursor-pointer group"
         )}
         onClick={!isOpen ? handleOpen : undefined}
@@ -195,7 +195,7 @@ export default function DailyCardDeck() {
               >
                 {/* Dynamic Glow: White over Black bg, Black over White bg */}
                 <div className="absolute -inset-2 bg-white blur-xl mix-blend-difference opacity-50 rounded-2xl pointer-events-none"></div>
-                
+
                 {/* Box Frame */}
                 <div className="relative w-full h-full rounded-xl overflow-hidden border border-zinc-500/30">
                   {revealedWeek === currentWeekNum ? (
@@ -211,13 +211,13 @@ export default function DailyCardDeck() {
           {cards.map((card, idx) => {
             const isFlipped = step >= card.id;
             const isDismissed = isOpen && isFlipped && step > card.id;
-            
+
             let yOffset = 0;
             let xOffset = 0;
             let rotate = 0;
             let scale = !isOpen ? 0.8 : 1;
-            let cardOpacity = !isOpen ? 0 : (isDismissed ? 0 : 1);
-            
+            const cardOpacity = !isOpen ? 0 : (isDismissed ? 0 : 1);
+
             if (isOpen && isDismissed) {
               yOffset = -50;
               xOffset = card.id % 2 === 0 ? 50 : -50;
@@ -256,7 +256,7 @@ export default function DailyCardDeck() {
                 }}
               >
                 {/* Back of Card */}
-                <div 
+                <div
                   className={cn(
                     "absolute inset-0 w-full h-full rounded-xl [backface-visibility:hidden] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.8)]"
                   )}
@@ -265,7 +265,7 @@ export default function DailyCardDeck() {
                 </div>
 
                 {/* Front */}
-                <div 
+                <div
                   className={cn(
                     "absolute inset-0 [backface-visibility:hidden] rounded-xl border overflow-hidden",
                     card.frontClass
@@ -280,7 +280,7 @@ export default function DailyCardDeck() {
 
           <AnimatePresence>
             {isOpen && step < 4 && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -292,12 +292,12 @@ export default function DailyCardDeck() {
               </motion.div>
             )}
             {!isOpen && (
-               <motion.div 
-                 initial={{ opacity: 0 }}
-                 animate={{ opacity: 1 }}
-                 className="absolute -top-6 md:-top-8 left-0 right-0 text-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-               >
-               </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute -top-6 md:-top-8 left-0 right-0 text-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

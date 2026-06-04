@@ -40,14 +40,14 @@ export const submitContact = async (req: Request, res: Response) => {
         email,
         phone,
         source: formType || 'contact-form',
-        data: {
+        data: JSON.stringify({
           organization,
           city,
           eventType,
           eventDate,
           audience,
           message
-        }
+        })
       }
     });
     

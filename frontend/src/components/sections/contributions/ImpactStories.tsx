@@ -206,7 +206,11 @@ const DEFAULT_STORIES: ImpactStory[] = [
   }
 ];
 
-export const ImpactStories: React.FC = () => {
+interface ImpactStoriesProps {
+  content?: any;
+}
+
+export const ImpactStories: React.FC<ImpactStoriesProps> = ({ content }) => {
   const [selectedStory, setSelectedStory] = useState<ImpactStory | null>(null);
 
   return (
