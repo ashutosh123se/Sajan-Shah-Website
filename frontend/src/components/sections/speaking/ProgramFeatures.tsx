@@ -11,7 +11,11 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-export const ProgramFeatures: React.FC = () => {
+interface ProgramFeaturesProps {
+  content?: any;
+}
+
+export const ProgramFeatures: React.FC<ProgramFeaturesProps> = ({ content }) => {
   const features = [
     {
       title: "Rapid Response",

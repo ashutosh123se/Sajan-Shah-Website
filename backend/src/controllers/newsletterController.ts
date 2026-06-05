@@ -32,9 +32,7 @@ export const subscribe = async (req: Request, res: Response) => {
         email,
         phone: req.body.phone || null,
         source: source || 'newsletter',
-        data: {
-          whatsappOptIn: whatsappOptIn || false,
-        }
+        data: JSON.stringify({ whatsappOptIn: whatsappOptIn || false })
       }
     });
 

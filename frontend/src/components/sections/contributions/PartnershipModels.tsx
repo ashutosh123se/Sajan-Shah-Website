@@ -1,7 +1,11 @@
 'use client';
 import React from 'react';
 
-export const PartnershipModels: React.FC = () => {
+interface PartnershipModelsProps {
+  content?: any;
+}
+
+export const PartnershipModels: React.FC<PartnershipModelsProps> = ({ content }) => {
   return (
     <section className="py-32 bg-black">
       <div className="max-w-7xl mx-auto px-4">

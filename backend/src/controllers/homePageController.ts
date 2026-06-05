@@ -37,7 +37,7 @@ export const updateHomePageSection: any = async (req: Request, res: Response) =>
       where: { id: id as string },
       data: {
         title,
-        content: content as Prisma.InputJsonValue,
+        content: typeof content === 'string' ? content : JSON.stringify(content),
         order: order !== undefined ? Number(order) : undefined,
         isActive: isActive !== undefined ? Boolean(isActive) : undefined
       }
@@ -58,7 +58,7 @@ export const createHomePageSection: any = async (req: Request, res: Response) =>
       data: {
         key,
         title,
-        content: content as Prisma.InputJsonValue,
+        content: typeof content === 'string' ? content : JSON.stringify(content),
         order: order !== undefined ? Number(order) : 0,
         isActive: isActive ?? true
       }

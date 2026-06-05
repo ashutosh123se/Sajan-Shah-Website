@@ -3,7 +3,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const SpeakingHero: React.FC = () => {
+interface SpeakingHeroProps {
+  content?: any;
+}
+
+export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-36">
       {/* Background Image with Dark Luxury Overlay */}
