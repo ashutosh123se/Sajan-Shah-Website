@@ -141,9 +141,9 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return sendError(res, 'Invalid payment signature', 400);
     }
     
-    const order = await db.order.update({
+    const order: any = await db.order.update({
       where: { id: orderId },
-      data: { status: 'PAID', paymentId: razorpayPaymentId },
+      data: { status: 'PAID' as any, paymentId: razorpayPaymentId },
       include: { user: true }
     });
 
