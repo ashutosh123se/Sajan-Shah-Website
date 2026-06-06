@@ -1,23 +1,26 @@
-FROM node:20
+FROM node:20-alpine
+
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json ./
+COPY package*.json ./
 
-# Install all dependencies (including dev dependencies required for ts-node and tsconfig-paths)
-RUN npm ci
+# Install dependencies
+RUN npm install
 
-# Copy the rest of the application code
+# Copy application files
 COPY . .
 
-# Generate Prisma client
+# Generate Prisma Client
 RUN npx prisma generate
 
-ENV NODE_ENV production
-ENV PORT 5000
+# Build TypeScript
+RUN npm run build
 
-EXPOSE 5000
+EXPOSE 5001
 
-# Start the application using their default start script
-CMD ["npm", "start"]
+# Push database schema (if empty) and start server
+CMD npx prisma db push && npm start
