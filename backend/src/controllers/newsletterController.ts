@@ -1,23 +1,57 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
+import { db } from '../utils/database';
 
 export const subscribe = async (req: Request, res: Response) => {
   try {
-    const { email, name, whatsappOptIn } = req.body;
+    const { email, name, whatsappOptIn, source } = req.body;
     
     // Validate required fields
     if (!email) {
       return sendError(res, 'Email is required', 400);
     }
     
-    // This would normally save to database and send welcome email
-    const subscription = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      name: name || '',
-      whatsappOptIn: whatsappOptIn || false,
-      subscribedAt: new Date()
-    };
+    // Save to Newsletter table
+    const subscription = await db.newsletter.upsert({
+      where: { email },
+      update: {
+        name: name || undefined,
+        whatsappOptIn: whatsappOptIn || undefined,
+      },
+      create: {
+        email,
+        name: name || '',
+        whatsappOptIn: whatsappOptIn || false,
+      }
+    });
+
+    // Also save as a Lead
+    await db.lead.create({
+      data: {
+        name: name || 'Subscriber',
+        email,
+        phone: req.body.phone || null,
+        source: source || 'newsletter',
+        data: JSON.stringify({ whatsappOptIn: whatsappOptIn || false })
+      }
+    });
+
+    // Also save as a Member in the Members table so they appear in the Members admin section
+    const existingMember = await db.member.findFirst({
+      where: { email }
+    });
+
+    if (!existingMember) {
+      await db.member.create({
+        data: {
+          name: name || email.split('@')[0],
+          email,
+          photoUrl: 'https://res.cloudinary.com/dztxhvx1e/image/upload/v1625068285/default-avatar.png',
+          bio: 'Subscribed to updates / newsletter from website.',
+          tier: 'Community'
+        }
+      });
+    }
     
     // TODO: Send welcome email
     
@@ -30,8 +64,9 @@ export const subscribe = async (req: Request, res: Response) => {
 
 export const getSubscribers = async (req: Request, res: Response) => {
   try {
-    // This would normally fetch from database
-    const subscribers: any[] = []; // Mock empty array for now
+    const subscribers = await db.newsletter.findMany({
+      orderBy: { subscribedAt: 'desc' }
+    });
     
     sendSuccess(res, { subscribers });
   } catch (error) {

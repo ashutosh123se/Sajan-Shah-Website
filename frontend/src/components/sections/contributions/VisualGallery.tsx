@@ -1,0 +1,131 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface GalleryPhoto {
+  cat: string;
+  title: string;
+  imageUrl?: string;
+  img?: string;
+  pos?: string;
+}
+
+interface VisualGalleryProps {
+  content?: {
+    heading?: string;
+    subHeading?: string;
+    paragraph?: string;
+    photos?: GalleryPhoto[];
+  };
+}
+
+const DEFAULT_PHOTOS: GalleryPhoto[] = [
+  { cat: "Food & Aid", title: "Neighborhood Relief", img: "/Social Work/1.jpeg" },
+  { cat: "Community Support", title: "COVID-19 Relief Drive", img: "/Social Work/2.jpeg" },
+  { cat: "Awareness Campaign", title: "Community Interaction", img: "/Social Work/3.jpeg" },
+  { cat: "Public Action", title: "Media & Awareness", img: "/Social Work/4.jpeg" },
+  { cat: "Safety Drive", title: "Empowering Sanitation Workers", img: "/Social Work/5.jpeg" },
+  { cat: "Local Support", title: "Empowering Street Vendors", img: "/Social Work/6.jpeg" },
+  { cat: "Sanitation Support", title: "Assisting Frontline Workers", img: "/Social Work/7.jpeg" },
+  { cat: "Welfare Drive", title: "Nighttime Aid Distribution", img: "/Social Work/8.jpeg" },
+  { cat: "Animal Welfare", title: "Supporting Gaushalas", img: "/Social Work/9.jpeg", pos: "object-left" },
+  { cat: "Youth Outreach", title: "Mega Yoga Session", img: "/Social Work/10.jpeg", pos: "object-right" },
+  { cat: "Community Engagement", title: "Slum Outreach", img: "/Social Work/11.jpeg", pos: "object-bottom" },
+  { cat: "Appreciation Drive", title: "Honoring Local Workers", img: "/Social Work/12.jpeg", pos: "object-left" },
+  { cat: "Safety Drive", title: "Distributing Safety Gear", img: "/Social Work/13.jpeg" },
+  { cat: "Food & Aid", title: "Street Food Distribution", img: "/Social Work/14.jpeg" },
+  { cat: "Volunteer Action", title: "Youth Relief Team", img: "/Social Work/15.jpeg" },
+  { cat: "Hunger Relief", title: "Midnight Food Drive", img: "/Social Work/16.jpeg" },
+];
+
+export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
+  const heading = content?.heading || "Impact in Action";
+  const subHeading = content?.subHeading || "Gallery Archive";
+  const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
+  const photos = content?.photos || DEFAULT_PHOTOS;
+
+  // Double the array for infinite loop
+  const duplicatedPhotos = [...photos, ...photos];
+
+  return (
+    <section className="py-32 bg-black overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 mb-20">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 border-b border-gray-900 pb-12">
+          <div>
+            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-xs mb-4">{subHeading}</h2>
+            <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tighter uppercase leading-none">{heading}</h3>
+          </div>
+          <p className="text-gray-500 font-light max-w-xs text-sm leading-relaxed italic">
+            {paragraph}
+          </p>
+        </div>
+      </div>
+
+      {/* Marquee Container */}
+      <div className="relative flex whitespace-nowrap overflow-hidden">
+        <motion.div
+          className="flex gap-6 py-4"
+          animate={{
+            x: ["0%", "-50%"],
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 80, // Speed of scroll
+              ease: "linear",
+            },
+          }}
+        >
+          {duplicatedPhotos.map((item, idx) => (
+            <div
+              key={idx}
+              className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
+            >
+              <img
+                src={item.imageUrl || item.img}
+                alt={item.title}
+                className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.15] group-hover:scale-[1.10] ${item.pos || 'object-center'}`}
+              />
+
+              {/* Overlay inspired by reference image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-10">
+                <div className="mb-4">
+                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center mb-4 group-hover:bg-white group-hover:text-black transition-all">
+                    <span className="text-white group-hover:text-black text-lg">👁</span>
+                  </div>
+                </div>
+
+                <h4 className="text-white text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight mb-2 group-hover:text-[#f26522] transition-colors break-words">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
+                  {item.cat}
+                </p>
+
+                <div className="mt-8 pt-6 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-[10px] text-white uppercase tracking-[0.3em] font-medium">
+                    Documentation Archive
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Gradient overlays for smooth fading edges */}
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
+      </div>
+
+      <div className="mt-20 flex justify-center">
+        <div className="flex gap-2">
+          <div className="w-8 h-1 bg-[#f26522] rounded-full"></div>
+          <div className="w-2 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-2 h-1 bg-gray-800 rounded-full"></div>
+        </div>
+      </div>
+    </section>
+  );
+};

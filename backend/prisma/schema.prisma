@@ -8,54 +8,52 @@ datasource db {
 }
 
 enum UserRole {
-  SUPER_ADMIN
   ADMIN
-  EDITOR
-  SHOP_MANAGER
-  SUBSCRIBER
   CUSTOMER
+  MEMBER
 }
 
 enum OrderStatus {
   PENDING
-  PAID
   PROCESSING
   SHIPPED
   DELIVERED
   CANCELLED
-  FAILED
-  REFUNDED
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  email        String    @unique
-  passwordHash String
-  role         UserRole  @default(CUSTOMER)
-  photoUrl     String?
-  phone        String?
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  orders       Order[]
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  passwordHash         String?
+  passwordSetupToken   String?   @unique
+  passwordSetupExpires DateTime?
+  role                 UserRole  @default(CUSTOMER)
+  photoUrl             String?
+  phone                String?
+  isActive             Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  orders               Order[]
 }
 
 model Product {
   id                 String      @id @default(cuid())
-  title              String
-  slug               String      @default("")
-  description        String
-  price              Float
-  currency           String      @default("INR")
-  imageUrl           String
-  images             String[]
-  category           String      // books | merchandise | courses | posters | bands | ai | bundles
-  tags               String[]
-  stock              Int?
-  isActive           Boolean     @default(true)
-  isFeatured         Boolean     @default(false)
-  cloudinaryPublicId String?
+  name               String      @default("")
+  slug               String      @unique
+  category           String      // book | course | merchandise
+  description        String      @db.Text
+  short_description  String?     @db.Text
+  is_active          Boolean     @default(true)
+  is_featured        Boolean     @default(false)
+  featured_order     Int?
+  image_homepage     String?     
+  image_product_page String?     
+  buy_url_amazon     String?     
+  buy_url_flipkart   String?     
+  buy_url_internal   String?     
+  price              Float?
   createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @default(now()) @updatedAt
   orderItems         OrderItem[]
 }
 
@@ -63,8 +61,9 @@ model Event {
   id                 String   @id @default(cuid())
   title              String
   slug               String   @unique @default("")
-  description        String?
+  description        String?  @db.Text
   posterUrl          String
+  homepageImageUrl   String?
   cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
@@ -76,14 +75,6 @@ model Event {
   price              Float?
   capacity           Int?
   isActive           Boolean  @default(true)
-  endDate            DateTime?
-  category           String?
-  format             String?
-  availability       String?
-  colorCode          String?
-  topic              String?
-  isTop5             Boolean  @default(false)
-  tag                String?
   createdAt          DateTime @default(now())
 }
 
@@ -93,7 +84,7 @@ model Member {
   email              String?
   photoUrl           String
   cloudinaryPublicId String?
-  bio                String
+  bio                String   @db.Text
   tier               String   // Gold | Silver | Community
   joinedAt           DateTime @default(now())
 }
@@ -103,8 +94,8 @@ model MemberApplication {
   name      String
   email     String
   phone     String?
-  bio       String
-  whyJoin   String
+  bio       String   @db.Text
+  whyJoin   String   @db.Text
   status    String   @default("PENDING")
   appliedAt DateTime @default(now())
 }
@@ -115,25 +106,18 @@ model Contributor {
   photoUrl           String
   cloudinaryPublicId String?
   role               String
-  description        String
+  description        String @db.Text
   order              Int    @default(0)
 }
 
-model Program {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  description    String
-  pitch          String
-  price          Float
-  currency       String   @default("INR")
-  thumbnailUrl   String?
-  videoUrl       String?
-  curriculum     String
-  targetAudience String[]
-  isActive       Boolean  @default(true)
-  isFeatured     Boolean  @default(false)
-  createdAt      DateTime @default(now())
+model SpeakingPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
+  title     String?
+  content   Json?      // Stores structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }
 
 model Contact {
@@ -146,7 +130,7 @@ model Contact {
   eventType    String?
   eventDate    DateTime?
   audience     String?
-  message      String
+  message      String    @db.Text
   formType     String    @default("inquiry")
   isRead       Boolean   @default(false)
   receivedAt   DateTime  @default(now())
@@ -171,8 +155,8 @@ model Order {
   status          OrderStatus @default(PENDING)
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
-  shippingNotes   String?
-  shippingAddress String?
+  shippingNotes   String?   @db.Text
+  shippingAddress String?   @db.Text
   phone           String?
   createdAt       DateTime    @default(now())
   items           OrderItem[]
@@ -192,7 +176,7 @@ model Initiative {
   id          String  @id @default(cuid())
   title       String
   slug        String  @unique
-  description String
+  description String  @db.Text
   imageUrl    String?
   stats       String?
   order       Int     @default(0)
@@ -205,7 +189,7 @@ model Testimonial {
   designation  String
   organization String?
   photoUrl     String?
-  quote        String
+  quote        String  @db.Text
   videoUrl     String?
   isActive     Boolean @default(true)
   order        Int     @default(0)
@@ -215,10 +199,9 @@ model LegalPage {
   id        String   @id @default(cuid())
   slug      String   @unique
   title     String
-  content   String
+  content   String   @db.Text
   updatedAt DateTime @updatedAt
 }
-
 
 model PopupBanner {
   id          String   @id @default(cuid())
@@ -239,22 +222,22 @@ model Setting {
   updatedAt DateTime @updatedAt
 }
 
-
 model Lead {
   id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
-  data      Json?    // to store additional fields like message, subject, organization, etc.
+  data      Json?      // to store additional fields like message, subject, organization, etc.
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
+
 model AboutPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   Json?      // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -264,7 +247,7 @@ model EventsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'cta'
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   Json?      // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -274,7 +257,7 @@ model ContributionsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'donate', etc.
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   Json?      // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -284,7 +267,7 @@ model HomePageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
   title     String?
-  content   Json?    // Stores the structured data for that specific section
+  content   Json?      // Stores the structured data for that specific section
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -293,13 +276,12 @@ model HomePageSection {
 model PressArticle {
   id        String   @id @default(cuid())
   title     String
-  source    String
-  thumbnail String
   url       String
+  source    String
+  imageUrl  String?
   date      DateTime
   isActive  Boolean  @default(true)
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-

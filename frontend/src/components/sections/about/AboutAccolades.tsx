@@ -3,21 +3,35 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const AboutAccolades: React.FC = () => {
-  const accolades = [
-    "India's Youngest Motivational Speaker with global impact",
-    "Known as the Memory Man of India for brain mastery",
-    "Speaker at the World Parliament of Religions",
-    "3-Time TEDx Speaker delivering high-impact ideas",
-    "Suryadatta National Awardee for Best Motivational Speaker",
-    "Honored with 30 Under 30 Nationwide Award by BusinessMint",
-    "Author of 8 Transformational Books",
-    "Impacted over 16+ Million Lives globally",
-    "Founder of United First Initiative (UN SDG 2030)",
-    "Founder of Live to Inspire Charitable Trust",
-    "Delivered sessions across 5000+ educational institutions",
-    "Conducted 6800+ high-impact transformational sessions"
-  ];
+interface AboutAccoladesProps {
+  content?: {
+    heading1?: string;
+    heading2?: string;
+    awardImage?: string;
+    list?: string[];
+  };
+}
+
+export const AboutAccolades: React.FC<AboutAccoladesProps> = ({ content }) => {
+  const data = {
+    heading1: content?.heading1 || "A few noteworthy",
+    heading2: content?.heading2 || "accolades include:",
+    awardImage: content?.awardImage || "/image.png",
+    list: content?.list || [
+      "India's Youngest Motivational Speaker and Bussiness Coach",
+      "Known as the Memory Man of India for brain mastery",
+      "Speaker at the World Parliament of Religions",
+      "4 -Time TEDx Speaker delivering high-impact ideas",
+      "Suryadatta National Awardee for Best Motivational Speaker",
+      "Honored with 30 Under 30 Nationwide Award by BusinessMint",
+      "Author of 8 Transformational Books",
+      "Impacted over 16+ Million Lives globally",
+      "Founder of United First Initiative (UN SDG 2030)",
+      "Founder of Live to Inspire Charitable Trust",
+      "Delivered sessions across 5000+ educational institutions",
+      "Conducted 6800+ high-impact transformational sessions"
+    ]
+  };
 
   return (
     <section className="py-20 bg-[#1a1a1a] text-white px-6 md:px-16">
@@ -33,14 +47,14 @@ export const AboutAccolades: React.FC = () => {
             className="lg:w-5/12 flex flex-col items-center lg:items-start text-center lg:text-left"
           >
             <h2 className="text-3xl md:text-4xl font-light italic leading-tight text-white mb-12">
-              A few noteworthy<br />
-              <span className="font-semibold">accolades include:</span>
+              {data.heading1}<br />
+              <span className="font-semibold">{data.heading2}</span>
             </h2>
 
             {/* Trophy Award Image - Perfectly aligned below heading */}
             <div className="w-full flex justify-start">
               <img
-                src="/image.png"
+                src={data.awardImage}
                 alt="Award Trophy"
                 className="w-64 md:w-80 object-contain"
               />
@@ -56,7 +70,7 @@ export const AboutAccolades: React.FC = () => {
             className="lg:w-7/12"
           >
             <div className="space-y-5">
-              {accolades.map((item, idx) => (
+              {data.list.map((item, idx) => (
                 <motion.div
                   key={idx}
                   initial={{ opacity: 0, x: 20 }}

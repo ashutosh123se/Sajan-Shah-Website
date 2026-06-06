@@ -133,7 +133,7 @@ export const SplitHero: React.FC = () => {
               {/* Front Side */}
               <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl">
                 <img 
-                  src="/speaking.jpeg" 
+                  src="/IMG_7631.jpg" 
                   alt="Speaking" 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
@@ -147,7 +147,7 @@ export const SplitHero: React.FC = () => {
               {/* Back Side */}
               <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl bg-[#0a0a0a]">
                 <img 
-                  src="/speaking.jpeg" 
+                  src="/IMG_7631.jpg" 
                   alt="Speaking" 
                   className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110" 
                 />
@@ -173,7 +173,7 @@ export const SplitHero: React.FC = () => {
           {/* Card 3 - Impact */}
           <div
             className="group relative w-full h-[450px] [perspective:1200px] cursor-pointer"
-            onClick={() => (window.location.href = '/impact')}
+            onClick={() => (window.location.href = '/contributions')}
           >
             <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
               

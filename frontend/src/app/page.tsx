@@ -7,6 +7,7 @@ import { LogoStrip } from '@/components/sections/home/LogoStrip';
 import { BooksSection } from '@/components/sections/home/BooksSection';
 import { Testimonials } from '@/components/sections/home/Testimonials';
 import { EventSchedule } from '@/components/sections/home/EventSchedule';
+import { TransformationStories } from '@/components/sections/home/TransformationStories';
 import { ImpactStatistics } from '@/components/sections/home/ImpactStatistics';
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
       <BooksSection />
       <Testimonials />
       <EventSchedule />
+      <TransformationStories />
       <ImpactStatistics />
     </div>
   );

@@ -6,37 +6,44 @@ export const Testimonials: React.FC = () => {
     {
       text: "Sajan is a passionate motivator and speaker. He just need a mic and stage to improve your productivity.",
       author: "Muhammad Faisal",
-      title: "Four Times Guinness World Record Holder for Strongest Memory"
+      title: "Four Times Guinness World Record Holder for Strongest Memory",
+      image: "/Hero T/Muhammad Faisal.jpeg"
     },
     {
       text: "Sajan is doing commendable work for the development of the country. I really appreciate his efforts and dedication towards building the next generation. Keep up the good work.",
       author: "His Holiness Dalai Lama",
-      title: "Spiritual Leader"
+      title: "Spiritual Leader",
+      image: "/Hero T/His Holiness Dalai Lama.png"
     },
     {
       text: "Sajan is very young, dynamic and a smart strategic speaker with amazing practical knowledge and examples. My best wishes are always with him.",
       author: "Acharya Dr. Lokesh Muni",
-      title: "World Peace Ambassador, Founder of Ahimsa Vishwa Bharti"
+      title: "World Peace Ambassador, Founder of Ahimsa Vishwa Bharti",
+      image: "/Hero T/Acharya Dr. Lokesh Muni.png"
     },
     {
       text: "It was really motivating to hear Sajan in Jammu Kashmir. His vision and mission towards the nation is really inspiring. His passion and energy is amazing. Keep it up Sajan.",
       author: "Hon. Dr. Jitendra Singh",
-      title: "Minister of State for Prime Minister's Office"
+      title: "Minister of State for Prime Minister's Office",
+      image: "/Hero T/Hon. Dr. Jitendra Singh.jpeg"
     },
     {
       text: "Sajan, not only do you motivate the youth & empower them; but you are serving the nation in a much bigger way. Never stop what you're doing.",
       author: "Hon. Piyush Goyal",
-      title: "Minister of Commerce and Industry"
+      title: "Minister of Commerce and Industry",
+      image: "/Hero T/Hon. Piyush Goyal.jpeg"
     },
     {
       text: "Well, first of all, I love watching him LIVE. His energy to enlighten and encourage the people, to achieve their potential to optimum level, is unmatchable! The highly thoughtful programs that he has done have potential which can help anyone to achieve real world class results.",
       author: "Sammeer Sata",
-      title: "Senior Vice President, Reliance Industries Limited"
+      title: "Senior Vice President, Reliance Industries Limited",
+      image: "/Hero T/Sammeer Sata.jpeg"
     },
     {
       text: "Sajan Shah has a clutter less thinking that helps 1000s to get Uncluttered. Met him just for an hour and found him having all that a leader needs.",
       author: "Dr. A Velumani",
-      title: "Promoter & MD, Thyrocare Tech. Ltd."
+      title: "Promoter & MD, Thyrocare Tech. Ltd.",
+      image: "/Hero T/Dr. A Velumani.webp"
     }
   ];
 
@@ -72,20 +79,22 @@ export const Testimonials: React.FC = () => {
             <p className="text-2xl md:text-3xl lg:text-4xl text-white font-light italic leading-relaxed mb-12 tracking-wide max-w-4xl mx-auto">
               "{testimonials[currentIndex].text}"
             </p>
-            <div>
-              <h4 className="text-xl font-bold text-[#f26522] uppercase tracking-widest">{testimonials[currentIndex].author}</h4>
-              <p className="text-gray-500 font-medium mt-2 text-sm uppercase tracking-widest">{testimonials[currentIndex].title}</p>
+            <div className="flex flex-col items-center gap-4">
+              {testimonials[currentIndex].image && (
+                <img 
+                  src={testimonials[currentIndex].image} 
+                  alt={testimonials[currentIndex].author} 
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-[#f26522]"
+                />
+              )}
+              <div>
+                <h4 className="text-xl font-bold text-[#f26522] uppercase tracking-widest">{testimonials[currentIndex].author}</h4>
+                <p className="text-gray-500 font-medium mt-2 text-sm uppercase tracking-widest">{testimonials[currentIndex].title}</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-center items-center mt-12 space-x-8 relative z-20">
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev - 1 + testimonials.length) % testimonials.length)}
-              className="p-4 rounded-none border border-gray-800 hover:border-[#f26522] hover:bg-[#151515] transition-colors text-white"
-              aria-label="Previous Testimonial"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
-            </button>
+          <div className="flex justify-center items-center mt-12 relative z-20">
             <div className="flex space-x-3">
               {testimonials.map((_, idx) => (
                 <button 
@@ -96,13 +105,6 @@ export const Testimonials: React.FC = () => {
                 />
               ))}
             </div>
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev + 1) % testimonials.length)}
-              className="p-4 rounded-none border border-gray-800 hover:border-[#f26522] hover:bg-[#151515] transition-colors text-white"
-              aria-label="Next Testimonial"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" /></svg>
-            </button>
           </div>
         </div>
       </div>

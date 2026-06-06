@@ -355,4 +355,109 @@ export class EmailService {
       html,
     });
   }
+
+  static sendPasswordSetupEmail(email: string, name: string, token: string): Promise<void> {
+    const setupUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/set-password?token=${token}`;
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Set Your Password - Sajan Shah</title>
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 40px auto; padding: 40px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+          .header { text-align: center; margin-bottom: 40px; }
+          .logo { font-size: 24px; font-weight: bold; color: #000; letter-spacing: -1px; }
+          .logo span { color: #f26522; }
+          .content { margin-bottom: 40px; }
+          h1 { font-size: 28px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.5px; }
+          p { margin-bottom: 20px; color: #4a4a4a; font-size: 16px; }
+          .button-container { text-align: center; margin: 40px 0; }
+          .button { display: inline-block; background: #000; color: #fff !important; padding: 18px 36px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 14px; letter-spacing: 2px; }
+          .footer { text-align: center; margin-top: 40px; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 30px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">sajan<span>shah</span></div>
+          </div>
+          
+          <div class="content">
+            <h1>Welcome to the inner circle, ${name.split(' ')[0]}.</h1>
+            <p>Your account has been successfully created following your recent interaction with our platform.</p>
+            <p>To access your purchased products, programs, and personalized dashboard, you need to establish a secure password.</p>
+            
+            <div class="button-container">
+              <a href="${setupUrl}" class="button">Set Your Password</a>
+            </div>
+            
+            <p>This link will remain active for 24 hours. If it expires, please contact our support team.</p>
+          </div>
+          
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Sajan Shah. All rights reserved.</p>
+            <p>Memory Man of India • Global Youth Speaker</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return this.sendEmail({
+      to: email,
+      subject: 'Action Required: Set Your Password - Sajan Shah',
+      html,
+    });
+  }
+
+  static sendPasswordSuccessEmail(email: string, name: string): Promise<void> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Password Set Successfully - Sajan Shah</title>
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 40px auto; padding: 40px; border: 1px solid #eee; border-radius: 12px; }
+          .header { text-align: center; margin-bottom: 40px; }
+          .logo { font-size: 24px; font-weight: bold; color: #000; letter-spacing: -1px; }
+          .logo span { color: #f26522; }
+          .content { margin-bottom: 40px; text-align: center; }
+          h1 { font-size: 28px; font-weight: 800; margin-bottom: 24px; }
+          .button { display: inline-block; background: #000; color: #fff !important; padding: 18px 36px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+          .footer { text-align: center; margin-top: 40px; color: #999; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">sajan<span>shah</span></div>
+          </div>
+          <div class="content">
+            <h1>Success!</h1>
+            <p>Hi ${name.split(' ')[0]}, your password has been successfully set.</p>
+            <p>You can now login to your dashboard using your email address and the new password.</p>
+            <div style="margin-top: 40px;">
+              <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login" class="button">Login to Dashboard</a>
+            </div>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Sajan Shah. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return this.sendEmail({
+      to: email,
+      subject: 'Password Set Successfully - Sajan Shah',
+      html,
+    });
+  }
 }

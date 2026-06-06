@@ -32,9 +32,9 @@ export const getProducts = async (req: Request, res: Response) => {
     
     // Apply sorting
     if (sort === 'price_asc') {
-      products.sort((a, b) => a.price - b.price);
+      products.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     } else if (sort === 'price_desc') {
-      products.sort((a, b) => b.price - a.price);
+      products.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
     } else if (sort === 'newest') {
       products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
