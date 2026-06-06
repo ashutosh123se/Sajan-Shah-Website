@@ -22,17 +22,6 @@ import legalRoutes from './routes/legal';
 import bannersRoutes from './routes/bannersRoutes';
 import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settingsRoutes';
-<<<<<<< HEAD
-=======
-import leadsRoutes from './routes/leads';
-import aboutRoutes from './routes/aboutRoutes';
-import eventsPageRoutes from './routes/eventsPage';
-import contributionsPageRoutes from './routes/contributionsPage';
-import v1ProductsRoutes from './routes/v1Products';
-import speakingRoutes from './routes/speaking';
-
-
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 import leadsRoutes from './routes/leads';
 import aboutRoutes from './routes/aboutRoutes';
 import eventsPageRoutes from './routes/eventsPage';
@@ -74,17 +63,6 @@ app.use('/api/legal', legalRoutes);
 app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
-<<<<<<< HEAD
-=======
-app.use('/api/leads', leadsRoutes);
-app.use('/api/about', aboutRoutes);
-app.use('/api/events-page', eventsPageRoutes);
-app.use('/api/contributions-page', contributionsPageRoutes);
-app.use('/api/v1', v1ProductsRoutes);
-app.use('/api/speaking', speakingRoutes);
-
-
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 app.use('/api/leads', leadsRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/events-page', eventsPageRoutes);

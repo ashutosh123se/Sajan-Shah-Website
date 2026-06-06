@@ -4,11 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "start": "node dist/server.js",
-=======
-    "start": "ts-node -r tsconfig-paths/register src/server.ts",
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
     "dev": "ts-node --transpile-only -r tsconfig-paths/register src/server.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -3,19 +3,10 @@ generator client {
 }
 
 datasource db {
-<<<<<<< HEAD
   provider = "mysql"
-=======
-  provider = "sqlite"
->>>>>>> bwik/main
   url      = env("DATABASE_URL")
 }
 
-<<<<<<< HEAD
-
-
-
-=======
 enum UserRole {
   ADMIN
   CUSTOMER
@@ -29,7 +20,6 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 
 model User {
   id                   String    @id @default(cuid())
@@ -38,11 +28,7 @@ model User {
   passwordHash         String?
   passwordSetupToken   String?   @unique
   passwordSetupExpires DateTime?
-<<<<<<< HEAD
-  role String @default("CUSTOMER")
-=======
   role                 UserRole  @default(CUSTOMER)
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   photoUrl             String?
   phone                String?
   isActive             Boolean   @default(true)
@@ -55,13 +41,8 @@ model Product {
   name               String      @default("")
   slug               String      @unique
   category           String      // book | course | merchandise
-<<<<<<< HEAD
-  description        String      
-  short_description  String?     
-=======
   description        String      @db.Text
   short_description  String?     @db.Text
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   is_active          Boolean     @default(true)
   is_featured        Boolean     @default(false)
   featured_order     Int?
@@ -133,11 +114,7 @@ model SpeakingPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
   title     String?
-<<<<<<< HEAD
-  content   String?    // Stores structured data for that specific section
-=======
   content   Json?      // Stores structured data for that specific section
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -175,7 +152,7 @@ model Order {
   amountPaise     Int
   paymentId       String?
   razorpayOrderId String?
-  status String @default("PENDING")
+  status          OrderStatus @default(PENDING)
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
   shippingNotes   String?   @db.Text
@@ -239,34 +216,19 @@ model PopupBanner {
 model Setting {
   id        String   @id @default(cuid())
   key       String   @unique
-  value     String   
+  value     String   @db.Text
   group     String   // website, smtp, payment, social
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> bwik/main
-=======
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 model Lead {
   id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
-<<<<<<< HEAD
-<<<<<<< HEAD
-  data      Json?    // to store additional fields like message, subject, organization, etc.
-=======
-  data      String?    // to store additional fields like message, subject, organization, etc.
->>>>>>> bwik/main
-=======
   data      Json?      // to store additional fields like message, subject, organization, etc.
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
@@ -275,15 +237,7 @@ model AboutPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
   title     String?
-<<<<<<< HEAD
-<<<<<<< HEAD
-  content   Json?    // Stores the structured data for that specific section
-=======
-  content   String?    // Stores the structured data for that specific section
->>>>>>> bwik/main
-=======
   content   Json?      // Stores the structured data for that specific section
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -293,15 +247,7 @@ model EventsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'cta'
   title     String?
-<<<<<<< HEAD
-<<<<<<< HEAD
-  content   Json?    // Stores the structured data for that specific section
-=======
-  content   String?    // Stores the structured data for that specific section
->>>>>>> bwik/main
-=======
   content   Json?      // Stores the structured data for that specific section
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -311,15 +257,7 @@ model ContributionsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'donate', etc.
   title     String?
-<<<<<<< HEAD
-<<<<<<< HEAD
-  content   Json?    // Stores the structured data for that specific section
-=======
-  content   String?    // Stores the structured data for that specific section
->>>>>>> bwik/main
-=======
   content   Json?      // Stores the structured data for that specific section
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -329,21 +267,12 @@ model HomePageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
   title     String?
-<<<<<<< HEAD
-<<<<<<< HEAD
-  content   Json?    // Stores the structured data for that specific section
-=======
-  content   String?    // Stores the structured data for that specific section
->>>>>>> bwik/main
-=======
   content   Json?      // Stores the structured data for that specific section
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
 
-<<<<<<< HEAD
 model PressArticle {
   id        String   @id @default(cuid())
   title     String
@@ -356,10 +285,3 @@ model PressArticle {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-<<<<<<< HEAD
-=======
->>>>>>> bwik/main
-
-
-=======
->>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
