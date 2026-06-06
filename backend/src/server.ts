@@ -30,6 +30,15 @@ import v1ProductsRoutes from './routes/v1Products';
 import speakingRoutes from './routes/speaking';
 
 
+import leadsRoutes from './routes/leads';
+import aboutRoutes from './routes/aboutRoutes';
+import eventsPageRoutes from './routes/eventsPage';
+import contributionsPageRoutes from './routes/contributionsPage';
+import v1ProductsRoutes from './routes/v1Products';
+import speakingRoutes from './routes/speaking';
+import pressRoutes from './routes/press';
+
+
 // Load environment variables
 dotenv.config();
 
@@ -69,6 +78,16 @@ app.use('/api/events-page', eventsPageRoutes);
 app.use('/api/contributions-page', contributionsPageRoutes);
 app.use('/api/v1', v1ProductsRoutes);
 app.use('/api/speaking', speakingRoutes);
+
+
+app.use('/api/leads', leadsRoutes);
+app.use('/api/about', aboutRoutes);
+app.use('/api/events-page', eventsPageRoutes);
+app.use('/api/contributions-page', contributionsPageRoutes);
+app.use('/api/v1', v1ProductsRoutes);
+app.use('/api/speaking', speakingRoutes);
+app.use('/api/press', pressRoutes);
+
 
 
 // Health check

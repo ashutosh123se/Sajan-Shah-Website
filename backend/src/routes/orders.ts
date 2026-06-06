@@ -10,8 +10,8 @@ router.post('/verify', verifyPayment);
 
 // Protected routes
 router.get('/my-orders', verifyToken, getMyOrders);
-router.get('/', verifyToken, requireRole('ADMIN', 'SHOP_MANAGER', 'SUPER_ADMIN', 'EDITOR'), getOrders);
-router.get('/:id', verifyToken, requireRole('ADMIN', 'SHOP_MANAGER', 'SUPER_ADMIN', 'EDITOR'), getOrderById);
-router.patch('/:id/status', verifyToken, requireRole('ADMIN', 'SHOP_MANAGER', 'SUPER_ADMIN', 'EDITOR'), updateOrderStatus);
+router.get('/', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'SHOP_MANAGER'), getOrders);
+router.get('/:id', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'SHOP_MANAGER'), getOrderById);
+router.patch('/:id/status', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN', 'SHOP_MANAGER'), updateOrderStatus);
 
 export default router;
