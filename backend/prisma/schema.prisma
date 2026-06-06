@@ -238,8 +238,7 @@ model Setting {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-<<<<<<< Updated upstream
-=======
+
 
 model Lead {
   id        String   @id @default(cuid())
@@ -304,4 +303,3 @@ model PressArticle {
 }
 
 
->>>>>>> Stashed changes

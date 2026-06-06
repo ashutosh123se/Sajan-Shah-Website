@@ -22,8 +22,7 @@ import legalRoutes from './routes/legal';
 import bannersRoutes from './routes/bannersRoutes';
 import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settingsRoutes';
-<<<<<<< Updated upstream
-=======
+
 import leadsRoutes from './routes/leads';
 import aboutRoutes from './routes/aboutRoutes';
 import eventsPageRoutes from './routes/eventsPage';
@@ -31,7 +30,7 @@ import contributionsPageRoutes from './routes/contributionsPage';
 import v1ProductsRoutes from './routes/v1Products';
 import speakingRoutes from './routes/speaking';
 import pressRoutes from './routes/press';
->>>>>>> Stashed changes
+
 
 // Load environment variables
 dotenv.config();
@@ -66,8 +65,7 @@ app.use('/api/legal', legalRoutes);
 app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
-<<<<<<< Updated upstream
-=======
+
 app.use('/api/leads', leadsRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/events-page', eventsPageRoutes);
@@ -76,7 +74,7 @@ app.use('/api/v1', v1ProductsRoutes);
 app.use('/api/speaking', speakingRoutes);
 app.use('/api/press', pressRoutes);
 
->>>>>>> Stashed changes
+
 
 // Health check
 app.get('/health', (req, res) => {
