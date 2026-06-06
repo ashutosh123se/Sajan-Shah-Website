@@ -38,7 +38,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
 
     // Calculate revenue (sum of paid orders)
     const orders = await db.order.findMany({
-      where: { status: 'PAID' },
+      where: { status: 'PAID' as any },
       select: { amount: true }
     });
     const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
