@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -76,6 +76,14 @@ model Event {
   price              Float?
   capacity           Int?
   isActive           Boolean  @default(true)
+  endDate            DateTime?
+  category           String?
+  format             String?
+  availability       String?
+  colorCode          String?
+  topic              String?
+  isTop5             Boolean  @default(false)
+  tag                String?
   createdAt          DateTime @default(now())
 }
 
@@ -230,3 +238,70 @@ model Setting {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+<<<<<<< Updated upstream
+=======
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
+  data      Json?    // to store additional fields like message, subject, organization, etc.
+  status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
+  createdAt DateTime @default(now())
+}
+model AboutPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model EventsPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'cta'
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model ContributionsPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'donate', etc.
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model HomePageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
+  title     String?
+  content   Json?    // Stores the structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model PressArticle {
+  id        String   @id @default(cuid())
+  title     String
+  source    String
+  thumbnail String
+  url       String
+  date      DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+>>>>>>> Stashed changes
