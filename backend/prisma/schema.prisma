@@ -11,9 +11,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 
 
 
+=======
+enum UserRole {
+  ADMIN
+  CUSTOMER
+  MEMBER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 
 model User {
   id                   String    @id @default(cuid())
@@ -22,7 +38,11 @@ model User {
   passwordHash         String?
   passwordSetupToken   String?   @unique
   passwordSetupExpires DateTime?
+<<<<<<< HEAD
   role String @default("CUSTOMER")
+=======
+  role                 UserRole  @default(CUSTOMER)
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   photoUrl             String?
   phone                String?
   isActive             Boolean   @default(true)
@@ -35,8 +55,13 @@ model Product {
   name               String      @default("")
   slug               String      @unique
   category           String      // book | course | merchandise
+<<<<<<< HEAD
   description        String      
   short_description  String?     
+=======
+  description        String      @db.Text
+  short_description  String?     @db.Text
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   is_active          Boolean     @default(true)
   is_featured        Boolean     @default(false)
   featured_order     Int?
@@ -55,7 +80,7 @@ model Event {
   id                 String   @id @default(cuid())
   title              String
   slug               String   @unique @default("")
-  description        String?
+  description        String?  @db.Text
   posterUrl          String
   homepageImageUrl   String?
   cloudinaryPublicId String
@@ -69,14 +94,6 @@ model Event {
   price              Float?
   capacity           Int?
   isActive           Boolean  @default(true)
-  endDate            DateTime?
-  category           String?
-  format             String?
-  availability       String?
-  colorCode          String?
-  topic              String?
-  isTop5             Boolean  @default(false)
-  tag                String?
   createdAt          DateTime @default(now())
 }
 
@@ -86,7 +103,7 @@ model Member {
   email              String?
   photoUrl           String
   cloudinaryPublicId String?
-  bio                String
+  bio                String   @db.Text
   tier               String   // Gold | Silver | Community
   joinedAt           DateTime @default(now())
 }
@@ -96,8 +113,8 @@ model MemberApplication {
   name      String
   email     String
   phone     String?
-  bio       String
-  whyJoin   String
+  bio       String   @db.Text
+  whyJoin   String   @db.Text
   status    String   @default("PENDING")
   appliedAt DateTime @default(now())
 }
@@ -108,7 +125,7 @@ model Contributor {
   photoUrl           String
   cloudinaryPublicId String?
   role               String
-  description        String
+  description        String @db.Text
   order              Int    @default(0)
 }
 
@@ -116,7 +133,11 @@ model SpeakingPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
   title     String?
+<<<<<<< HEAD
   content   String?    // Stores structured data for that specific section
+=======
+  content   Json?      // Stores structured data for that specific section
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -132,7 +153,7 @@ model Contact {
   eventType    String?
   eventDate    DateTime?
   audience     String?
-  message      String
+  message      String    @db.Text
   formType     String    @default("inquiry")
   isRead       Boolean   @default(false)
   receivedAt   DateTime  @default(now())
@@ -157,8 +178,8 @@ model Order {
   status String @default("PENDING")
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
-  shippingNotes   String?
-  shippingAddress String?
+  shippingNotes   String?   @db.Text
+  shippingAddress String?   @db.Text
   phone           String?
   createdAt       DateTime    @default(now())
   items           OrderItem[]
@@ -178,7 +199,7 @@ model Initiative {
   id          String  @id @default(cuid())
   title       String
   slug        String  @unique
-  description String
+  description String  @db.Text
   imageUrl    String?
   stats       String?
   order       Int     @default(0)
@@ -191,7 +212,7 @@ model Testimonial {
   designation  String
   organization String?
   photoUrl     String?
-  quote        String
+  quote        String  @db.Text
   videoUrl     String?
   isActive     Boolean @default(true)
   order        Int     @default(0)
@@ -201,10 +222,9 @@ model LegalPage {
   id        String   @id @default(cuid())
   slug      String   @unique
   title     String
-  content   String
+  content   String   @db.Text
   updatedAt DateTime @updatedAt
 }
-
 
 model PopupBanner {
   id          String   @id @default(cuid())
@@ -226,9 +246,12 @@ model Setting {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bwik/main
+=======
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
 model Lead {
   id        String   @id @default(cuid())
   name      String
@@ -236,22 +259,31 @@ model Lead {
   phone     String?
   source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
 <<<<<<< HEAD
+<<<<<<< HEAD
   data      Json?    // to store additional fields like message, subject, organization, etc.
 =======
   data      String?    // to store additional fields like message, subject, organization, etc.
 >>>>>>> bwik/main
+=======
+  data      Json?      // to store additional fields like message, subject, organization, etc.
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
+
 model AboutPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
   title     String?
 <<<<<<< HEAD
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
 =======
   content   String?    // Stores the structured data for that specific section
 >>>>>>> bwik/main
+=======
+  content   Json?      // Stores the structured data for that specific section
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -262,10 +294,14 @@ model EventsPageSection {
   key       String   @unique // e.g., 'hero', 'cta'
   title     String?
 <<<<<<< HEAD
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
 =======
   content   String?    // Stores the structured data for that specific section
 >>>>>>> bwik/main
+=======
+  content   Json?      // Stores the structured data for that specific section
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -276,10 +312,14 @@ model ContributionsPageSection {
   key       String   @unique // e.g., 'hero', 'donate', etc.
   title     String?
 <<<<<<< HEAD
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
 =======
   content   String?    // Stores the structured data for that specific section
 >>>>>>> bwik/main
+=======
+  content   Json?      // Stores the structured data for that specific section
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -290,10 +330,14 @@ model HomePageSection {
   key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
   title     String?
 <<<<<<< HEAD
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
 =======
   content   String?    // Stores the structured data for that specific section
 >>>>>>> bwik/main
+=======
+  content   Json?      // Stores the structured data for that specific section
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -303,15 +347,19 @@ model HomePageSection {
 model PressArticle {
   id        String   @id @default(cuid())
   title     String
-  source    String
-  thumbnail String
   url       String
+  source    String
+  imageUrl  String?
   date      DateTime
   isActive  Boolean  @default(true)
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+<<<<<<< HEAD
 =======
 >>>>>>> bwik/main
 
 
+=======
+>>>>>>> d0119a908f845a95a675b2207ea8ebbf19a90ce8
