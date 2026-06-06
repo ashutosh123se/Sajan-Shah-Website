@@ -93,7 +93,7 @@ export const MediaPress: React.FC = () => {
             ))
           ) : (
             articles.map((article) => (
-              <article 
+              <article
                 key={article.id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group"
                 onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
@@ -135,17 +135,53 @@ export const MediaPress: React.FC = () => {
             <h3 className="text-center text-lg font-semibold text-gray-700 mb-8">
               As Featured In
             </h3>
-            
+
             {/* Auto-scrolling Logos */}
             <div className="relative">
               <div className="flex space-x-12 animate-scroll">
                 {/* Duplicate logos for seamless scrolling effect */}
-                {['The Times of India', 'Economic Times', 'Forbes India', 'Hindustan Times', 'BBC News', 'CNN', 'Reuters'].map((outlet, index) => (
-                  <div 
+                {[
+                  // National
+                  'ANI',
+                  'Business Standard',
+                  'The Tribune',
+                  'LatestLY',
+                  'Google News',
+                  'Daily Hunt',
+                  'Indian News Network',
+                  'Indian Economic Observer',
+                  'National Insight',
+                  'Rising Entrepreneurs',
+
+                  // International
+                  'London Channel News',
+                  'Washington DC Dispatch',
+                  'Dubai City Reporter',
+                  'British Columbia Times',
+                  'England News Portal',
+                  'France Network Times',
+                  'Richmond Evening News',
+                  'Buffalo Dispatch',
+                  'Maldives Star Plus',
+                  'Lanka Express',
+
+                  // Regional
+                  'Lokmat Times Today',
+                  'Mumbai Live',
+                  'Gujarat Taraf',
+                  'Hyderabad News',
+                  'Bangalore Buzz',
+                  'Rajasthan Express',
+                  'Madhya Pradesh Chronicle',
+                  'Telangana Journal',
+                  'Punjab Live',
+                  'Calcutta Courier'
+                ].map((outlet, index) => (
+                  <div
                     key={`${outlet}-${index}`}
                     className="flex-shrink-0 h-12 w-32 md:w-40 flex items-center justify-center filter grayscale opacity-60 hover:opacity-100 transition-opacity"
                   >
-                    <span className="text-sm md:text-base font-medium text-gray-600">
+                    <span className="text-sm md:text-base font-medium text-gray-600 whitespace-nowrap">
                       {outlet}
                     </span>
                   </div>

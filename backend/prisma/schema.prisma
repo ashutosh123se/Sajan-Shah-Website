@@ -3,59 +3,51 @@ generator client {
 }
 
 datasource db {
+<<<<<<< HEAD
   provider = "mysql"
+=======
+  provider = "sqlite"
+>>>>>>> bwik/main
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  SUPER_ADMIN
-  ADMIN
-  EDITOR
-  SHOP_MANAGER
-  SUBSCRIBER
-  CUSTOMER
-}
 
-enum OrderStatus {
-  PENDING
-  PAID
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  FAILED
-  REFUNDED
-}
+
+
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  email        String    @unique
-  passwordHash String
-  role         UserRole  @default(CUSTOMER)
-  photoUrl     String?
-  phone        String?
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  orders       Order[]
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  passwordHash         String?
+  passwordSetupToken   String?   @unique
+  passwordSetupExpires DateTime?
+  role String @default("CUSTOMER")
+  photoUrl             String?
+  phone                String?
+  isActive             Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  orders               Order[]
 }
 
 model Product {
   id                 String      @id @default(cuid())
-  title              String
-  slug               String      @default("")
-  description        String
-  price              Float
-  currency           String      @default("INR")
-  imageUrl           String
-  images             String[]
-  category           String      // books | merchandise | courses | posters | bands | ai | bundles
-  tags               String[]
-  stock              Int?
-  isActive           Boolean     @default(true)
-  isFeatured         Boolean     @default(false)
-  cloudinaryPublicId String?
+  name               String      @default("")
+  slug               String      @unique
+  category           String      // book | course | merchandise
+  description        String      
+  short_description  String?     
+  is_active          Boolean     @default(true)
+  is_featured        Boolean     @default(false)
+  featured_order     Int?
+  image_homepage     String?     
+  image_product_page String?     
+  buy_url_amazon     String?     
+  buy_url_flipkart   String?     
+  buy_url_internal   String?     
+  price              Float?
   createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @default(now()) @updatedAt
   orderItems         OrderItem[]
 }
 
@@ -65,6 +57,7 @@ model Event {
   slug               String   @unique @default("")
   description        String?
   posterUrl          String
+  homepageImageUrl   String?
   cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
@@ -119,21 +112,14 @@ model Contributor {
   order              Int    @default(0)
 }
 
-model Program {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  description    String
-  pitch          String
-  price          Float
-  currency       String   @default("INR")
-  thumbnailUrl   String?
-  videoUrl       String?
-  curriculum     String
-  targetAudience String[]
-  isActive       Boolean  @default(true)
-  isFeatured     Boolean  @default(false)
-  createdAt      DateTime @default(now())
+model SpeakingPageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., 'hero', 'logos', 'message', 'reasons', 'catalog', 'features'
+  title     String?
+  content   String?    // Stores structured data for that specific section
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }
 
 model Contact {
@@ -168,7 +154,7 @@ model Order {
   amountPaise     Int
   paymentId       String?
   razorpayOrderId String?
-  status          OrderStatus @default(PENDING)
+  status String @default("PENDING")
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
   shippingNotes   String?
@@ -233,20 +219,27 @@ model PopupBanner {
 model Setting {
   id        String   @id @default(cuid())
   key       String   @unique
-  value     String   @db.Text
+  value     String   
   group     String   // website, smtp, payment, social
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bwik/main
 model Lead {
   id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   source    String?  // e.g., 'contact-form', 'newsletter', 'masterclass-funnel'
+<<<<<<< HEAD
   data      Json?    // to store additional fields like message, subject, organization, etc.
+=======
+  data      String?    // to store additional fields like message, subject, organization, etc.
+>>>>>>> bwik/main
   status    String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CLOSED
   createdAt DateTime @default(now())
 }
@@ -254,7 +247,11 @@ model AboutPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'mission', 'bio', etc.
   title     String?
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
+=======
+  content   String?    // Stores the structured data for that specific section
+>>>>>>> bwik/main
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -264,7 +261,11 @@ model EventsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'cta'
   title     String?
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
+=======
+  content   String?    // Stores the structured data for that specific section
+>>>>>>> bwik/main
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -274,7 +275,11 @@ model ContributionsPageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'donate', etc.
   title     String?
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
+=======
+  content   String?    // Stores the structured data for that specific section
+>>>>>>> bwik/main
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
@@ -284,12 +289,17 @@ model HomePageSection {
   id        String   @id @default(cuid())
   key       String   @unique // e.g., 'hero', 'split_hero', 'brand_writeup'
   title     String?
+<<<<<<< HEAD
   content   Json?    // Stores the structured data for that specific section
+=======
+  content   String?    // Stores the structured data for that specific section
+>>>>>>> bwik/main
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
 
+<<<<<<< HEAD
 model PressArticle {
   id        String   @id @default(cuid())
   title     String
@@ -301,5 +311,7 @@ model PressArticle {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+=======
+>>>>>>> bwik/main
 
 

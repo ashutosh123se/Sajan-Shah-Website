@@ -71,7 +71,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0C0C0C]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12 mx-auto mb-4" />
           <p className="text-gray-400">Loading...</p>
         </div>
       </div>
@@ -79,10 +79,10 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-white flex font-sans selection:bg-white selection:text-black">
+    <div className="pt-[176px] lg:pt-[196px] min-h-screen bg-[#0C0C0C] text-white flex font-sans selection:bg-white selection:text-black">
       {/* Sidebar */}
-      <div className="w-64 bg-[#141414] border-r border-white/10 min-h-screen flex flex-col">
-        <div className="p-6 flex-1">
+      <div className="w-64 bg-[#141414] border-r border-white/10 h-[calc(100vh-176px)] lg:h-[calc(100vh-196px)] sticky top-[176px] lg:top-[196px] flex flex-col">
+        <div className="p-6 flex-1 overflow-y-auto no-scrollbar">
           <h2 className="text-2xl font-extrabold text-white tracking-tight mb-8">
             User<span className="text-gray-500">Dashboard</span>
           </h2>
@@ -93,20 +93,20 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <p className="font-semibold text-white truncate">{user.name}</p>
             <p className="text-xs text-gray-400 mt-1 uppercase tracking-tighter">User</p>
           </div>
-
+ 
           {/* Navigation */}
           <nav className="space-y-1">
             {sidebarItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center space-x-3 px-4 py-3 transition-all duration-200 border-l-2 ${
-                    isActive
-                      ? 'bg-white/10 text-white border-white'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'
-                  }`}
+                   key={item.href}
+                   href={item.href}
+                   className={`flex items-center space-x-3 px-4 py-3 transition-all duration-200 border-l-2 ${
+                     isActive
+                       ? 'bg-white/10 text-white border-white'
+                       : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent'
+                   }`}
                 >
                   {item.icon}
                   <span className="font-medium tracking-wide">{item.title}</span>
@@ -127,9 +127,9 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
           </Button>
         </div>
       </div>
-
+ 
       {/* Main Content */}
-      <div className="flex-1 max-h-screen overflow-y-auto bg-[#0C0C0C]">
+      <div className="flex-1 bg-[#0C0C0C]">
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>

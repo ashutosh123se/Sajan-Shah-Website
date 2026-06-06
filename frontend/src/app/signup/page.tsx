@@ -5,155 +5,174 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, User } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
       const result = await register(name, email, password);
       if (result?.success) {
-        router.push('/user');
+        toast.success('Account created successfully!');
+        router.push('/login'); // Redirect to login after signup
       } else {
-        setError(result?.error || 'Failed to register');
+        toast.error(result?.error || 'Failed to register');
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      toast.error(err.message || 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-4 overflow-hidden">
-      {/* Premium Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url("/images/premium_bg.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    <div className="relative min-h-screen flex flex-col items-center justify-start pt-60 pb-12 overflow-hidden bg-black selection:bg-[#f26522]/30">
+      {/* Cinematic Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/login-bg.png" 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-60 grayscale-[0.5]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-black/80 to-[#f26522]/10"></div>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-transparent via-gold-500/50 to-transparent"></div>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <div className="text-center mb-8">
-          <Link href="/">
-            <h1 className="text-4xl font-black text-white tracking-tighter cursor-pointer uppercase mb-2">
-              Sajan<span className="text-gray-500">Shah</span>
-            </h1>
-          </Link>
-          <div className="h-px w-12 bg-white/30 mx-auto mb-6"></div>
-          <h2 className="text-2xl font-light text-white tracking-[0.2em] uppercase">
-            Begin the Journey
-          </h2>
-          <p className="mt-2 text-xs text-gray-400 uppercase tracking-widest font-medium">
-            Join the elite circle
-          </p>
-        </div>
+      {/* Decorative Light Rays */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f26522]/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/5 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
-        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs uppercase tracking-widest py-3 px-4 text-center"
-              >
-                {error}
-              </motion.div>
-            )}
-            
-            <div className="space-y-1">
-              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-md px-6"
+      >
+        <div className="py-8 md:py-0">
+          {/* Logo & Header */}
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-block mb-6">
+              <h1 className="text-3xl md:text-4xl font-light tracking-tighter text-white">
+                sajan<span className="font-bold text-[#f26522]">shah</span>
+              </h1>
+              <div className="w-12 h-1 bg-[#f26522] mx-auto mt-1"></div>
+            </Link>
+            <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
+            <p className="text-gray-500 text-sm font-light">Join the movement of human transformation.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
                 Full Name
               </label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
-                placeholder="John Doe"
-              />
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <User className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="Your Name"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
                 Email Address
               </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
-                placeholder="you@example.com"
-              />
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="name@example.com"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
                 Password
               </label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3.5 bg-white/[0.05] border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-all text-sm font-light tracking-wide"
-                placeholder="••••••••"
-              />
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 pr-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-white text-black text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all disabled:opacity-50 relative overflow-hidden group mt-4"
-            >
-              <span className="relative z-10">{isLoading ? 'Creating Identity...' : 'Initiate Registration'}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
-            </button>
+            <div className="pt-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-4 rounded-xl shadow-[0_10px_20px_rgba(242,101,34,0.2)] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+              >
+                {isLoading ? 'Creating Account...' : (
+                  <>
+                    Sign Up <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </motion.button>
+            </div>
           </form>
 
-          <div className="mt-8 text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-              Already a member?{' '}
-              <Link href="/login" className="text-white hover:underline font-bold transition-all ml-1">
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 text-sm font-light">
+              Already have an account?{' '}
+              <Link href="/login" className="text-white font-bold hover:text-[#f26522] transition-colors">
                 Sign In
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Subtle Footer */}
+        {/* Footer Branding */}
         <div className="mt-8 text-center">
-          <p className="text-[9px] uppercase tracking-[0.4em] text-gray-600 font-medium">
-            SECURE ACCESS • ELITE PRIVACY
+          <p className="text-gray-600 text-[10px] uppercase tracking-[0.3em] font-medium">
+            Transform Your Thinking. Transform Your Life.
           </p>
         </div>
       </motion.div>
     </div>
   );
 }
-

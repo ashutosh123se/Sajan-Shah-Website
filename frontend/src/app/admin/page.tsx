@@ -35,7 +35,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12" />
       </div>
     );
   }
@@ -75,6 +75,11 @@ export default function AdminDashboard() {
         <div className="bg-white/5 p-6 border border-white/10 hover:border-white/30 transition-all duration-300">
           <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Events</h3>
           <p className="text-4xl font-light text-white">{stats.totalEvents}</p>
+        </div>
+
+        <div className="bg-white/5 p-6 border border-white/10 hover:border-white/30 transition-all duration-300">
+          <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Total Leads</h3>
+          <p className="text-4xl font-light text-[#f26522]">{((stats as any).totalLeads || 0).toLocaleString()}</p>
         </div>
       </div>
 

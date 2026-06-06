@@ -16,26 +16,26 @@ export const ContactAddresses: React.FC = () => {
           <h2 className="text-4xl font-light tracking-tight">Global <span className="font-bold">Presence</span></h2>
         </div>
 
-        {/* Custom Grid Layout: 3 Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:grid-rows-2">
-          
-          {/* Column 1: Head Office (Spans 2 rows) */}
+        {/* Custom Grid Layout: 3 Columns, 2 Rows */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          {/* Column 1 - Top: Head Office */}
           <motion.div
             whileHover={{ y: -5 }}
             onClick={() => handleMapClick('Sajan Shah Foundation Ahmedabad')}
-            className="md:row-span-2 p-10 bg-white border border-[#f26522] shadow-sm flex flex-col justify-between cursor-pointer"
+            className="p-8 bg-[#f26522] border border-[#f26522] shadow-sm flex flex-col justify-between cursor-pointer text-white rounded-2xl"
           >
             <div>
-              <div className="flex items-center gap-3 mb-8 text-[#f26522]">
+              <div className="flex items-center gap-3 mb-6 text-white/90">
                 <MapPin className="w-5 h-5" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Head Office</span>
               </div>
-              <h4 className="text-2xl font-bold mb-6">Sajan Shah Foundation</h4>
-              <p className="text-gray-500 text-sm font-light leading-relaxed mb-8">
+              <h4 className="text-xl font-bold mb-4">Sajan Shah Foundation</h4>
+              <p className="text-white/80 text-sm font-light leading-relaxed mb-6">
                 8, Deepawali Centre, Opp. Old High Court, Income Tax Under Bridge, Ashram Road, Ahmedabad - 380014, Gujarat, India
               </p>
             </div>
-            <div className="text-[#f26522] text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+            <div className="text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
               View on Maps <span className="text-lg">→</span>
             </div>
           </motion.div>
@@ -44,7 +44,7 @@ export const ContactAddresses: React.FC = () => {
           <motion.div
             whileHover={{ y: -5 }}
             onClick={() => handleMapClick('Mittal Towers Nariman Point Mumbai')}
-            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer"
+            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer rounded-2xl"
           >
             <div>
               <div className="flex items-center gap-3 mb-6 text-[#f26522]">
@@ -65,7 +65,7 @@ export const ContactAddresses: React.FC = () => {
           <motion.div
             whileHover={{ y: -5 }}
             onClick={() => handleMapClick('Ahimsa Vishwa Bharti Old Rajinder Nagar')}
-            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer"
+            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer rounded-2xl"
           >
             <div>
               <div className="flex items-center gap-3 mb-6 text-[#f26522]">
@@ -82,11 +82,11 @@ export const ContactAddresses: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Column 2 - Bottom: New York */}
+          {/* Column 1 - Bottom: New York */}
           <motion.div
             whileHover={{ y: -5 }}
             onClick={() => handleMapClick('218 Webster Avenue Brooklyn New York')}
-            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer"
+            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer rounded-2xl"
           >
             <div>
               <div className="flex items-center gap-3 mb-6 text-[#f26522]">
@@ -103,11 +103,11 @@ export const ContactAddresses: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Column 3 - Bottom: Australia */}
+          {/* Column 2 - Bottom: Australia */}
           <motion.div
             whileHover={{ y: -5 }}
             onClick={() => handleMapClick('1A Launder Street Hawthorn Melbourne')}
-            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer"
+            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer rounded-2xl"
           >
             <div>
               <div className="flex items-center gap-3 mb-6 text-[#f26522]">
@@ -117,6 +117,27 @@ export const ContactAddresses: React.FC = () => {
               <h4 className="text-xl font-bold mb-4">Melbourne Office</h4>
               <p className="text-gray-500 text-sm font-light leading-relaxed mb-6">
                 1A Launder Street, Hawthorn, Melbourne, Victoria - 3122, Australia
+              </p>
+            </div>
+            <div className="text-[#f26522] text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+              View on Maps <span className="text-lg">→</span>
+            </div>
+          </motion.div>
+
+          {/* Column 3 - Bottom: Philippines */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            onClick={() => handleMapClick('58D The Rise, San Antonio, Makati, Philippines 1304')}
+            className="p-8 bg-white border border-gray-100 shadow-sm flex flex-col justify-between cursor-pointer rounded-2xl"
+          >
+            <div>
+              <div className="flex items-center gap-3 mb-6 text-[#f26522]">
+                <Globe className="w-5 h-5" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Philippines</span>
+              </div>
+              <h4 className="text-xl font-bold mb-4">Philippines Office</h4>
+              <p className="text-gray-500 text-sm font-light leading-relaxed mb-6">
+                58D The Rise, San Antonio, Makati, Philippines 1304
               </p>
             </div>
             <div className="text-[#f26522] text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">

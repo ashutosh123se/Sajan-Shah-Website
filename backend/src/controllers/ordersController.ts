@@ -3,7 +3,8 @@ import { sendSuccess, sendError } from '../utils/apiResponse';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { db } from '../utils/database';
-
+import { generateSetupToken, getSetupTokenExpiry } from '../utils/authUtils';
+import { EmailService } from '../services/emailService';
 import { getPaymentConfig } from '../utils/config';
 
 const getRazorpayInstance = async () => {
@@ -17,10 +18,45 @@ const getRazorpayInstance = async () => {
   });
 };
 
+const getOrCreateUser = async (email: string, name: string) => {
+  let user = await db.user.findUnique({ where: { email } });
+  let isNew = false;
+  let setupToken = null;
+
+  if (!user) {
+    setupToken = generateSetupToken();
+    user = await db.user.create({
+      data: {
+        email,
+        name,
+        passwordSetupToken: setupToken,
+        passwordSetupExpires: getSetupTokenExpiry(),
+        role: 'CUSTOMER'
+      }
+    });
+    isNew = true;
+  } else if (!user.passwordHash && !user.passwordSetupToken) {
+    setupToken = generateSetupToken();
+    user = await db.user.update({
+      where: { email },
+      data: {
+        passwordSetupToken: setupToken,
+        passwordSetupExpires: getSetupTokenExpiry()
+      }
+    });
+    isNew = true;
+  }
+
+  return { user, isNew, setupToken };
+};
+
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { items, userEmail, paymentMethod = 'RAZORPAY', shippingAddress, phone } = req.body;
+    const { items, userEmail, userName, paymentMethod = 'RAZORPAY', shippingAddress, phone } = req.body;
     
+    // Get or Create User
+    const { user, isNew, setupToken } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
+
     // Calculate total amount
     const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
     const amountPaise = Math.round(total * 100);
@@ -42,11 +78,16 @@ export const createOrder = async (req: Request, res: Response) => {
       rzpOrderId = rzpOrder.id;
     } else if (paymentMethod === 'COD') {
       orderStatus = 'PROCESSING'; // COD orders start as processing
+      
+      // For COD, if it's a new user, send setup email immediately
+      if (isNew && setupToken) {
+        await EmailService.sendPasswordSetupEmail(user.email, user.name, setupToken);
+      }
     }
     
     const order = await db.order.create({
       data: {
-        userEmail,
+        userEmail: user.email,
         amount: total,
         amountPaise,
         razorpayOrderId: rzpOrderId,
@@ -100,10 +141,16 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return sendError(res, 'Invalid payment signature', 400);
     }
     
-    await db.order.update({
+    const order = await db.order.update({
       where: { id: orderId },
-      data: { status: 'PAID', paymentId: razorpayPaymentId }
+      data: { status: 'PAID', paymentId: razorpayPaymentId },
+      include: { user: true }
     });
+
+    // If it's a new user (no password set), send setup email
+    if (!order.user.passwordHash && order.user.passwordSetupToken) {
+      await EmailService.sendPasswordSetupEmail(order.user.email, order.user.name, order.user.passwordSetupToken);
+    }
     
     sendSuccess(res, { orderId }, 'Payment verified successfully');
   } catch (error) {

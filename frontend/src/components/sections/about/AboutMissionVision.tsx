@@ -3,7 +3,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const AboutMissionVision: React.FC = () => {
+interface AboutMissionVisionProps {
+  content?: {
+    missionTitle?: string;
+    missionHeading?: string;
+    missionDescription?: string;
+    visionTitle?: string;
+    visionHeading?: string;
+    visionDescription?: string;
+  };
+}
+
+export const AboutMissionVision: React.FC<AboutMissionVisionProps> = ({ content }) => {
+  const data = {
+    missionTitle: content?.missionTitle || 'Mission',
+    missionHeading: content?.missionHeading || 'Igniting a global movement to inspire 1.2 billion young minds.',
+    missionDescription: content?.missionDescription || 'To think differently, act consciously, and create extraordinary impact in the world.',
+    visionTitle: content?.visionTitle || 'Vision',
+    visionHeading: content?.visionHeading || 'A world powered by clarity and awareness.',
+    visionDescription: content?.visionDescription || 'To build a world where individuals are not driven by pressure, but powered by a rewired mind.'
+  };
+
   return (
     <section className="py-24 bg-white text-black px-4 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -17,12 +37,11 @@ export const AboutMissionVision: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <h3 className="text-[#f26522] text-xs font-bold uppercase tracking-[0.3em]">Mission</h3>
-            <h2 className="text-3xl md:text-5xl font-light leading-tight">
-              Igniting a global movement to inspire <span className="font-bold">1.2 billion young minds.</span>
+            <h3 className="text-[#f26522] text-xs font-bold uppercase tracking-[0.3em]">{data.missionTitle}</h3>
+            <h2 className="text-3xl md:text-5xl font-light leading-tight" dangerouslySetInnerHTML={{ __html: data.missionHeading }}>
             </h2>
             <p className="text-gray-500 text-lg font-light leading-relaxed">
-              To think differently, act consciously, and create extraordinary impact in the world.
+              {data.missionDescription}
             </p>
           </motion.div>
 
@@ -34,12 +53,11 @@ export const AboutMissionVision: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-6 lg:border-l lg:border-gray-100 lg:pl-16"
           >
-            <h3 className="text-[#f26522] text-xs font-bold uppercase tracking-[0.3em]">Vision</h3>
-            <h2 className="text-3xl md:text-5xl font-light leading-tight">
-              A world powered by <span className="font-bold">clarity and awareness.</span>
+            <h3 className="text-[#f26522] text-xs font-bold uppercase tracking-[0.3em]">{data.visionTitle}</h3>
+            <h2 className="text-3xl md:text-5xl font-light leading-tight" dangerouslySetInnerHTML={{ __html: data.visionHeading }}>
             </h2>
             <p className="text-gray-500 text-lg font-light leading-relaxed">
-              To build a world where individuals are not driven by pressure, but powered by a rewired mind.
+              {data.visionDescription}
             </p>
           </motion.div>
 

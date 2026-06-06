@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12 -600" />
       </div>
     );
   }
