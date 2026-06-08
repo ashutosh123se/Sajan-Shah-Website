@@ -17,3 +17,8 @@ backend/.env
 frontend/.env
 backend/dist/
 frontend/.next/
+
+# Ignore local Docker files
+docker-compose.yml
+Dockerfile
+.dockerignore
