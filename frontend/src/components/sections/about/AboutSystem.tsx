@@ -131,9 +131,9 @@ export const AboutSystem: React.FC<AboutSystemProps> = ({ content }) => {
             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-[#f26522] mb-6">
               {data.outcomeTagline}
             </p>
-            <h3 className="text-3xl md:text-5xl font-black tracking-tighter leading-tight uppercase">
+            <h3 className="text-3xl md:text-5xl font-black tracking-tight md:tracking-tighter leading-tight uppercase">
               <span className="text-gray-500 font-light block mb-2 text-2xl md:text-4xl">Not temporary excitement.</span>
-              A&nbsp;&nbsp;&nbsp;&nbsp;PERMANENT&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#f26522]">SHIFT.</span>
+              <span className="inline-block tracking-widest md:tracking-normal whitespace-normal break-words">A PERMANENT <span className="text-[#f26522]">SHIFT.</span></span>
             </h3>
           </div>
         </motion.div>

@@ -377,7 +377,7 @@ export const ProductsMerchandise: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-[#111] border border-white/10 rounded-3xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row relative shadow-[0_0_50px_rgba(242,101,34,0.15)]"
+              className="bg-[#111] border border-white/10 rounded-3xl overflow-y-auto max-h-[95vh] md:max-h-[90vh] max-w-4xl w-full flex flex-col md:flex-row relative shadow-[0_0_50px_rgba(242,101,34,0.15)] scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
               onClick={(e) => e.stopPropagation()}
             >
 
@@ -421,7 +421,7 @@ export const ProductsMerchandise: React.FC = () => {
               </div>
 
               {/* Details section */}
-              <div className="w-full md:w-1/2 bg-[#111] relative overflow-hidden flex flex-col max-h-[85vh]">
+              <div className="w-full md:w-1/2 bg-[#111] relative overflow-hidden flex flex-col max-h-none md:max-h-[85vh]">
                 
                 {/* Fixed Watermark Background */}
                 <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.04] select-none">
@@ -438,6 +438,11 @@ export const ProductsMerchandise: React.FC = () => {
                     <button onClick={handleShare} className="hover:text-white transition-colors" title="Share">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                    </button>
+                    <button onClick={() => setSelectedProduct(null)} className="hover:text-white transition-colors" title="Close">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   </div>
