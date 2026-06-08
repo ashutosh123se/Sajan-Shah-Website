@@ -79,7 +79,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
       </div>
 
       {/* Content lower on the screen for better breathing room */}
-      <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto pt-48 md:pt-64 pb-12">
+      <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto pt-32 sm:pt-48 md:pt-64 pb-12">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -89,11 +89,11 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Faded white heading (opacity-60) to allow video textures to be primary */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-white/60 mb-10 leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white/60 mb-6 sm:mb-10 leading-[1.2] md:leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
               {slide.headline}
             </h1>
             {/* Faded subheadline (opacity-40) */}
-            <p className="text-xl md:text-2xl font-light text-white/40 mb-10 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl font-light text-white/40 mb-8 sm:mb-10 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
               {slide.subheadline}
             </p>
             {/* CTA Button */}

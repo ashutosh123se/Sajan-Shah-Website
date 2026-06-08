@@ -121,7 +121,7 @@ export const AppPromoModal: React.FC<AppPromoModalProps> = ({ isOpen, onClose })
                   {/* 3. End: Video */}
                   <div className="w-full relative">
                     <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 text-center">Promo Video</h3>
-                    <div className="relative w-full aspect-video bg-black/40 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+                    <div className="relative w-full h-[260px] sm:h-[350px] md:h-[450px] bg-black/40 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
                       <iframe
                         src="https://drive.google.com/file/d/1gpc5iO--EIejYrYK3jo06hIjZySa1eTW/preview"
                         title="Sajan Shah App Promo"
