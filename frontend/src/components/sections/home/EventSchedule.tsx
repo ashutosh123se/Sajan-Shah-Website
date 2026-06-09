@@ -181,75 +181,29 @@ function Badge({ card, idx }: { card: CardDef; idx: number }) {
             boxShadow: `0 18px 48px rgba(${card.glowRgb},0.5), 0 4px 16px rgba(0,0,0,0.4)`,
             transition: { duration: 0.2 },
           }}
-          className="block"
-          style={{ textDecoration: 'none' }}
+          className="block no-underline"
         >
           {/* Card shell */}
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: 'rgba(255,255,255,0.97)',
-              borderRadius: '18px',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3)',
-              border: '2.5px solid rgba(255,255,255,0.95)',
-              padding: '10px',
-              gap: '14px',
-              minWidth: '200px',
-              maxWidth: '240px',
-              backdropFilter: 'blur(16px)',
-              cursor: 'pointer',
-              position: 'relative',
-            }}
+            className="flex items-center bg-white/95 rounded-[12px] md:rounded-[18px] shadow-[0_8px_20px_rgba(0,0,0,0.35),0_2px_4px_rgba(0,0,0,0.2)] md:shadow-[0_12px_40px_rgba(0,0,0,0.45),0_2px_8px_rgba(0,0,0,0.3)] border-[1.5px] md:border-[2.5px] border-white/95 p-1.5 md:p-2.5 gap-2 md:gap-3.5 min-w-[120px] max-w-[160px] md:min-w-[200px] md:max-w-[240px] backdrop-blur-md cursor-pointer relative"
           >
-            {/* Brand icon block — rounded square, left side */}
+            {/* Brand icon block */}
             <div
-              style={{
-                ...iconBgStyle,
-                width: '64px',
-                height: '64px',
-                borderRadius: '14px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                padding: '14px',
-              }}
+              style={iconBgStyle}
+              className="w-10 h-10 md:w-16 md:h-16 rounded-[8px] md:rounded-[14px] flex items-center justify-center shrink-0 p-2 md:p-3.5"
             >
               <card.Icon />
             </div>
 
             {/* Text block */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '6px' }}>
-              {/* Handle / name */}
-              <span style={{
-                fontSize: '13px',
-                fontWeight: 700,
-                color: '#1a1a1a',
-                lineHeight: 1.2,
-                letterSpacing: '-0.01em',
-              }}>
+            <div className="flex flex-col justify-center pr-1 md:pr-1.5">
+              <span className="text-[9px] md:text-[13px] font-bold text-[#1a1a1a] leading-tight tracking-tight">
                 {card.handle}
               </span>
-              {/* Big stat number */}
-              <span style={{
-                fontSize: '26px',
-                fontWeight: 900,
-                color: '#0f0f0f',
-                lineHeight: 1.1,
-                letterSpacing: '-0.04em',
-                marginTop: '2px',
-              }}>
+              <span className="text-[16px] md:text-[26px] font-black text-[#0f0f0f] leading-none tracking-tight mt-0.5">
                 {card.stat}
               </span>
-              {/* Small label */}
-              <span style={{
-                fontSize: '11px',
-                fontWeight: 500,
-                color: '#888',
-                lineHeight: 1.2,
-                marginTop: '1px',
-              }}>
+              <span className="text-[8px] md:text-[11px] font-medium text-[#888] leading-tight mt-px">
                 {card.label}
               </span>
             </div>
@@ -257,18 +211,9 @@ function Badge({ card, idx }: { card: CardDef; idx: number }) {
 
           {/* Speech bubble tail */}
           {card.hasTail && (
-            <div style={{
-              position: 'absolute',
-              bottom: '-14px',
-              ...(tailLeft ? { left: '28px' } : {}),
-              ...(tailRight ? { right: '28px' } : {}),
-              width: 0,
-              height: 0,
-              borderLeft: '12px solid transparent',
-              borderRight: '12px solid transparent',
-              borderTop: '15px solid rgba(255,255,255,0.97)',
-              filter: 'drop-shadow(0 6px 4px rgba(0,0,0,0.15))',
-            }} />
+            <div 
+              className={`absolute -bottom-2 md:-bottom-[14px] w-0 h-0 border-l-[6px] md:border-l-[12px] border-r-[6px] md:border-r-[12px] border-t-[8px] md:border-t-[15px] border-x-transparent border-t-white/95 drop-shadow-[0_4px_3px_rgba(0,0,0,0.15)] ${tailLeft ? 'left-4 md:left-7' : ''} ${tailRight ? 'right-4 md:right-7' : ''}`}
+            />
           )}
         </motion.a>
       </motion.div>
@@ -324,45 +269,14 @@ export const EventSchedule: React.FC = () => {
             />
           </div>
 
-          {/* Floating badges — desktop only */}
-          <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ overflow: 'visible' }}>
+          {/* Floating badges — fully responsive */}
+          <div className="absolute inset-0 pointer-events-none" style={{ overflow: 'visible' }}>
             {CARDS.map((card, idx) => (
               <div key={card.platform} className="pointer-events-auto">
                 <Badge card={card} idx={idx} />
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Mobile fallback grid */}
-        <div className="mt-8 grid grid-cols-2 gap-3 md:hidden">
-          {CARDS.map((card) => {
-            const iconBgStyle =
-              typeof card.iconBg === 'string'
-                ? { background: card.iconBg }
-                : { background: `linear-gradient(160deg, ${card.iconBg.from}, ${card.iconBg.via}, ${card.iconBg.to})` };
-
-            return (
-              <a
-                key={card.platform}
-                href={card.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-white rounded-2xl p-3 shadow-lg active:scale-95 transition-transform"
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 p-2.5"
-                  style={iconBgStyle}
-                >
-                  <card.Icon />
-                </div>
-                <div>
-                  <p className="text-gray-800 font-black text-lg leading-tight">{card.stat}</p>
-                  <p className="text-gray-400 text-[10px] leading-tight">{card.label}</p>
-                </div>
-              </a>
-            );
-          })}
         </div>
 
       </div>

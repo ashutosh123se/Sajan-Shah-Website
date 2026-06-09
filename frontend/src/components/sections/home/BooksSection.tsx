@@ -5,6 +5,7 @@ export const BooksSection: React.FC = () => {
   const books = [
     {
       title: "You v/s You",
+      amazonLink: "https://www.amazon.in/s?k=Sajan+Shah+YOU+v%2Fs+YOU",
       image: "/You vs You.png",
       subtext: "A 100-Day Personal Transformation Challenge",
       description: "Not just a book, your personal mentor in paperback form. A 100-day transformation journey designed to help you outgrow your old self through powerful, action-driven tasks.",
@@ -24,6 +25,7 @@ export const BooksSection: React.FC = () => {
     },
     {
       title: "Studenting & Parenting",
+      amazonLink: "https://www.amazon.in/s?k=Sajan+Shah+STUDENTING+%26+PARENTING",
       image: "/Studenting & Parenting.png",
       subtext: "Build a Positive, Happy Home Culture",
       description: "A practical guide to transforming the relationship between students and parents in today’s fast-changing world. Structured with 100 chapters (50 for parents, 50 for students), this book creates a shared growth journey.",
@@ -41,6 +43,7 @@ export const BooksSection: React.FC = () => {
     },
     {
       title: "Untold Stories of Your Heroes",
+      amazonLink: "https://www.amazon.in/s?k=Sajan+Shah+UNTOLD+STORIES+OF+YOUR+HEROES",
       image: "/Untold Stories of Your Heroes.png",
       subtext: "100 Transformational Journeys to Inspire",
       description: "A powerful collection of 100 transformational stories of individuals who overcame challenges, broke barriers, and created impact. Across multiple fields, each story delivers lessons that drive real change.",
@@ -108,10 +111,10 @@ export const BooksSection: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <button className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-10 py-5 font-bold text-lg transition-colors inline-block tracking-wide shadow-lg">
-                  Order on Flipkart
-                </button>
+              <div className="mb-10 lg:mb-0">
+                <a href={book.amazonLink} target="_blank" rel="noopener noreferrer" className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-10 py-5 font-bold text-lg transition-colors inline-block tracking-wide shadow-lg">
+                  Order on Amazon
+                </a>
               </div>
             </div>
 
