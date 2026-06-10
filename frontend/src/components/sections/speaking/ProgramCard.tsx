@@ -9,16 +9,18 @@ interface ProgramCardProps {
   badges: string[];
   img: string;
   isFeatured?: boolean;
+  link?: string;
 }
 
-export const ProgramCard: React.FC<ProgramCardProps> = ({ name, pitch, badges, img, isFeatured }) => {
+export const ProgramCard: React.FC<ProgramCardProps> = ({ name, pitch, badges, img, isFeatured, link }) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       whileHover={{ y: -10 }}
-      className={`group relative h-[500px] rounded-[2.5rem] overflow-hidden border cursor-pointer shadow-2xl transition-all duration-500 ${
+      onClick={() => link && window.open(link, '_blank', 'noopener,noreferrer')}
+      className={`group relative h-[500px] rounded-[2.5rem] overflow-hidden border shadow-2xl transition-all duration-500 ${link ? 'cursor-pointer' : 'cursor-default'} ${
         isFeatured ? 'border-[#f26522]/50 scale-105 z-10' : 'border-gray-900 bg-black'
       }`}
     >

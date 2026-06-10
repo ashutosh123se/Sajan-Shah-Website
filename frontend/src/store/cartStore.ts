@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 interface Product {
   id: string;
   title: string;
+  name?: string;
   price: number;
   imageUrl: string;
   category: string;
@@ -83,12 +84,12 @@ export const useCartStore = create<CartState>()(
 
       getTotalItems: () => {
         const { items } = get();
-        return items.reduce((total, item) => total + item.quantity, 0);
+        return (items || []).reduce((total, item) => total + (item?.quantity || 0), 0);
       },
 
       getTotalPrice: () => {
         const { items } = get();
-        return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+        return (items || []).reduce((total, item) => total + ((item?.product?.price || 0) * (item?.quantity || 0)), 0);
       },
     }),
     {
