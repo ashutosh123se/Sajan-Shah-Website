@@ -253,7 +253,7 @@ export const PlantablePencilsModal: React.FC<PlantablePencilsModalProps> = ({ is
                         src="https://www.instagram.com/p/CubsaaQxCML/embed/?hidecaption=true"
                         className="absolute inset-0 w-[110%] h-[110%] -top-[5%] -left-[5%] border-0 pointer-events-auto"
                         scrolling="no"
-                        allowTransparency={true}
+                        allowtransparency="true"
                         allow="encrypted-media"
                       />
                     </div>

@@ -303,7 +303,7 @@ export const EthosGlobalModal: React.FC<EthosGlobalModalProps> = ({ isOpen, onCl
                         src="https://www.instagram.com/p/DOA9LXOkgsA/embed/?hidecaption=true"
                         className="absolute inset-0 w-full h-full border-0 scale-[1.3] origin-center pointer-events-auto"
                         scrolling="no"
-                        allowTransparency={true}
+                        allowtransparency="true"
                         allow="encrypted-media"
                       />
                     </div>
