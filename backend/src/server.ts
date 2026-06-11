@@ -43,7 +43,6 @@ app.use(cors({
     'https://www.sajanshah.com', 
     'https://sajanshah.com', 
     'https://qa.sajanshah.com',
-    'http://localhost:3001',
     process.env.FRONTEND_URL || 'http://localhost:3000'
   ],
   credentials: true

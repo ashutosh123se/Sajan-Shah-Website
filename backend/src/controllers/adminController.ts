@@ -31,31 +31,31 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     let totalPrograms = 0;
     if (catalogSection?.content) {
       const content = catalogSection.content as any;
-      if (content && Array.isArray(content.programs)) {
-        totalPrograms = content.programs.length || 0;
+      if (Array.isArray(content?.programs)) {
+        totalPrograms = content.programs.length;
       }
     }
 
     // Calculate revenue (sum of paid orders)
     const orders = await db.order.findMany({
-      where: { status: { in: ['PROCESSING', 'SHIPPED', 'DELIVERED'] } as any },
+      where: { status: 'PAID' as any },
       select: { amount: true }
-    }) || [];
-    const totalRevenue = orders.reduce((sum, order) => sum + (order?.amount || 0), 0);
+    });
+    const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
 
     sendSuccess(res, {
       stats: {
-        totalUsers: totalUsers || 0,
-        totalOrders: totalOrders || 0,
-        totalRevenue: totalRevenue || 0,
-        totalProducts: totalProducts || 0,
-        totalEvents: totalEvents || 0,
-        totalPrograms: totalPrograms || 0,
-        totalLeads: totalLeads || 0
+        totalUsers,
+        totalOrders,
+        totalRevenue,
+        totalProducts,
+        totalEvents,
+        totalPrograms,
+        totalLeads
       },
-      recentActivity: (recentOrders || []).map(order => ({
-        time: order?.createdAt ? new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
-        action: `New order #${order?.id?.slice?.(-5) || ''} by ${order?.user?.name || 'Customer'}`
+      recentActivity: recentOrders.map(order => ({
+        time: new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        action: `New order #${order.id.slice(-5)} by ${order.user?.name || 'Customer'}`
       }))
     });
   } catch (error) {
