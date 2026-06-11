@@ -5,9 +5,8 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.user.upsert({
     where: { email: 'ashutoshshekhar37@gmail.com' }, update: {},
-    create: { name: 'Super Admin', email: 'ashutoshshekhar37@gmail.com', passwordHash: await bcrypt.hash('ashutosh@1234sa', 12), role: 'SUPER_ADMIN' }
+    create: { name: 'Super Admin', email: 'ashutoshshekhar37@gmail.com', passwordHash: await bcrypt.hash('ashutosh@1234sa', 12), role: 'ADMIN' }
   });
 
-  console.log('✅ Database seeded successfully');
 }
-main().catch(console.error).finally(() => prisma.$disconnect());
+main().finally(() => prisma.$disconnect());
