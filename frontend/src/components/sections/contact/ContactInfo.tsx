@@ -32,15 +32,15 @@ export const ContactInfo: React.FC = () => {
           </div>
           <div className="flex justify-between items-center text-sm border-b border-white/5 pb-2">
             <span className="font-bold">Rika</span>
-            <span className="text-gray-300">+91 9426 861925</span>
+            <span className="text-gray-300">+91 9274849916</span>
           </div>
           <div className="flex justify-between items-center text-sm border-b border-white/5 pb-2">
             <span className="font-bold">Mittal</span>
-            <span className="text-gray-300">+91 7801986496</span>
+            <span className="text-gray-300">+91 9274839916</span>
           </div>
           <div className="flex justify-between items-center text-sm border-b border-white/5 pb-2">
             <span className="font-bold">Ruthika</span>
-            <span className="text-gray-300">+91 70439 53846</span>
+            <span className="text-gray-300">+91 9274859916</span>
           </div>
         </div>
       </div>
