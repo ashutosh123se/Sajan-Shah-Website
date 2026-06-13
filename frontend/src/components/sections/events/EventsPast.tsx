@@ -71,7 +71,7 @@ export default function EventsPast({ events }: { events?: any[] }) {
                   src={event.embedUrl}
                   className="absolute inset-0 w-full h-full border-0 scale-[1.4] origin-center pointer-events-auto"
                   scrolling="no"
-                  allowtransparency="true"
+                  allowTransparency={true}
                   allow="encrypted-media"
                 />
               </div>

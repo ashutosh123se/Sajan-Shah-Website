@@ -316,7 +316,7 @@ export const UVGlassesModal: React.FC<UVGlassesModalProps> = ({ isOpen, onClose 
                         src="https://www.instagram.com/p/C7TFMy3pQBt/embed/?hidecaption=true"
                         className="absolute inset-0 w-[110%] h-[110%] -top-[5%] -left-[5%] border-0 pointer-events-auto"
                         scrolling="no"
-                        allowtransparency="true"
+                        allowTransparency={true}
                         allow="encrypted-media"
                       />
                     </div>
