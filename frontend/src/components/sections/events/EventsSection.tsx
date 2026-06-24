@@ -41,9 +41,10 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     thumbnail: e.posterUrl || '/images/placeholder.jpg',
     isWebinar: isWebinar,
     topic: e.description || '',
-    isPast: e.isPast || new Date(e.eventDate) < new Date(),
+    isPast: e.isPast || new Date(e.eventDate).getTime() < new Date().setHours(0,0,0,0),
     isTop5: e.isTop5 || false,
-    tag: e.venue || 'Corporate'
+    tag: e.venue || 'Corporate',
+    buttonUrl: e.buttonUrl
   };
 };
 
