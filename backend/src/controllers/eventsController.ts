@@ -62,16 +62,17 @@ export const getEventById = async (req: Request, res: Response) => {
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
+    console.log("CREATE EVENT REQ BODY: ", req.body);
     const {
       title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
       webinarUrl, eventDate, city, venue, eventType, isPast,
-      isFree, price, capacity, isActive
+      isFree, price, capacity, isActive, buttonUrl
     } = req.body;
 
     const event = await db.event.create({
       data: {
         title,
-        slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        slug: slug || `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
         description,
         posterUrl,
         homepageImageUrl,
@@ -85,7 +86,8 @@ export const createEvent = async (req: Request, res: Response) => {
         isFree: isFree ?? true,
         price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : null,
         capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : null,
-        isActive: isActive ?? true
+        isActive: isActive ?? true,
+        buttonUrl
       }
     });
     sendSuccess(res, { event }, 'Event created successfully');
@@ -101,7 +103,7 @@ export const updateEvent = async (req: Request, res: Response) => {
     const {
       title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
       webinarUrl, eventDate, city, venue, eventType, isPast,
-      isFree, price, capacity, isActive
+      isFree, price, capacity, isActive, buttonUrl
     } = req.body;
 
     const event = await db.event.update({
@@ -122,7 +124,8 @@ export const updateEvent = async (req: Request, res: Response) => {
         isFree,
         price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
         capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
-        isActive
+        isActive,
+        buttonUrl
       }
     });
     sendSuccess(res, { event }, 'Event updated successfully');
