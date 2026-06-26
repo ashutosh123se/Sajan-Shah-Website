@@ -19,37 +19,14 @@ export const ProductsHero: React.FC = () => {
         <img
           src="/products.png"
           alt="Products Background"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-contain object-top md:object-cover md:object-center opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a]/80"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center w-full">
-        <div className="text-center mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-wrap justify-center items-center gap-2 md:gap-4 mb-4 md:mb-6"
-          >
-            {[''].map((item, index) => (
-              <React.Fragment key={item}>
-                <span className="text-gray-300 uppercase tracking-widest md:tracking-[0.3em] text-xs md:text-sm font-black drop-shadow-md">
-                  {item}
-                </span>
-                {index < 2 && <span className="text-white/30 hidden sm:inline">|</span>}
-              </React.Fragment>
-            ))}
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl sm:text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter uppercase drop-shadow-2xl"
-          >
-            Explore <span className="text-[#f26522]">Now</span> →
-          </motion.h1>
+        {/* Spacer to preserve the layout where the text used to be */}
+        <div className="text-center mb-24 h-32 md:h-48">
         </div>
 
         {/* Overlapping Stats Box */}
