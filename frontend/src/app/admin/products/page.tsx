@@ -80,7 +80,7 @@ export default function AdminProductsPage() {
     try {
       setLoading(true);
       const [prodRes, slotsRes] = await Promise.all([
-        api.get('/v1/products'),
+        api.get('/v1/admin/products'),
         api.get('/v1/admin/products/featured-slots'),
       ]);
       setProducts(prodRes.data.data.products || []);
@@ -567,7 +567,6 @@ export default function AdminProductsPage() {
                 <div className="md:col-span-2">
                   <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Full Description (Product Page)</label>
                   <textarea 
-                    required 
                     value={formData.description} 
                     onChange={(e) => setFormData({...formData, description: e.target.value})} 
                     className="w-full bg-black border border-white/10 text-white px-4 py-3 h-32 focus:border-[#f26522] focus:outline-none resize-none"
@@ -582,7 +581,6 @@ export default function AdminProductsPage() {
                       <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Amazon Buy URL</label>
                       <input 
                         type="url" 
-                        required 
                         value={formData.buy_url_amazon} 
                         onChange={(e) => setFormData({...formData, buy_url_amazon: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
@@ -593,7 +591,6 @@ export default function AdminProductsPage() {
                       <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Flipkart Buy URL</label>
                       <input 
                         type="url" 
-                        required 
                         value={formData.buy_url_flipkart} 
                         onChange={(e) => setFormData({...formData, buy_url_flipkart: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
@@ -607,7 +604,6 @@ export default function AdminProductsPage() {
                       <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Price (INR)</label>
                       <input 
                         type="number" 
-                        required 
                         value={formData.price} 
                         onChange={(e) => setFormData({...formData, price: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
@@ -618,7 +614,6 @@ export default function AdminProductsPage() {
                       <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Internal Buy URL</label>
                       <input 
                         type="url" 
-                        required 
                         value={formData.buy_url_internal} 
                         onChange={(e) => setFormData({...formData, buy_url_internal: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"

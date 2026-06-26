@@ -66,16 +66,14 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
       {/* Loopable Background Video */}
       <div className="absolute inset-0 z-0 bg-black">
-        <video
-          className="w-full h-full object-cover opacity-85"
-          src="/sajan_hero.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
+        <iframe
+          className="w-full h-full object-cover opacity-40 pointer-events-none scale-150 md:scale-125"
+          src="https://player.vimeo.com/video/1204461566?background=1"
+          allow="autoplay; fullscreen"
+          frameBorder="0"
         />
-        {/* Soft bottom-to-top dark overlay to make text pop while keeping the video clear */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
+        {/* Stronger bottom-to-top dark overlay to make text pop while keeping the video clear */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/50 to-black/30 z-10 pointer-events-none" />
       </div>
 
       {/* Content lower on the screen for better breathing room */}
@@ -88,12 +86,12 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Faded white heading (opacity-60) to allow video textures to be primary */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white/60 mb-6 sm:mb-10 leading-[1.2] md:leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+            {/* Solid white heading to stand out against the faded video */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 sm:mb-10 leading-[1.2] md:leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
               {slide.headline}
             </h1>
             {/* Faded subheadline (opacity-40) */}
-            <p className="text-lg sm:text-xl md:text-2xl font-light text-white/40 mb-8 sm:mb-10 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl font-medium text-white/90 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow-lg">
               {slide.subheadline}
             </p>
             {/* CTA Button */}

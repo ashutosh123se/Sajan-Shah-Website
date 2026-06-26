@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '@/lib/api';
 
 interface BulkOrderModalProps {
   isOpen: boolean;
@@ -21,17 +22,30 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [isError, setIsError] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setIsError(false);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const response = await api.post('/leads', {
+        name: formData.fullName || formData.organization || 'Unknown Bulk Order',
+        email: formData.email,
+        phone: formData.phone,
+        source: 'Bulk Order',
+        data: {
+          organization: formData.organization,
+          quantity: formData.quantity,
+          requirements: formData.requirements
+        }
+      });
+      
       setIsSuccess(true);
       
       // Auto close after 3 seconds
@@ -40,7 +54,12 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
         setFormData({ fullName: '', organization: '', email: '', phone: '', quantity: '', requirements: '' });
         onClose();
       }, 3000);
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      setIsError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -245,6 +264,10 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
                         Additional Requirements
                       </label>
                     </div>
+
+                    {isError && (
+                      <p className="text-red-500 font-bold text-center text-sm">Failed to submit inquiry. Please try again.</p>
+                    )}
 
                     {/* Submit Button */}
                     <button
