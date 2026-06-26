@@ -116,7 +116,7 @@ export const ProductsBooks: React.FC = () => {
         const dbBooks = dbProducts.filter((p: any) => p.category === 'book');
         
         if (dbBooks.length > 0) {
-          setBooksList(dbBooks.map((b: any) => ({
+          const mappedDb = dbBooks.map((b: any) => ({
             id: b.id,
             name: b.name,
             subtitle: b.short_description || 'A Book by Sajan Shah',
@@ -126,7 +126,12 @@ export const ProductsBooks: React.FC = () => {
             buy_url_flipkart: b.buy_url_flipkart,
             buy_url_amazon: b.buy_url_amazon,
             is_featured: b.is_featured,
-          })));
+          }));
+          const dbNames = new Set(mappedDb.map((b: BookProduct) => b.name.toLowerCase()));
+          setBooksList([
+            ...mappedDb,
+            ...staticBooks.filter(s => !dbNames.has(s.name.toLowerCase())),
+          ]);
         } else {
           setBooksList(staticBooks);
         }

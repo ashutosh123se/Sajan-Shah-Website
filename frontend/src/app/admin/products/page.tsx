@@ -80,7 +80,7 @@ export default function AdminProductsPage() {
     try {
       setLoading(true);
       const [prodRes, slotsRes] = await Promise.all([
-        api.get('/v1/products'),
+        api.get('/v1/admin/products'),
         api.get('/v1/admin/products/featured-slots'),
       ]);
       setProducts(prodRes.data.data.products || []);
@@ -579,10 +579,9 @@ export default function AdminProductsPage() {
                 {formData.category === 'book' ? (
                   <>
                     <div className="md:col-span-2">
-                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Amazon Buy URL</label>
+                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Amazon Buy URL (Optional)</label>
                       <input 
                         type="url" 
-                        required 
                         value={formData.buy_url_amazon} 
                         onChange={(e) => setFormData({...formData, buy_url_amazon: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
@@ -590,10 +589,9 @@ export default function AdminProductsPage() {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Flipkart Buy URL</label>
+                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Flipkart Buy URL (Optional)</label>
                       <input 
                         type="url" 
-                        required 
                         value={formData.buy_url_flipkart} 
                         onChange={(e) => setFormData({...formData, buy_url_flipkart: e.target.value})} 
                         className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"

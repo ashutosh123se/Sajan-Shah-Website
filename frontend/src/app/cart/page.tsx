@@ -12,7 +12,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function CartPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
-  const { items, updateItemQuantity, removeFromCart, getTotalPrice, clearAllItems } = useCart();
+  const cartState = useCart();
+  const items = cartState.items || [];
+  const { updateItemQuantity, removeFromCart, getTotalPrice, clearAllItems } = cartState;
   
   const [mounted, setMounted] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
@@ -197,34 +199,38 @@ export default function CartPage() {
                   
                   {items.length > 0 ? (
                     <div className="divide-y divide-white/5">
-                      {items.map(item => (
-                        <div key={item.product.id} className="py-8 first:pt-0 flex gap-8 group">
+                      {items.map(item => {
+                        const product = item?.product;
+                        if (!product) return null;
+                        
+                        return (
+                        <div key={product.id} className="py-8 first:pt-0 flex gap-8 group">
                           <div className="w-32 h-40 bg-white/[0.03] overflow-hidden relative border border-white/5">
-                            <img src={item.product.imageUrl} alt={item.product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                           </div>
                           <div className="flex-1 flex flex-col justify-between py-2">
                             <div className="flex justify-between">
                               <div>
-                                <h3 className="text-2xl font-black uppercase tracking-tighter mb-1">{item.product.title}</h3>
-                                <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em]">{item.product.category}</p>
+                                <h3 className="text-2xl font-black uppercase tracking-tighter mb-1">{product.title || product.name || 'Unknown Product'}</h3>
+                                <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em]">{product.category || 'Product'}</p>
                               </div>
-                              <button onClick={() => removeFromCart(item.product.id)} className="text-gray-600 hover:text-[#f26522] transition-colors h-fit p-1" title="Remove item">
+                              <button onClick={() => removeFromCart(product.id)} className="text-gray-600 hover:text-[#f26522] transition-colors h-fit p-1" title="Remove item">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                               </button>
                             </div>
                             
                             <div className="flex justify-between items-center mt-8">
                               <div className="flex items-center bg-white/[0.03] border border-white/10 px-1 py-1">
-                                <button onClick={() => updateItemQuantity(item.product.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">-</button>
+                                <button onClick={() => updateItemQuantity(product.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">-</button>
                                 <span className="w-10 text-center text-xs font-black tracking-tighter">{item.quantity}</span>
-                                <button onClick={() => updateItemQuantity(item.product.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">+</button>
+                                <button onClick={() => updateItemQuantity(product.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white/10 transition-colors">+</button>
                               </div>
-                              <div className="text-2xl font-light tracking-tighter">₹{(item.product.price * item.quantity).toLocaleString()}</div>
+                              <div className="text-2xl font-light tracking-tighter">₹{((product.price || 0) * (item.quantity || 1)).toLocaleString()}</div>
                             </div>
                           </div>
                         </div>
-                      ))}
+                      )})}
                     </div>
                   ) : (
                     <div className="py-32 text-center">

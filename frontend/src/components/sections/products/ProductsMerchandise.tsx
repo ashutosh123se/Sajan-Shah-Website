@@ -206,7 +206,7 @@ export const ProductsMerchandise: React.FC = () => {
         const dbMerch = dbProducts.filter((p: any) => p.category === 'merchandise');
 
         if (dbMerch.length > 0) {
-          setMerchList(dbMerch.map((m: any) => ({
+          const mappedDb = dbMerch.map((m: any) => ({
             id: m.id,
             name: m.name,
             subtitle: m.short_description || 'Exclusive Merchandise',
@@ -214,7 +214,12 @@ export const ProductsMerchandise: React.FC = () => {
             image: m.image_homepage || m.image_product_page || 'https://placehold.co/600x600/0a0a0a/f26522?text=MERCHANDISE',
             buy_url_internal: m.buy_url_internal || '#',
             price: m.price !== null ? Number(m.price) : 499,
-          })));
+          }));
+          const dbNames = new Set(mappedDb.map((m: MerchProduct) => m.name.toLowerCase()));
+          setMerchList([
+            ...mappedDb,
+            ...staticMerchandise.filter(s => !dbNames.has(s.name.toLowerCase())),
+          ]);
         } else {
           setMerchList(staticMerchandise);
         }

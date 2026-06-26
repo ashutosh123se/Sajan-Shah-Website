@@ -112,8 +112,13 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs bg-white/5 border border-white/10 px-2 py-1 uppercase tracking-tighter">
-                        {lead.source || 'Unknown'}
+                        {(lead.source || 'Unknown').replace(/-/g, ' ')}
                       </span>
+                      {lead.data && typeof lead.data === 'object' && (
+                        <div className="text-[10px] text-gray-500 mt-1 max-w-[200px] truncate">
+                          {lead.data.organization || lead.data.quantity ? `Qty: ${lead.data.quantity || '-'}` : ''}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <select

@@ -57,7 +57,7 @@ export const ProductsCourses: React.FC = () => {
         const dbCourses = dbProducts.filter((p: any) => p.category === 'course');
         
         if (dbCourses.length > 0) {
-          setCoursesList(dbCourses.map((c: any) => ({
+          const mappedDb = dbCourses.map((c: any) => ({
             id: c.id,
             name: c.name,
             subtitle: c.short_description || 'A Premium Course',
@@ -65,7 +65,12 @@ export const ProductsCourses: React.FC = () => {
             image: c.image_product_page || c.image_homepage || 'https://placehold.co/800x600/0a0a0a/3b82f6?text=COURSE',
             buy_url_internal: c.buy_url_internal || '#',
             isSoldOut: !c.is_active,
-          })));
+          }));
+          const dbNames = new Set(mappedDb.map((c: any) => c.name.toLowerCase()));
+          setCoursesList([
+            ...mappedDb,
+            ...staticCourses.filter(s => !dbNames.has(s.name.toLowerCase())),
+          ]);
         } else {
           setCoursesList(staticCourses);
         }
