@@ -23,12 +23,14 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
 
   const tagline = content?.tagline || "Experience The Energy";
   const title = content?.title || "Witness the <span class=\"font-bold\">Transformation.</span>";
-  const videoUrl = content?.videoUrl || "/sajan_intro.mp4";
+  const videoUrl = content?.videoUrl || "https://vimeo.com/1204462539";
   const quote = content?.quote || "Sajan is doing commendable work for the development of the country. I really appreciate his efforts and dedication towards building the next generation. Keep up the good work.";
   const quoteAuthor = content?.quoteAuthor || "His Holiness Dalai Lama, Spiritual Leader";
 
   const isYoutube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
   const videoId = isYoutube ? getYoutubeId(videoUrl) : '';
+  const isVimeo = videoUrl.includes('vimeo.com');
+  const vimeoId = isVimeo ? (videoUrl.match(/vimeo\.com\/(\d+)/)?.[1] || '1204462539') : '';
 
   // Handle body scroll locking
   React.useEffect(() => {
@@ -67,6 +69,20 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
                 src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3`}
                 className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
                 allow="autoplay; encrypted-media"
+                frameBorder="0"
+              />
+            ) : isVimeo ? (
+              <iframe
+                src={`https://player.vimeo.com/video/${vimeoId}?background=1`}
+                className="w-full h-[150%] -translate-y-[15%] scale-110 md:scale-125 object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 pointer-events-none"
+                allow="autoplay; fullscreen"
+                frameBorder="0"
+              />
+            ) : videoUrl.includes('drive.google.com') ? (
+              <iframe
+                src="https://drive.google.com/file/d/1gjMl_zHgN2j_YJM9xvq6UqsbF9xfPr-4/preview?autoplay=1&mute=1&loop=1"
+                className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 pointer-events-none scale-110"
+                allow="autoplay; fullscreen"
                 frameBorder="0"
               />
             ) : (
@@ -126,6 +142,21 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ content }) => {
                   title="Sajan Shah Transformation"
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : isVimeo ? (
+                <iframe
+                  src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&title=0&byline=0&portrait=0`}
+                  className="w-full h-full rounded-sm"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  frameBorder="0"
+                  allowFullScreen
+                />
+              ) : videoUrl.includes('drive.google.com') ? (
+                <iframe
+                  src={`https://drive.google.com/file/d/1gjMl_zHgN2j_YJM9xvq6UqsbF9xfPr-4/preview`}
+                  className="w-full h-full rounded-sm"
+                  allow="autoplay"
                   allowFullScreen
                 />
               ) : (

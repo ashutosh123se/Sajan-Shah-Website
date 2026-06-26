@@ -11,6 +11,7 @@ import {
   getFeaturedSlots,
   uploadHomepageImage,
   uploadProductImage,
+  getAllProductsAdmin,
 } from '../controllers/v1ProductsController';
 import { verifyToken, requireRole } from '../middleware/verifyToken';
 
@@ -26,6 +27,7 @@ router.get('/products/featured', getFeaturedProducts);
 router.get('/products/:slug', getProductBySlug);
 
 // ── Admin Endpoints ─────────────────────────────────────────────────────────
+router.get('/admin/products', ...adminAuth, getAllProductsAdmin);
 router.post('/admin/products', ...adminAuth, createProduct);
 router.put('/admin/products/:id', ...adminAuth, updateProduct);
 router.delete('/admin/products/:id', ...adminAuth, deleteProduct);

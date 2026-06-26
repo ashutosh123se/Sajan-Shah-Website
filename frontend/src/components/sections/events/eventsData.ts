@@ -18,6 +18,7 @@ export interface SajanEvent {
   isPast?: boolean;
   isTop5?: boolean;
   tag?: string;
+  buttonUrl?: string;
 }
 
 export const currentDate = new Date();

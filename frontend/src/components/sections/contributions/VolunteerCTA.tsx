@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Check } from 'lucide-react';
+import api from '@/lib/api';
 
 interface VolunteerCTAProps {
   content?: {
@@ -20,6 +21,53 @@ export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
       return <span dangerouslySetInnerHTML={{ __html: heading }} />;
     }
     return heading;
+  };
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    organization: '',
+    role: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus('idle');
+
+    try {
+      const response = await api.post('/leads', {
+        name: formData.name || 'Unknown Ambassador',
+        email: formData.email,
+        phone: formData.phone,
+        source: 'Ambassador Application',
+        data: {
+          organization: formData.organization,
+          role: formData.role
+        }
+      });
+
+      setStatus('success');
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        organization: '',
+        role: ''
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,21 +101,25 @@ export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
         </div>
 
         <div className="lg:w-1/2 w-full">
-          <form className="bg-[#0a0a0a] p-8 md:p-12 rounded-[2rem] border border-gray-800 space-y-4" onSubmit={e => e.preventDefault()}>
+          <form className="bg-[#0a0a0a] p-8 md:p-12 rounded-[2rem] border border-gray-800 space-y-4" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" placeholder="Your Name" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
-              <input type="email" placeholder="Email Address" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
+              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your Name" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
+              <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email Address" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
             </div>
-            <input type="tel" placeholder="Phone Number" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
-            <input type="text" placeholder="Organization (Optional)" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" />
-            <select className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none appearance-none text-gray-400" required>
-              <option value="">Select Role</option>
-              <option value="volunteer">Volunteer</option>
-              <option value="csr">CSR Partner</option>
-              <option value="esg">ESG Partner</option>
+            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
+            <input type="text" name="organization" value={formData.organization} onChange={handleChange} placeholder="Organization (Optional)" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" />
+            <select name="role" value={formData.role} onChange={handleChange} className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none appearance-none text-gray-400" required>
+              <option value="" className="bg-[#0a0a0a] text-white">Select Role</option>
+              <option value="volunteer" className="bg-[#0a0a0a] text-white">Volunteer</option>
+              <option value="csr" className="bg-[#0a0a0a] text-white">CSR Partner</option>
+              <option value="esg" className="bg-[#0a0a0a] text-white">ESG Partner</option>
             </select>
-            <button type="submit" className="w-full bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs">
-              {buttonText}
+
+            {status === 'success' && <p className="text-green-500 font-bold px-2">Successfully submitted! Thank you.</p>}
+            {status === 'error' && <p className="text-red-500 font-bold px-2">Failed to submit. Please try again.</p>}
+
+            <button type="submit" disabled={loading} className="w-full bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? 'Submitting...' : buttonText}
             </button>
           </form>
         </div>

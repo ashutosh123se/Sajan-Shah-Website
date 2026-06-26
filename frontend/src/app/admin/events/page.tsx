@@ -22,6 +22,7 @@ interface Event {
   capacity?: number;
   thumbnailUrl?: string;
   homepageImageUrl?: string;
+  buttonUrl?: string;
   isActive: boolean;
 }
 
@@ -74,6 +75,7 @@ export default function AdminEventsPage() {
     capacity: '',
     thumbnailUrl: '',
     homepageImageUrl: '',
+    buttonUrl: '',
     isActive: true,
   });
 
@@ -124,7 +126,7 @@ export default function AdminEventsPage() {
     try {
       const payload = {
         title: formData.title,
-        slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        slug: formData.slug || `${formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
         description: formData.description,
         eventDate: new Date(formData.eventDate).toISOString(),
         eventType: formData.eventType,
@@ -135,6 +137,7 @@ export default function AdminEventsPage() {
         capacity: formData.capacity ? Number(formData.capacity) : null,
         posterUrl: formData.thumbnailUrl || 'https://via.placeholder.com/800x600',
         homepageImageUrl: formData.homepageImageUrl || '',
+        buttonUrl: formData.buttonUrl || null,
         cloudinaryPublicId: 'default',
         webinarUrl: 'https://zoom.us',
         isActive: formData.isActive,
@@ -171,6 +174,7 @@ export default function AdminEventsPage() {
         capacity: event.capacity?.toString() || '',
         thumbnailUrl: (event as any).posterUrl || event.thumbnailUrl || '',
         homepageImageUrl: event.homepageImageUrl || '',
+        buttonUrl: event.buttonUrl || '',
         isActive: event.isActive,
       });
     } else {
@@ -189,6 +193,7 @@ export default function AdminEventsPage() {
         capacity: '',
         thumbnailUrl: '',
         homepageImageUrl: '',
+        buttonUrl: '',
         isActive: true,
       });
     }
@@ -523,6 +528,11 @@ export default function AdminEventsPage() {
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Home Page Image URL (Carousel Size)</label>
                   <input type="text" value={formData.homepageImageUrl} onChange={(e) => setFormData({...formData, homepageImageUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/home-slider.jpg" />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event URL (For View Details Button)</label>
+                  <input type="text" value={formData.buttonUrl} onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. https://rzp.io/l/event-ticket" />
                 </div>
 
                 <div className="col-span-2 flex items-center space-x-6 pt-2">

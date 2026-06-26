@@ -173,7 +173,7 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
             monthEvents.map(event => (
               <div key={event.id} className="flex flex-col">
                 <span className="text-sm font-bold tracking-tight mb-1">
-                  {format(event.date, 'd')}{event.endDate ? `-${format(event.endDate, 'd')}` : ''}
+                  {format(event.date, 'd MMM, HH:mm')}{event.endDate ? ` - ${format(event.endDate, 'd MMM, HH:mm')}` : ''}
                 </span>
                 <span className="text-sm text-gray-300 mb-2 truncate" title={event.title}>{event.title}</span>
                 <div className="flex items-center text-[10px] uppercase font-bold tracking-wider text-gray-500 mb-3">
@@ -283,13 +283,17 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                     </div>
                     <h3 className="text-xl font-bold mb-4 line-clamp-2">{event.title}</h3>
                     <div className="space-y-2 mb-6 text-sm text-gray-300">
-                      <div className="flex items-center"><CalendarIcon className="w-4 h-4 mr-3 text-brand-orange" /> {format(event.date, 'dd MMM yyyy')} {event.endDate && `- ${format(event.endDate, 'dd MMM yyyy')}`}</div>
+                      <div className="flex items-center"><CalendarIcon className="w-4 h-4 mr-3 text-brand-orange" /> {format(event.date, 'dd MMM yyyy, HH:mm')} {event.endDate && `- ${format(event.endDate, 'dd MMM yyyy, HH:mm')}`}</div>
                       <div className="flex items-center"><MapPin className="w-4 h-4 mr-3 text-brand-orange" /> {event.city}</div>
                       <div className="flex items-center"><CheckCircle2 className="w-4 h-4 mr-3 text-brand-orange" /> {event.availability}</div>
                     </div>
                     <Button 
                       onClick={() => {
-                        document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' });
+                        if (event.buttonUrl) {
+                          window.open(event.buttonUrl, '_blank');
+                        } else {
+                          document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' });
+                        }
                       }}
                       className="w-full bg-white text-black hover:bg-brand-orange hover:text-white"
                     >

@@ -56,7 +56,7 @@ export const createLead = async (req: Request, res: Response) => {
         email,
         phone,
         source,
-        data: data || {}
+        data: data ? (typeof data === 'string' ? data : JSON.stringify(data)) : null
       }
     });
 
