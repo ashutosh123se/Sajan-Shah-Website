@@ -1,19 +1,22 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { db } from '../utils/database';
 
-const prisma = new PrismaClient();
+const mapArticle = (article: any) => ({
+  ...article,
+  thumbnail: article.imageUrl,
+});
 
 // Get all active press articles
 export const getArticles = async (req: Request, res: Response) => {
   try {
-    const articles = await prisma.pressArticle.findMany({
+    const articles = await db.pressArticle.findMany({
       where: { isActive: true },
       orderBy: { date: 'desc' }
     });
 
     res.status(200).json({
       success: true,
-      data: { articles }
+      data: { articles: articles.map(mapArticle) }
     });
   } catch (error: any) {
     console.error('Get Articles Error:', error);
@@ -24,13 +27,13 @@ export const getArticles = async (req: Request, res: Response) => {
 // Get all press articles (for admin)
 export const getAllArticles = async (req: Request, res: Response) => {
   try {
-    const articles = await prisma.pressArticle.findMany({
+    const articles = await db.pressArticle.findMany({
       orderBy: { date: 'desc' }
     });
 
     res.status(200).json({
       success: true,
-      data: { articles }
+      data: { articles: articles.map(mapArticle) }
     });
   } catch (error: any) {
     console.error('Get All Articles Error:', error);
@@ -42,7 +45,7 @@ export const getAllArticles = async (req: Request, res: Response) => {
 export const getArticleById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const article = await prisma.pressArticle.findUnique({
+    const article = await db.pressArticle.findUnique({
       where: { id }
     });
 
@@ -52,7 +55,7 @@ export const getArticleById = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      data: { article }
+      data: { article: mapArticle(article) }
     });
   } catch (error: any) {
     console.error('Get Article Error:', error);
@@ -63,13 +66,22 @@ export const getArticleById = async (req: Request, res: Response) => {
 // Create new article
 export const createArticle = async (req: Request, res: Response) => {
   try {
-    const { title, source, thumbnail, url, date, isActive } = req.body;
+    const { title, source, thumbnail, imageUrl, url, date, isActive } = req.body;
 
-    const newArticle = await prisma.pressArticle.create({
+    if (!title || !source || !url || !date) {
+      return res.status(400).json({ success: false, error: 'Title, source, URL, and date are required.' });
+    }
+
+    const resolvedImageUrl = imageUrl || thumbnail;
+    if (!resolvedImageUrl) {
+      return res.status(400).json({ success: false, error: 'Article image is required.' });
+    }
+
+    const newArticle = await db.pressArticle.create({
       data: {
         title,
         source,
-        thumbnail,
+        imageUrl: resolvedImageUrl,
         url,
         date: new Date(date),
         isActive: isActive ?? true
@@ -78,7 +90,7 @@ export const createArticle = async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      data: { article: newArticle }
+      data: { article: mapArticle(newArticle) }
     });
   } catch (error: any) {
     console.error('Create Article Error:', error);
@@ -90,14 +102,16 @@ export const createArticle = async (req: Request, res: Response) => {
 export const updateArticle = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const { title, source, thumbnail, url, date, isActive } = req.body;
+    const { title, source, thumbnail, imageUrl, url, date, isActive } = req.body;
 
-    const updatedArticle = await prisma.pressArticle.update({
+    const resolvedImageUrl = imageUrl || thumbnail;
+
+    const updatedArticle = await db.pressArticle.update({
       where: { id },
       data: {
         title,
         source,
-        thumbnail,
+        ...(resolvedImageUrl && { imageUrl: resolvedImageUrl }),
         url,
         ...(date && { date: new Date(date) }),
         isActive
@@ -106,7 +120,7 @@ export const updateArticle = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      data: { article: updatedArticle }
+      data: { article: mapArticle(updatedArticle) }
     });
   } catch (error: any) {
     console.error('Update Article Error:', error);
@@ -119,7 +133,7 @@ export const deleteArticle = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
 
-    await prisma.pressArticle.delete({
+    await db.pressArticle.delete({
       where: { id }
     });
 

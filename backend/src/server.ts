@@ -29,6 +29,7 @@ import contributionsPageRoutes from './routes/contributionsPage';
 import v1ProductsRoutes from './routes/v1Products';
 import speakingRoutes from './routes/speaking';
 import pressRoutes from './routes/press';
+import uploadRoutes from './routes/upload';
 
 // Load environment variables
 dotenv.config();
@@ -43,6 +44,7 @@ app.use(cors({
     'https://www.sajanshah.com', 
     'https://sajanshah.com', 
     'https://qa.sajanshah.com',
+    'http://localhost:3001',
     process.env.FRONTEND_URL || 'http://localhost:3000'
   ],
   credentials: true
@@ -75,6 +77,7 @@ app.use('/api/contributions-page', contributionsPageRoutes);
 app.use('/api/v1', v1ProductsRoutes);
 app.use('/api/speaking', speakingRoutes);
 app.use('/api/press', pressRoutes);
+app.use('/api/upload', uploadRoutes);
 
 
 // Health check

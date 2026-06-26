@@ -32,7 +32,10 @@ export const getMemberById = async (req: Request, res: Response) => {
 
 export const createMember = async (req: Request, res: Response) => {
   try {
-    const memberData = req.body;
+    const memberData = {
+      ...req.body,
+      photoUrl: req.body.photoUrl || '/LOGO.png',
+    };
     const member = await db.member.create({ data: memberData });
     sendSuccess(res, { member }, 'Member created successfully');
   } catch (error) {
