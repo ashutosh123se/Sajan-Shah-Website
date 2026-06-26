@@ -70,7 +70,13 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
               
               <div className="flex flex-wrap items-center gap-x-10 gap-y-6 mt-auto">
                 <Button 
-                  onClick={() => document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => {
+                    if (webinar.buttonUrl) {
+                      window.open(webinar.buttonUrl, '_blank');
+                    } else {
+                      document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="rounded-full bg-white text-black hover:bg-brand-orange hover:text-white font-black px-10 py-4 uppercase tracking-widest text-xs transition-all shadow-lg hover:shadow-brand-orange/20"
                 >
                   Learn More
@@ -84,7 +90,7 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
                   
                   <div>
                     <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Time</div>
-                    <div className="font-bold text-sm text-gray-200">10:00 AM IST</div>
+                    <div className="font-bold text-sm text-gray-200">{format(webinar.date, 'HH:mm')}</div>
                   </div>
                   
                   <div>
@@ -123,7 +129,13 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
 
                 <div className="mt-8">
                   <Button 
-                    onClick={() => document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => {
+                      if (webinar.buttonUrl) {
+                        window.open(webinar.buttonUrl, '_blank');
+                      } else {
+                        document.getElementById('book-sajan')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
                     className="w-full bg-brand-orange text-white hover:bg-white hover:text-black font-black uppercase tracking-widest py-4 text-xs rounded-xl shadow-[0_0_20px_rgba(239,111,15,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all"
                   >
                     Register Free

@@ -19,7 +19,9 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (mounted) {
       if (!isAuthenticated) {
-        router.push('/login');
+        if (!localStorage.getItem('accessToken')) {
+          router.push('/login');
+        }
         return;
       }
       if (!isSubscriber && !isAdmin) {

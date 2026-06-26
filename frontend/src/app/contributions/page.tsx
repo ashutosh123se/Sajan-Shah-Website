@@ -59,7 +59,7 @@ export default function ContributionsPage() {
   return (
     <main className="min-h-screen bg-black">
       <ContributionsHero content={getSection('hero')} />
-      <InitiativeCards />
+      <InitiativeCards initiatives={initiatives} />
       <ImpactDashboard content={getSection('impact')} />
       <DonateCTA content={getSection('donate')} />
       <ImpactStories content={getSection('stories')} />

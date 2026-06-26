@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 interface BulkOrderModalProps {
   isOpen: boolean;
@@ -25,22 +27,34 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      await api.post('/leads', {
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        source: 'bulk-order-inquiry',
+        data: {
+          organization: formData.organization,
+          quantity: formData.quantity,
+          requirements: formData.requirements,
+        },
+      });
+
       setIsSuccess(true);
-      
-      // Auto close after 3 seconds
       setTimeout(() => {
         setIsSuccess(false);
         setFormData({ fullName: '', organization: '', email: '', phone: '', quantity: '', requirements: '' });
         onClose();
       }, 3000);
-    }, 1500);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to submit inquiry. Please check your details.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

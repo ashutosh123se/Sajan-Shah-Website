@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import api from '@/lib/api';
 
 interface PressArticle {
   id: string;
@@ -11,52 +12,71 @@ interface PressArticle {
   date: string;
 }
 
+const mockArticles: PressArticle[] = [
+  {
+    id: '1',
+    title: 'Sajan Shah Revolutionizes Memory Training in Indian Schools',
+    source: 'Times of India',
+    thumbnail: '/press-1.jpg',
+    url: 'https://example.com/article1',
+    date: '2024-01-15',
+  },
+  {
+    id: '2',
+    title: 'Memory Man of India Launches New Online Learning Platform',
+    source: 'Economic Times',
+    thumbnail: '/press-2.jpg',
+    url: 'https://example.com/article2',
+    date: '2024-01-10',
+  },
+  {
+    id: '3',
+    title: 'Neuroscience-Based Education Gets Global Recognition',
+    source: 'Forbes India',
+    thumbnail: '/press-3.jpg',
+    url: 'https://example.com/article3',
+    date: '2024-01-05',
+  },
+  {
+    id: '4',
+    title: 'Youth Speaker Sajan Shah Inspires Millions',
+    source: 'Hindustan Times',
+    thumbnail: '/press-4.jpg',
+    url: 'https://example.com/article4',
+    date: '2023-12-20',
+  },
+];
+
 export const MediaPress: React.FC = () => {
   const [articles, setArticles] = useState<PressArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock data for demonstration
-    const mockArticles: PressArticle[] = [
-      {
-        id: '1',
-        title: 'Sajan Shah Revolutionizes Memory Training in Indian Schools',
-        source: 'Times of India',
-        thumbnail: '/press-1.jpg',
-        url: 'https://example.com/article1',
-        date: '2024-01-15',
-      },
-      {
-        id: '2',
-        title: 'Memory Man of India Launches New Online Learning Platform',
-        source: 'Economic Times',
-        thumbnail: '/press-2.jpg',
-        url: 'https://example.com/article2',
-        date: '2024-01-10',
-      },
-      {
-        id: '3',
-        title: 'Neuroscience-Based Education Gets Global Recognition',
-        source: 'Forbes India',
-        thumbnail: '/press-3.jpg',
-        url: 'https://example.com/article3',
-        date: '2024-01-05',
-      },
-      {
-        id: '4',
-        title: 'Youth Speaker Sajan Shah Inspires Millions',
-        source: 'Hindustan Times',
-        thumbnail: '/press-4.jpg',
-        url: 'https://example.com/article4',
-        date: '2023-12-20',
-      },
-    ];
+    const fetchArticles = async () => {
+      try {
+        const res = await api.get('/press');
+        const dbArticles = (res.data?.data?.articles || []).map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          source: a.source,
+          thumbnail: a.thumbnail || a.imageUrl,
+          url: a.url,
+          date: a.date,
+        }));
 
-    // Simulate loading
-    setTimeout(() => {
-      setArticles(mockArticles);
-      setLoading(false);
-    }, 1000);
+        if (dbArticles.length > 0) {
+          setArticles(dbArticles);
+        } else {
+          setArticles(mockArticles);
+        }
+      } catch {
+        setArticles(mockArticles);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
   }, []);
 
   const formatDate = (dateString: string) => {
