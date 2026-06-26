@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 import api from '@/lib/api';
+import { useCart } from '@/hooks/useCart';
+import { useRouter } from 'next/navigation';
 
 const staticCourses = [
   {
@@ -42,12 +44,15 @@ interface CourseProduct {
   description: string;
   image?: string;
   buy_url_internal?: string;
+  price?: number;
   isSoldOut: boolean;
 }
 
 export const ProductsCourses: React.FC = () => {
   const [coursesList, setCoursesList] = useState<CourseProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -64,6 +69,7 @@ export const ProductsCourses: React.FC = () => {
             description: c.description,
             image: c.image_product_page || c.image_homepage || 'https://placehold.co/800x600/0a0a0a/3b82f6?text=COURSE',
             buy_url_internal: c.buy_url_internal || '#',
+            price: c.price !== null ? Number(c.price) : 4999,
             isSoldOut: !c.is_active,
           })));
         } else {
@@ -183,12 +189,26 @@ export const ProductsCourses: React.FC = () => {
                           Next Batch Coming Soon
                        </div>
                      ) : (
-                       <a href={`/products/${course.id}`} className="inline-flex items-center text-white font-black text-sm uppercase tracking-widest hover:text-[#f26522] transition-colors group/link">
-                          Explore Course 
+                       <button 
+                         onClick={() => {
+                           addToCart({
+                             id: course.id,
+                             title: course.name,
+                             description: course.description,
+                             price: course.price || 4999,
+                             imageUrl: course.image || '',
+                             category: 'course',
+                             stock: 100
+                           }, 1);
+                           router.push('/cart');
+                         }}
+                         className="inline-flex items-center text-white font-black text-sm uppercase tracking-widest hover:text-[#f26522] transition-colors group/link"
+                       >
+                          Add to Cart 
                           <svg className="ml-2 w-5 h-5 transform group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                           </svg>
-                       </a>
+                       </button>
                      )}
                   </div>
                 </div>
