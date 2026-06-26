@@ -67,7 +67,7 @@ export const createOrder = async (req: Request, res: Response) => {
     if (paymentMethod === 'RAZORPAY') {
       const razorpay = await getRazorpayInstance();
       if (!razorpay) {
-        return sendError(res, 'Payment service not configured', 500);
+        return sendError(res, 'Online payment is not configured. Please use Cash on Delivery or contact support.', 503);
       }
 
       const rzpOrder = await razorpay.orders.create({

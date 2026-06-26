@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import {
   getProducts,
+  getAllProductsAdmin,
   getFeaturedProducts,
   getProductBySlug,
   createProduct,
@@ -26,6 +27,7 @@ router.get('/products/featured', getFeaturedProducts);
 router.get('/products/:slug', getProductBySlug);
 
 // ── Admin Endpoints ─────────────────────────────────────────────────────────
+router.get('/admin/products', ...adminAuth, getAllProductsAdmin);
 router.post('/admin/products', ...adminAuth, createProduct);
 router.put('/admin/products/:id', ...adminAuth, updateProduct);
 router.delete('/admin/products/:id', ...adminAuth, deleteProduct);

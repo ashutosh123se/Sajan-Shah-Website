@@ -5,6 +5,7 @@ import { db } from '../utils/database';
 export const getInitiatives = async (req: Request, res: Response) => {
   try {
     const initiatives = await db.initiative.findMany({
+      where: { isActive: true },
       orderBy: { order: 'asc' }
     });
     sendSuccess(res, { initiatives });
