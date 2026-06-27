@@ -240,7 +240,7 @@ export default function AdminContributorsPage() {
 
   // --- 💡 Initiatives CRUD Operations ---
   const fetchInitiatives = async () => {
-    const response = await api.get('/initiatives');
+    const response = await api.get('/initiatives/admin/all');
     if (response.data.success) {
       setInitiatives(response.data.data.initiatives || []);
     }

@@ -53,11 +53,9 @@ export const InitiativeCards: React.FC<InitiativeCardsProps> = ({ initiatives: a
     slug: init.slug,
   }));
 
-  const dbTitles = new Set(dbInitiatives.map(i => i.title.toLowerCase()));
-  const initiatives = [
-    ...dbInitiatives,
-    ...defaultInitiatives.filter(i => !dbTitles.has(i.title.toLowerCase())),
-  ];
+  const initiatives = dbInitiatives.length > 0
+    ? dbInitiatives
+    : defaultInitiatives;
 
   return (
     <section className="py-32 bg-black">
