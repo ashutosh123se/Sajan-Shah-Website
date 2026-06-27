@@ -1,26 +1,12 @@
 import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
+import { db } from '../utils/database';
 
 export const getLegalPages = async (req: Request, res: Response) => {
   try {
-    // This would normally fetch from database
-    const legalPages = [
-      {
-        id: '1',
-        slug: 'privacy-policy',
-        title: 'Privacy Policy',
-        content: '<h1>Privacy Policy</h1><p>Content to be updated by admin via the admin panel.</p>',
-        updatedAt: new Date()
-      },
-      {
-        id: '2',
-        slug: 'terms-and-conditions',
-        title: 'Terms & Conditions',
-        content: '<h1>Terms & Conditions</h1><p>Content to be updated by admin via the admin panel.</p>',
-        updatedAt: new Date()
-      }
-    ];
-    
+    const legalPages = await db.legalPage.findMany({
+      orderBy: { slug: 'asc' },
+    });
     sendSuccess(res, { legalPages });
   } catch (error) {
     console.error('Get legal pages error:', error);
@@ -30,20 +16,14 @@ export const getLegalPages = async (req: Request, res: Response) => {
 
 export const getLegalPageBySlug = async (req: Request, res: Response) => {
   try {
-    const { slug } = req.params;
-    
-    // This would normally fetch from database
-    const slugString = Array.isArray(slug) ? slug[0] : slug;
-    const title = slugString.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
-    
-    const legalPage = {
-      id: '1',
-      slug: slugString,
-      title,
-      content: `<h1>${title}</h1><p>Content to be updated by admin via the admin panel.</p>`,
-      updatedAt: new Date()
-    };
-    
+    const slugParam = req.params.slug;
+    const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+
+    const legalPage = await db.legalPage.findUnique({ where: { slug } });
+    if (!legalPage) {
+      return sendError(res, 'Legal page not found', 404);
+    }
+
     sendSuccess(res, { legalPage });
   } catch (error) {
     console.error('Get legal page error:', error);
@@ -53,12 +33,21 @@ export const getLegalPageBySlug = async (req: Request, res: Response) => {
 
 export const updateLegalPage = async (req: Request, res: Response) => {
   try {
-    const { slug } = req.params;
+    const slugParam = req.params.slug;
+    const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
     const { title, content } = req.body;
-    
-    // This would normally update legal page in database
-    
-    sendSuccess(res, { legalPage: { slug, title, content, updatedAt: new Date() } }, 'Legal page updated successfully');
+
+    if (!title || !content) {
+      return sendError(res, 'Title and content are required', 400);
+    }
+
+    const legalPage = await db.legalPage.upsert({
+      where: { slug },
+      update: { title, content },
+      create: { slug, title, content },
+    });
+
+    sendSuccess(res, { legalPage }, 'Legal page updated successfully');
   } catch (error) {
     console.error('Update legal page error:', error);
     sendError(res, 'Internal server error', 500);

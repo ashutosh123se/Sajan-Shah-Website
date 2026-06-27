@@ -2,6 +2,18 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { db } from '../utils/database';
 
+export const getAllInitiatives = async (_req: Request, res: Response) => {
+  try {
+    const initiatives = await db.initiative.findMany({
+      orderBy: { order: 'asc' }
+    });
+    sendSuccess(res, { initiatives });
+  } catch (error) {
+    console.error('Get all initiatives error:', error);
+    sendError(res, 'Internal server error', 500);
+  }
+};
+
 export const getInitiatives = async (req: Request, res: Response) => {
   try {
     const initiatives = await db.initiative.findMany({
