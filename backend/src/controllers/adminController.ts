@@ -15,8 +15,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     ] = await Promise.all([
       db.user.count(),
       db.order.count(),
-      db.product.count(),
-      db.event.count(),
+      db.product.count({ where: { is_active: true } }),
+      db.event.count({ where: { isActive: true } }),
       db.lead.count(),
       db.order.findMany({
         take: 5,
@@ -54,7 +54,15 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         totalLeads: totalLeads || 0
       },
       recentActivity: (recentOrders || []).map(order => ({
-        time: order?.createdAt ? new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+        time: order?.createdAt
+          ? new Date(order.createdAt).toLocaleString('en-IN', {
+              timeZone: 'Asia/Kolkata',
+              hour: '2-digit',
+              minute: '2-digit',
+              day: '2-digit',
+              month: 'short'
+            })
+          : '',
         action: `New order #${order?.id?.slice?.(-5) || ''} by ${order?.user?.name || 'Customer'}`
       }))
     });

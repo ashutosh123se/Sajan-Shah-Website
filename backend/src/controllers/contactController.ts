@@ -12,9 +12,18 @@ export const submitContact = async (req: Request, res: Response) => {
       return sendSuccess(res, null, 'Message submitted successfully');
     }
     
-    // Validate required fields
-    if (!name || !email || !message) {
-      return sendError(res, 'Name, email, and message are required', 400);
+    // Validate required fields with specific messages
+    if (!name?.trim()) {
+      return sendError(res, 'Full name is required.', 400);
+    }
+    if (!email?.trim()) {
+      return sendError(res, 'Email address is required.', 400);
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return sendError(res, 'Please enter a valid email address.', 400);
+    }
+    if (!message?.trim()) {
+      return sendError(res, 'Message or inquiry details are required.', 400);
     }
     
     // Save to database

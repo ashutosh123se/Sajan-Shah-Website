@@ -3,6 +3,19 @@ import { db } from '../utils/database';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { uploadToCloudinary } from '../utils/cloudinary';
 
+// GET /api/v1/admin/products (Admin - includes inactive)
+export const getAllProductsAdmin = async (req: Request, res: Response) => {
+  try {
+    const products = await db.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return sendSuccess(res, { products });
+  } catch (error) {
+    console.error('Error fetching admin products:', error);
+    return sendError(res, 'Internal server error', 500);
+  }
+};
+
 // GET /api/v1/products (Public)
 export const getProducts = async (req: Request, res: Response) => {
   try {
@@ -75,15 +88,11 @@ export const createProduct = async (req: Request, res: Response) => {
     } = req.body;
 
     // 1. Validate Category-specific Fields
-    if (category === 'book') {
-      if (!buy_url_amazon || !buy_url_flipkart) {
-        return sendError(res, 'Books require both Amazon and Flipkart purchase URLs.', 400);
+    if (category === 'course' || category === 'merchandise') {
+      if (price === undefined || price === null || price === '') {
+        return sendError(res, 'Courses and merchandise require a price.', 400);
       }
-    } else if (category === 'course' || category === 'merchandise') {
-      if (!buy_url_internal || price === undefined) {
-        return sendError(res, 'Courses and Merchandise require both an internal buy URL and a price.', 400);
-      }
-    } else {
+    } else if (category !== 'book') {
       return sendError(res, "Category must be 'book', 'course', or 'merchandise'.", 400);
     }
 
@@ -180,19 +189,9 @@ export const updateProduct = async (req: Request, res: Response) => {
     const nextCategory = category || existingProduct.category;
 
     // Validate Category-specific Fields
-    if (nextCategory === 'book') {
-      if (!buy_url_amazon && !existingProduct.buy_url_amazon) {
-        return sendError(res, 'Books require Amazon purchase URL.', 400);
-      }
-      if (!buy_url_flipkart && !existingProduct.buy_url_flipkart) {
-        return sendError(res, 'Books require Flipkart purchase URL.', 400);
-      }
-    } else if (nextCategory === 'course' || nextCategory === 'merchandise') {
+    if (nextCategory === 'course' || nextCategory === 'merchandise') {
       if (price === undefined && existingProduct.price === null) {
-        return sendError(res, 'Courses and Merchandise require a price.', 400);
-      }
-      if (!buy_url_internal && !existingProduct.buy_url_internal) {
-        return sendError(res, 'Courses and Merchandise require an internal buy URL.', 400);
+        return sendError(res, 'Courses and merchandise require a price.', 400);
       }
     }
 
