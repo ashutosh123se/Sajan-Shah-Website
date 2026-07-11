@@ -97,11 +97,40 @@ export default function AdminEventsPage() {
     }
   }, [hasAccess, activeTab]);
 
+  const [uploadingPoster, setUploadingPoster] = useState(false);
+  const [uploadingHomepage, setUploadingHomepage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'thumbnailUrl' | 'homepageImageUrl') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isPoster = field === 'thumbnailUrl';
+    if (isPoster) setUploadingPoster(true);
+    else setUploadingHomepage(true);
+
+    try {
+      const data = new FormData();
+      data.append('image', file);
+      data.append('folder', isPoster ? 'events/posters' : 'events/homepage');
+      const res = await api.post('/upload', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const imageUrl = res.data.data.imageUrl;
+      setFormData(prev => ({ ...prev, [field]: imageUrl }));
+      toast.success('Image uploaded successfully');
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Image upload failed');
+    } finally {
+      if (isPoster) setUploadingPoster(false);
+      else setUploadingHomepage(false);
+    }
+  };
+
   // --- Calendar Events Operations ---
   const fetchEvents = async () => {
     try {
       setLoadingEvents(true);
-      const response = await api.get('/events');
+      const response = await api.get('/events/admin/all');
       setEvents(response.data.data.events || []);
     } catch (error) {
       toast.error('Failed to fetch events');
@@ -152,8 +181,8 @@ export default function AdminEventsPage() {
       }
       setIsModalOpen(false);
       fetchEvents();
-    } catch (error) {
-      toast.error('Failed to save event');
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to save event');
     }
   };
 
@@ -521,13 +550,22 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Page Image URL (Detailed Size)</label>
-                  <input type="text" value={formData.thumbnailUrl} onChange={(e) => setFormData({...formData, thumbnailUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/event-poster.jpg" />
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Page Image</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'thumbnailUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
+                  {uploadingPoster && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
+                  {formData.thumbnailUrl && <img src={formData.thumbnailUrl} alt="Poster preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
                 </div>
 
                 <div>
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Home Page Image URL (Carousel Size)</label>
-                  <input type="text" value={formData.homepageImageUrl} onChange={(e) => setFormData({...formData, homepageImageUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/home-slider.jpg" />
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Home Page Carousel Image</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'homepageImageUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
+                  {uploadingHomepage && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
+                  {formData.homepageImageUrl && <img src={formData.homepageImageUrl} alt="Homepage preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Registration URL (SOL / Razorpay link)</label>
+                  <input type="text" value={formData.buttonUrl} onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. https://sol.sajanshah.com" />
                 </div>
 
                 <div className="col-span-2">

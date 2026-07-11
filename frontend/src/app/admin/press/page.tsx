@@ -79,6 +79,10 @@ export default function PressAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.thumbnail) {
+      alert('Please upload an article image.');
+      return;
+    }
     try {
       if (editingArticle) {
         await api.put(`/press/${editingArticle.id}`, formData);
@@ -235,15 +239,28 @@ export default function PressAdmin() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Thumbnail URL</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Article Image</label>
                   <input
-                    type="url"
-                    required
-                    value={formData.thumbnail}
-                    onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-[#f26522]"
-                    placeholder="https://..."
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const data = new FormData();
+                      data.append('image', file);
+                      data.append('folder', 'press');
+                      try {
+                        const res = await api.post('/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+                        setFormData({ ...formData, thumbnail: res.data.data.imageUrl });
+                      } catch {
+                        alert('Image upload failed');
+                      }
+                    }}
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded px-4 py-2"
                   />
+                  {formData.thumbnail && (
+                    <img src={formData.thumbnail} alt="Preview" className="mt-2 h-20 object-cover rounded" />
+                  )}
                 </div>
 
                 <div>

@@ -61,12 +61,16 @@ export default function EventsSection() {
           api.get('/events-page')
         ]);
         
-        const dbEvents = eventsRes.data.data.events || [];
-        if (dbEvents.length > 0) {
-          setEventsList(dbEvents.map(mapDbEventToSajanEvent));
-        } else {
-          setEventsList(MOCK_EVENTS);
-        }
+        const dbEvents = (eventsRes.data.data.events || [])
+          .filter((e: any) => e.isActive !== false)
+          .map(mapDbEventToSajanEvent);
+
+        const dbTitles = new Set(dbEvents.map((e: SajanEvent) => e.title.toLowerCase()));
+        const mergedEvents = [
+          ...dbEvents,
+          ...MOCK_EVENTS.filter(m => !dbTitles.has(m.title.toLowerCase()))
+        ];
+        setEventsList(mergedEvents);
 
         if (sectionsRes.data.success) {
           setSections(sectionsRes.data.data.sections || []);

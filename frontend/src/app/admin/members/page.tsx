@@ -24,7 +24,6 @@ export default function AdminMembersPage() {
   const [formData, setFormData] = useState<Partial<Member>>({
     name: '',
     email: '',
-    photoUrl: '',
     bio: '',
     tier: 'Community'
   });
@@ -57,7 +56,6 @@ export default function AdminMembersPage() {
     setFormData({
       name: '',
       email: '',
-      photoUrl: '',
       bio: '',
       tier: 'Community'
     });
@@ -122,10 +120,6 @@ export default function AdminMembersPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs uppercase text-gray-400 mb-1">Photo URL</label>
-              <input required value={formData.photoUrl} onChange={e => setFormData({...formData, photoUrl: e.target.value})} className="w-full bg-white/5 border border-white/10 text-white px-4 py-2" />
-            </div>
-            <div>
               <label className="block text-xs uppercase text-gray-400 mb-1">Bio</label>
               <textarea required value={formData.bio} onChange={e => setFormData({...formData, bio: e.target.value})} className="w-full bg-white/5 border border-white/10 text-white px-4 py-2 h-32" />
             </div>
@@ -150,7 +144,9 @@ export default function AdminMembersPage() {
           ) : members.length > 0 ? (
             members.map(member => (
               <div key={member.id} className="bg-[#141414] border border-white/10 p-4 flex gap-4 items-start">
-                <img src={member.photoUrl} alt={member.name} className="w-20 h-20 object-cover border border-white/10" />
+                <div className="w-20 h-20 flex items-center justify-center bg-white/5 border border-white/10 text-2xl font-bold text-[#f26522] shrink-0">
+                  {member.name.charAt(0).toUpperCase()}
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-white truncate">{member.name}</h3>
                   <p className="text-xs text-blue-400 mb-2">{member.tier}</p>
