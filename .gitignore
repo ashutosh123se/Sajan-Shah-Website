@@ -17,4 +17,5 @@ backend/.env
 frontend/.env
 backend/dist/
 frontend/.next/
+backend/uploads/
 
