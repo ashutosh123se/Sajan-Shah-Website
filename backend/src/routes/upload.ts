@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import { verifyToken, requireRole } from '../middleware/verifyToken';
-import { uploadToCloudinary } from '../utils/cloudinary';
+import { isCloudinaryConfigured, uploadToCloudinary, uploadToLocal } from '../utils/cloudinary';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 
 const router = Router();
@@ -19,7 +19,14 @@ router.post(
       }
 
       const folder = typeof req.body.folder === 'string' ? req.body.folder : 'uploads';
-      const imageUrl = await uploadToCloudinary(req.file.buffer, folder, undefined, undefined, 'limit', 85);
+
+      let imageUrl: string;
+      if (isCloudinaryConfigured()) {
+        imageUrl = await uploadToCloudinary(req.file.buffer, folder, undefined, undefined, 'limit', 85);
+      } else {
+        console.warn('Cloudinary not configured — using local uploads fallback');
+        imageUrl = await uploadToLocal(req.file.buffer, folder, req.file.originalname);
+      }
 
       return sendSuccess(res, { imageUrl }, 'Image uploaded successfully');
     } catch (error) {
