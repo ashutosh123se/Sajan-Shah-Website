@@ -60,10 +60,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// Local uploaded images (fallback when Cloudinary is not configured)
+// Local uploaded images (saved under backend/uploads)
 app.use(
   '/uploads',
-  express.static(path.join(__dirname, '..', 'uploads'), {
+  express.static(path.join(process.cwd(), 'uploads'), {
     setHeaders: (res) => {
       res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     },
