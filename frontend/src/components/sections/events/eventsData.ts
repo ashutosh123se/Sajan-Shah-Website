@@ -19,6 +19,8 @@ export interface SajanEvent {
   isTop5?: boolean;
   tag?: string;
   buttonUrl?: string;
+  isFree?: boolean;
+  price?: number;
 }
 
 export const currentDate = new Date();

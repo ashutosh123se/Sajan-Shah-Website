@@ -44,7 +44,9 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     isPast: e.isPast || new Date(e.eventDate).getTime() < new Date().setHours(0,0,0,0),
     isTop5: e.isTop5 || false,
     tag: e.venue || 'Corporate',
-    buttonUrl: e.buttonUrl
+    buttonUrl: e.buttonUrl,
+    isFree: e.isFree ?? true,
+    price: e.price ?? undefined,
   };
 };
 
@@ -88,10 +90,16 @@ export default function EventsSection() {
 
   const activeEvents = eventsList;
 
-  // Filter lists for children
-  const upcomingEvents = activeEvents.filter(e => !e.isPast && !e.isWebinar);
-  const webinars = activeEvents.filter(e => e.isWebinar);
-  const pastEvents = activeEvents.filter(e => e.isPast);
+  // Filter lists for children (upcoming sorted soonest-first)
+  const upcomingEvents = activeEvents
+    .filter(e => !e.isPast && !e.isWebinar)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const webinars = activeEvents
+    .filter(e => e.isWebinar)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const pastEvents = activeEvents
+    .filter(e => e.isPast)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   if (loading) {
     return (

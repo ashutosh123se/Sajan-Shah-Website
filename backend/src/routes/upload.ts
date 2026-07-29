@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import { verifyToken, requireRole } from '../middleware/verifyToken';
-import { uploadImage } from '../utils/cloudinary';
+import { uploadImage } from '../utils/imageStorage';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 
 const router = Router();

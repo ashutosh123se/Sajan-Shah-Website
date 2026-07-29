@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../utils/database';
 import { sendSuccess, sendError } from '../utils/apiResponse';
-import { uploadImage } from '../utils/cloudinary';
+import { uploadImage } from '../utils/imageStorage';
 
 // GET /api/v1/admin/products (Admin - includes inactive)
 export const getAllProductsAdmin = async (req: Request, res: Response) => {
@@ -417,15 +417,10 @@ export const uploadHomepageImage = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found.', 404);
     }
 
-    // Large homepage cover for big posters (local stores original; Cloudinary uses these dims)
     const imageUrl = await uploadImage(
       req.file.buffer,
       'products/homepage',
-      req.file.originalname,
-      1600,
-      2000,
-      'limit',
-      90
+      req.file.originalname
     );
 
     const updatedProduct = await db.product.update({
@@ -453,15 +448,10 @@ export const uploadProductImage = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found.', 404);
     }
 
-    // product page: prefer local storage (Cloudinary only if USE_CLOUDINARY=true)
     const imageUrl = await uploadImage(
       req.file.buffer,
       'products/product_page',
-      req.file.originalname,
-      900,
-      undefined,
-      'limit',
-      85
+      req.file.originalname
     );
 
     const updatedProduct = await db.product.update({

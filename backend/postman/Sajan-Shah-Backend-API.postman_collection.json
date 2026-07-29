@@ -1,0 +1,1085 @@
+{
+  "info": {
+    "_postman_id": "sajan-shah-backend-api",
+    "name": "Sajan Shah Website - Backend API",
+    "description": "Complete API collection for ss-website-react backend.\n\n**Setup:**\n1. Import this collection + the environment file.\n2. Set `baseUrl` (e.g. `http://localhost:5000` or your live API host without `/api`).\n3. Run **Auth → Login** — the access token is saved automatically.\n4. Protected requests use Bearer auth via `{{accessToken}}`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "sectionId", "value": "" },
+    { "key": "productId", "value": "" },
+    { "key": "eventId", "value": "" },
+    { "key": "pressId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  const token = json?.data?.accessToken;",
+                  "  if (token) {",
+                  "    pm.collectionVariables.set('accessToken', token);",
+                  "    console.log('accessToken saved to collection variables');",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ashutoshshekhar37@gmail.com\",\n  \"password\": \"ashutosh@1234sa\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/refresh"
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/auth/me" }
+        },
+        {
+          "name": "Logout",
+          "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/api/auth/logout" }
+        },
+        {
+          "name": "Verify Password Setup Token",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-password-token?token=YOUR_TOKEN",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-password-token"],
+              "query": [{ "key": "token", "value": "YOUR_TOKEN" }]
+            }
+          }
+        },
+        {
+          "name": "Set Password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"YOUR_TOKEN\",\n  \"password\": \"newPassword123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/set-password"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/admin/stats" }
+        }
+      ]
+    },
+    {
+      "name": "Home Page CMS",
+      "item": [
+        {
+          "name": "Get Public Sections",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/home-page"
+          }
+        },
+        {
+          "name": "Get All Sections (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/home-page/all" }
+        },
+        {
+          "name": "Update Section",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hero Slider Section\",\n  \"content\": { \"slides\": [] },\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/home-page/{{sectionId}}"
+          }
+        },
+        {
+          "name": "Create Section",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"custom_section\",\n  \"title\": \"Custom Section\",\n  \"content\": {},\n  \"order\": 99,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/home-page"
+          }
+        },
+        {
+          "name": "Delete Section",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/home-page/{{sectionId}}" }
+        }
+      ]
+    },
+    {
+      "name": "About Page CMS",
+      "item": [
+        {
+          "name": "Get Public Sections",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/about"
+          }
+        },
+        {
+          "name": "Get All Sections (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/about/all" }
+        },
+        {
+          "name": "Update Section",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hero Section\",\n  \"content\": {},\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/about/{{sectionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Speaking Page CMS",
+      "item": [
+        {
+          "name": "Get Public Sections",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/speaking"
+          }
+        },
+        {
+          "name": "Get All Sections (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/speaking/all" }
+        },
+        {
+          "name": "Update Section",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hero Section\",\n  \"content\": {\n    \"heading\": \"This Isn't Motivation.\",\n    \"headingItalic\": \"This Is\",\n    \"headingHighlight\": \"Transformation.\"\n  },\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/speaking/{{sectionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events Page CMS",
+      "item": [
+        {
+          "name": "Get Public Sections",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/events-page"
+          }
+        },
+        {
+          "name": "Get All Sections (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/events-page/all" }
+        },
+        {
+          "name": "Update Section",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Events Hero Section\",\n  \"content\": {\n    \"heading\": \"Sajan Shah\",\n    \"subHeading\": \"events calendar\",\n    \"paragraph\": \"Create your own success story.\",\n    \"buttonText\": \"View all events\"\n  },\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/events-page/{{sectionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contributions Page CMS",
+      "item": [
+        {
+          "name": "Get Public Sections",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/contributions-page"
+          }
+        },
+        {
+          "name": "Get All Sections (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/contributions-page/all" }
+        },
+        {
+          "name": "Update Section",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Contributions Hero Banner\",\n  \"content\": {\n    \"heading\": \"IMPACT BEYOND BOUNDARIES\",\n    \"subHeading\": \"Our Contributions\",\n    \"paragraph\": \"We build legacies through education.\"\n  },\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/contributions-page/{{sectionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Get Public Events",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/events"
+          }
+        },
+        {
+          "name": "Get All Events (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/events/admin/all" }
+        },
+        {
+          "name": "Get Event By ID",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/events/{{eventId}}"
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Event\",\n  \"slug\": \"sample-event\",\n  \"description\": \"Event description\",\n  \"posterUrl\": \"/images/placeholder.jpg\",\n  \"webinarUrl\": \"https://example.com\",\n  \"eventDate\": \"2026-07-01T10:00:00.000Z\",\n  \"city\": \"Mumbai\",\n  \"category\": \"Public\",\n  \"format\": \"Offline\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/events"
+          }
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Event Title\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/events/{{eventId}}"
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/events/{{eventId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Products (Legacy /api/products)",
+      "item": [
+        {
+          "name": "Get Products",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products"
+          }
+        },
+        {
+          "name": "Get Product By ID",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products/{{productId}}"
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Book\",\n  \"slug\": \"sample-book\",\n  \"category\": \"book\",\n  \"description\": \"Full description\",\n  \"short_description\": \"Short description\",\n  \"price\": 499,\n  \"is_active\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/products"
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Book\",\n  \"is_active\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/products/{{productId}}"
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/products/{{productId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Products V1 (/api/v1)",
+      "item": [
+        {
+          "name": "Get Products",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/products"
+          }
+        },
+        {
+          "name": "Get Featured Products",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/products/featured"
+          }
+        },
+        {
+          "name": "Get Product By Slug",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/products/you-vs-you"
+          }
+        },
+        {
+          "name": "Create Product (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"YOU v/s YOU\",\n  \"slug\": \"you-vs-you\",\n  \"category\": \"book\",\n  \"description\": \"A 100-Day Personal Transformation Challenge\",\n  \"short_description\": \"Transform in 100 days\",\n  \"price\": 499,\n  \"is_active\": true,\n  \"buy_url_amazon\": \"https://amazon.in\",\n  \"buy_url_flipkart\": \"https://flipkart.com\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/products"
+          }
+        },
+        {
+          "name": "Update Product (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Product Name\",\n  \"is_active\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/products/{{productId}}"
+          }
+        },
+        {
+          "name": "Delete Product (Admin)",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/v1/admin/products/{{productId}}" }
+        },
+        {
+          "name": "Feature Product (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"featured_order\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/products/{{productId}}/feature"
+          }
+        },
+        {
+          "name": "Get Featured Slots (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/v1/admin/products/featured-slots" }
+        },
+        {
+          "name": "Upload Homepage Image (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "image", "type": "file", "src": [] }]
+            },
+            "url": "{{baseUrl}}/api/v1/admin/products/{{productId}}/upload-homepage-image"
+          }
+        },
+        {
+          "name": "Upload Product Image (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "image", "type": "file", "src": [] }]
+            },
+            "url": "{{baseUrl}}/api/v1/admin/products/{{productId}}/upload-product-image"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Press",
+      "item": [
+        {
+          "name": "Get Public Articles",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/press"
+          }
+        },
+        {
+          "name": "Get All Articles (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/press/admin/all" }
+        },
+        {
+          "name": "Get Article By ID",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/press/{{pressId}}"
+          }
+        },
+        {
+          "name": "Create Article",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Press Article\",\n  \"source\": \"Times of India\",\n  \"thumbnail\": \"/press-1.jpg\",\n  \"url\": \"https://example.com/article\",\n  \"date\": \"2026-01-15\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/press"
+          }
+        },
+        {
+          "name": "Update Article",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Press Article\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/press/{{pressId}}"
+          }
+        },
+        {
+          "name": "Delete Article",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/press/{{pressId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Get Members",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/members"
+          }
+        },
+        {
+          "name": "Get Member By ID",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/members/MEMBER_ID"
+          }
+        },
+        {
+          "name": "Apply For Membership",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"9876543210\",\n  \"bio\": \"Short bio\",\n  \"whyJoin\": \"Reason for joining\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members/apply"
+          }
+        },
+        {
+          "name": "Create Member (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Member Name\",\n  \"email\": \"member@example.com\",\n  \"photoUrl\": \"/photo.jpg\",\n  \"bio\": \"Member bio\",\n  \"tier\": \"Gold\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members"
+          }
+        },
+        {
+          "name": "Update Member (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"tier\": \"Silver\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members/MEMBER_ID"
+          }
+        },
+        {
+          "name": "Delete Member (Admin)",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/members/MEMBER_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Contributors",
+      "item": [
+        {
+          "name": "Get Contributors",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/contributors"
+          }
+        },
+        {
+          "name": "Create Contributor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Contributor Name\",\n  \"photoUrl\": \"/photo.jpg\",\n  \"role\": \"Advisor\",\n  \"description\": \"Contributor description\",\n  \"order\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/contributors"
+          }
+        },
+        {
+          "name": "Update Contributor",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Contributor\",\n  \"role\": \"Lead Advisor\"\n}"
+            },
+            "url": "{{baseUrl}}/api/contributors/CONTRIBUTOR_ID"
+          }
+        },
+        {
+          "name": "Delete Contributor",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/contributors/CONTRIBUTOR_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Initiatives",
+      "item": [
+        {
+          "name": "Get Public Initiatives",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/initiatives"
+          }
+        },
+        {
+          "name": "Get All Initiatives (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/initiatives/admin/all" }
+        },
+        {
+          "name": "Create Initiative",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Live to Inspire\",\n  \"slug\": \"live-to-inspire\",\n  \"description\": \"Our core foundation for large-scale impact.\",\n  \"imageUrl\": \"/live to bg.jpeg\",\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/initiatives"
+          }
+        },
+        {
+          "name": "Update Initiative",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Initiative\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/initiatives/INITIATIVE_ID"
+          }
+        },
+        {
+          "name": "Delete Initiative",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/initiatives/INITIATIVE_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Testimonials",
+      "item": [
+        {
+          "name": "Get Public Testimonials",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/testimonials"
+          }
+        },
+        {
+          "name": "Get All Testimonials (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/testimonials/admin/all" }
+        },
+        {
+          "name": "Create Testimonial",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Muhammad Faisal\",\n  \"designation\": \"Guinness World Record Holder\",\n  \"quote\": \"Sajan is a passionate motivator and speaker.\",\n  \"photoUrl\": \"/Hero T/Muhammad Faisal.jpeg\",\n  \"order\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/testimonials"
+          }
+        },
+        {
+          "name": "Update Testimonial",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote\": \"Updated testimonial quote.\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/testimonials/TESTIMONIAL_ID"
+          }
+        },
+        {
+          "name": "Delete Testimonial",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/testimonials/TESTIMONIAL_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Legal Pages",
+      "item": [
+        {
+          "name": "Get All Legal Pages",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/legal"
+          }
+        },
+        {
+          "name": "Get Legal Page By Slug",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/legal/privacy-policy"
+          }
+        },
+        {
+          "name": "Update Legal Page (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Privacy Policy\",\n  \"content\": \"<p>Updated privacy policy HTML content.</p>\"\n}"
+            },
+            "url": "{{baseUrl}}/api/legal/privacy-policy"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Banners",
+      "item": [
+        {
+          "name": "Get Active Banner",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/banners/active"
+          }
+        },
+        {
+          "name": "Get All Banners (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/banners" }
+        },
+        {
+          "name": "Create Banner",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Promo Banner\",\n  \"imageUrl\": \"/banner.jpg\",\n  \"linkUrl\": \"https://sajanshah.com/events\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/banners"
+          }
+        },
+        {
+          "name": "Update Banner",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Banner\",\n  \"isActive\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/banners/BANNER_ID"
+          }
+        },
+        {
+          "name": "Delete Banner",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/banners/BANNER_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"9876543210\",\n  \"message\": \"I would like to book Sajan Shah for an event.\",\n  \"formType\": \"inquiry\"\n}"
+            },
+            "url": "{{baseUrl}}/api/contact"
+          }
+        },
+        {
+          "name": "Get Contact Messages (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/contact" }
+        },
+        {
+          "name": "Mark Message As Read",
+          "request": { "method": "PUT", "header": [], "url": "{{baseUrl}}/api/contact/MESSAGE_ID/read" }
+        },
+        {
+          "name": "Reply To Message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"replyMessage\": \"Thank you for contacting us. We will get back to you shortly.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/contact/MESSAGE_ID/reply"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Create Lead",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"9876543210\",\n  \"source\": \"contact-form\",\n  \"data\": {\n    \"message\": \"Interested in corporate program\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/leads"
+          }
+        },
+        {
+          "name": "Get All Leads (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/leads" }
+        },
+        {
+          "name": "Update Lead Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONTACTED\"\n}"
+            },
+            "url": "{{baseUrl}}/api/leads/LEAD_ID/status"
+          }
+        },
+        {
+          "name": "Delete Lead",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/leads/LEAD_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"productId\": \"PRODUCT_ID\", \"quantity\": 1 }\n  ],\n  \"userEmail\": \"customer@example.com\",\n  \"phone\": \"9876543210\",\n  \"shippingAddress\": \"123 Main St, Mumbai\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders/create"
+          }
+        },
+        {
+          "name": "Verify Payment",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpay_order_id\": \"order_xxx\",\n  \"razorpay_payment_id\": \"pay_xxx\",\n  \"razorpay_signature\": \"signature_xxx\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders/verify"
+          }
+        },
+        {
+          "name": "Get My Orders",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/orders/my-orders" }
+        },
+        {
+          "name": "Get All Orders (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/orders" }
+        },
+        {
+          "name": "Get Order By ID (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/orders/ORDER_ID" }
+        },
+        {
+          "name": "Update Order Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHIPPED\",\n  \"trackingId\": \"TRACK123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders/ORDER_ID/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Newsletter",
+      "item": [
+        {
+          "name": "Subscribe",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"subscriber@example.com\",\n  \"name\": \"Subscriber Name\",\n  \"whatsappOptIn\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/newsletter"
+          }
+        },
+        {
+          "name": "Get Subscribers (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/newsletter" }
+        },
+        {
+          "name": "Export Subscribers (Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/newsletter/export" }
+        },
+        {
+          "name": "Unsubscribe (Admin)",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/newsletter/SUBSCRIBER_ID" }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings (Super Admin)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/settings" }
+        },
+        {
+          "name": "Update Settings (Super Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"settings\": {\n    \"website\": {\n      \"siteName\": \"Sajan Shah\",\n      \"contactEmail\": \"hr@sajanshah.com\",\n      \"logoUrl\": \"/LOGO.png\"\n    },\n    \"smtp\": {\n      \"host\": \"smtp.gmail.com\",\n      \"port\": \"587\",\n      \"username\": \"your@email.com\",\n      \"password\": \"app-password\"\n    },\n    \"payment\": {\n      \"gateway\": \"Razorpay\",\n      \"apiKey\": \"rzp_live_xxx\",\n      \"apiSecret\": \"secret_xxx\",\n      \"currency\": \"INR\"\n    },\n    \"social\": {\n      \"facebook\": \"\",\n      \"instagram\": \"\",\n      \"linkedin\": \"\",\n      \"twitter\": \"\"\n    }\n  }\n}"
+            },
+            "url": "{{baseUrl}}/api/settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/users" }
+        },
+        {
+          "name": "Get User By ID",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/users/USER_ID" }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"admin@example.com\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/USER_ID/role"
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/users/USER_ID/status"
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/users/USER_ID" }
+        }
+      ]
+    }
+  ]
+}

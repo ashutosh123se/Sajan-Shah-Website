@@ -8,7 +8,6 @@ function OrderSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId') || 'SS-ORDER-PENDING';
-  const method = searchParams.get('method') || 'RAZORPAY';
 
   return (
     <div className="min-h-screen bg-[#0C0C0C] text-white pt-48 pb-32 px-4 relative overflow-hidden flex items-center justify-center">
@@ -74,7 +73,7 @@ function OrderSuccessContent() {
           </div>
           <div className="flex justify-between items-center border-b border-white/5 pb-3">
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Payment Method</span>
-            <span className="text-white text-xs uppercase font-bold tracking-wider">{method === 'COD' ? 'Cash On Delivery' : 'Razorpay Gateway'}</span>
+            <span className="text-white text-xs uppercase font-bold tracking-wider">Razorpay Gateway</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Status</span>

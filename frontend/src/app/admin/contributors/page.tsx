@@ -397,6 +397,24 @@ export default function AdminContributorsPage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Team Contributors Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Updates contributor profile cards shown on the public `Contributions` page.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Social Initiatives Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Controls initiative cards and visibility state for visitors in real time.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Page Layout Copy Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Edits text, media, and ordering of all dynamic content blocks on `/contributions`.</p>
+        </div>
+      </div>
+
       {/* --- TAB 1: TEAM CONTRIBUTORS --- */}
       {activeTab === 'contributors' && (
         <div className="space-y-6">

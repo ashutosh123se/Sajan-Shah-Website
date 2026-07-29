@@ -15,6 +15,15 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
   const allWebinars = events;
   const webinars = showAll ? allWebinars : allWebinars.slice(0, 2);
 
+  const formatWebinarPrice = (webinar: SajanEvent) => {
+    if (webinar.isFree || !webinar.price) return 'Register Free';
+    return `Register · ${new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(webinar.price)}`;
+  };
+
   const bgImages = [
     '/Sir Event3.jpeg',
     '/sir Event2.jpeg',
@@ -138,7 +147,7 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
                     }}
                     className="w-full bg-brand-orange text-white hover:bg-white hover:text-black font-black uppercase tracking-widest py-4 text-xs rounded-xl shadow-[0_0_20px_rgba(239,111,15,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all"
                   >
-                    Register Free
+                    {formatWebinarPrice(webinar)}
                   </Button>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 interface Product {
   id: string;
@@ -43,10 +44,6 @@ export default function AdminProductsPage() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
-  // Image upload progress states
-  const [uploadingHome, setUploadingHome] = useState(false);
-  const [uploadingPage, setUploadingPage] = useState(false);
 
   // Slot changing state
   const [assigningSlot, setAssigningSlot] = useState<number | null>(null);
@@ -194,46 +191,6 @@ export default function AdminProductsPage() {
     }));
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'homepage' | 'product_page') => {
-    const file = e.target.files?.[0];
-    if (!file || !editingProduct) return;
-
-    const data = new FormData();
-    data.append('image', file);
-
-    const isHome = type === 'homepage';
-    if (isHome) setUploadingHome(true);
-    else setUploadingPage(true);
-
-    try {
-      const endpoint = `/v1/admin/products/${editingProduct.id}/upload-${isHome ? 'homepage' : 'product'}-image`;
-      const res = await api.post(endpoint, data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      
-      const uploadedUrl = res.data.data.imageUrl;
-      toast.success('Image uploaded successfully');
-      setFormData(prev => ({
-        ...prev,
-        [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
-      }));
-      setEditingProduct((prev) =>
-        prev
-          ? {
-              ...prev,
-              [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
-            }
-          : prev
-      );
-      fetchData();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Image upload failed');
-    } finally {
-      if (isHome) setUploadingHome(false);
-      else setUploadingPage(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -244,6 +201,8 @@ export default function AdminProductsPage() {
         description: formData.description,
         short_description: formData.short_description,
         is_active: formData.is_active,
+        image_homepage: formData.image_homepage || null,
+        image_product_page: formData.image_product_page || null,
       };
 
       if (formData.category === 'book') {
@@ -257,22 +216,12 @@ export default function AdminProductsPage() {
       if (editingProduct) {
         await api.put(`/v1/admin/products/${editingProduct.id}`, payload);
         toast.success('Product updated successfully');
-        setIsModalOpen(false);
-        fetchData();
       } else {
-        const res = await api.post('/v1/admin/products', payload);
-        const created = res.data?.data?.product;
-        toast.success('Product created. Now upload homepage and catalog images.');
-        if (created) {
-          setEditingProduct(created);
-          setFormData((prev) => ({
-            ...prev,
-            image_homepage: created.image_homepage || '',
-            image_product_page: created.image_product_page || '',
-          }));
-        }
-        fetchData();
+        await api.post('/v1/admin/products', payload);
+        toast.success('Product created successfully');
       }
+      setIsModalOpen(false);
+      fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Failed to save product');
     }
@@ -657,83 +606,36 @@ export default function AdminProductsPage() {
                   </>
                 )}
 
-                {/* Dual image uploads: large homepage cover + catalog/product page */}
-                {editingProduct ? (
-                  <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
-                    <div>
-                      <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images</h3>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Homepage cover is required for homepage slots (use a large image so it does not blur). Catalog image is used on the products page.
-                      </p>
+                {/* Dual image uploads: available while creating and editing */}
+                <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images</h3>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Upload both images here while adding the product. Homepage cover is needed for homepage slots (large ~1600×2000). Catalog image is used on the products page.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Homepage Cover (large)"
+                        value={formData.image_homepage}
+                        folder="products/homepage"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_homepage: url }))}
+                      />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      
-                      {/* Homepage Cover */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">
-                          Homepage Cover (large, ~1600×2000)
-                        </label>
-                        
-                        {formData.image_homepage && (
-                          <div className="w-28 h-36 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_homepage} alt="Homepage cover preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="homepage-upload"
-                            onChange={(e) => handleImageUpload(e, 'homepage')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="homepage-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingHome ? 'Uploading...' : 'Upload Homepage Cover'}
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Product Page Image */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">
-                          Catalog / Product Page Image
-                        </label>
-                        
-                        {formData.image_product_page && (
-                          <div className="w-28 h-36 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_product_page} alt="Product page preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="product-page-upload"
-                            onChange={(e) => handleImageUpload(e, 'product_page')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="product-page-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingPage ? 'Uploading...' : 'Upload Catalog Image'}
-                          </label>
-                        </div>
-                      </div>
-
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Catalog / Product Page Image"
+                        value={formData.image_product_page}
+                        folder="products/product_page"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_product_page: url }))}
+                      />
                     </div>
                   </div>
-                ) : (
-                  <div className="md:col-span-2 bg-[#f26522]/10 border border-[#f26522]/20 p-4 text-center text-sm text-gray-300">
-                    Save the product first — then upload a large Homepage cover and a Catalog image in this same form.
-                  </div>
-                )}
+                </div>
 
               </div>
 
