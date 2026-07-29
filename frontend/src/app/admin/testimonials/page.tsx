@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 interface Testimonial {
   id: string;
@@ -154,7 +155,13 @@ export default function AdminTestimonialsPage() {
             <div className="space-y-4">
               <input type="text" placeholder="Name" value={formData.name || ''} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" required />
               <input type="text" placeholder="Designation / Title" value={formData.designation || ''} onChange={(e) => setFormData({ ...formData, designation: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" required />
-              <input type="text" placeholder="Photo URL" value={formData.photoUrl || ''} onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
+              <ImageUploadField
+                label="Photo"
+                value={formData.photoUrl || ''}
+                folder="testimonials"
+                previewClassName="h-16 w-16 rounded-full"
+                onChange={(photoUrl) => setFormData({ ...formData, photoUrl })}
+              />
               <textarea placeholder="Quote" value={formData.quote || ''} onChange={(e) => setFormData({ ...formData, quote: e.target.value })} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg min-h-[120px]" required />
               <div className="flex gap-4 items-center">
                 <input type="number" placeholder="Order" value={formData.order ?? 0} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} className="w-24 bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />

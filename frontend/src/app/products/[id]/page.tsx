@@ -45,17 +45,27 @@ export default function ProductDetailPage() {
 
   const fetchProduct = async () => {
     try {
-      const response = await api.get(`/products/${id}`);
-      const rawProduct = response.data.data.product;
+      const slugOrId = String(id);
+      let rawProduct: any = null;
+
+      try {
+        const bySlug = await api.get(`/v1/products/${slugOrId}`);
+        rawProduct = bySlug.data?.data?.product;
+      } catch {
+        // Fall back to legacy id endpoint for older links
+        const byId = await api.get(`/products/${slugOrId}`);
+        rawProduct = byId.data?.data?.product;
+      }
+
       if (rawProduct) {
         setProduct({
           id: rawProduct.id,
           title: rawProduct.name || rawProduct.title || '',
           description: rawProduct.description || '',
-          price: rawProduct.price !== null ? Number(rawProduct.price) : 0,
+          price: rawProduct.price !== null && rawProduct.price !== undefined ? Number(rawProduct.price) : 0,
           imageUrl: rawProduct.image_product_page || rawProduct.image_homepage || rawProduct.imageUrl || '',
           category: rawProduct.category || '',
-          stock: 100 // virtual stock for digital products/merchandise
+          stock: 100
         });
       } else {
         toast.error('Product not found');

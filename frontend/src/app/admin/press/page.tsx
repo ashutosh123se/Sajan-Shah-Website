@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 interface PressArticle {
   id: string;
@@ -117,7 +118,10 @@ export default function PressAdmin() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Media & Press</h1>
-          <p className="text-gray-400">Manage your press articles and media coverage.</p>
+          <p className="text-gray-400 max-w-2xl">
+            Manage press stories shown on the homepage Media &amp; Press grid, and outlet names (Source)
+            used in the scrolling “As Featured In” logo strip. Toggle Active to show/hide on the live site.
+          </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
@@ -239,28 +243,13 @@ export default function PressAdmin() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Article Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const data = new FormData();
-                      data.append('image', file);
-                      data.append('folder', 'press');
-                      try {
-                        const res = await api.post('/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
-                        setFormData({ ...formData, thumbnail: res.data.data.imageUrl });
-                      } catch {
-                        alert('Image upload failed');
-                      }
-                    }}
-                    className="w-full bg-gray-800 border border-gray-700 text-white rounded px-4 py-2"
+                  <ImageUploadField
+                    label="Article Image"
+                    value={formData.thumbnail}
+                    folder="press"
+                    required
+                    onChange={(thumbnail) => setFormData({ ...formData, thumbnail })}
                   />
-                  {formData.thumbnail && (
-                    <img src={formData.thumbnail} alt="Preview" className="mt-2 h-20 object-cover rounded" />
-                  )}
                 </div>
 
                 <div>

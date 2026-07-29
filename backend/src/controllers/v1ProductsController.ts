@@ -105,6 +105,13 @@ export const createProduct = async (req: Request, res: Response) => {
       if (!active) {
         return sendError(res, 'A product must be active to be featured on the homepage.', 400);
       }
+      if (!image_homepage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before featuring this product on the homepage.',
+          400
+        );
+      }
       if (!slot || ![1, 2, 3].includes(slot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
       }
@@ -210,6 +217,15 @@ export const updateProduct = async (req: Request, res: Response) => {
       if (!active) {
         return sendError(res, 'A product must be active to be featured.', 400);
       }
+      const nextHomepageImage =
+        image_homepage !== undefined ? image_homepage : existingProduct.image_homepage;
+      if (!nextHomepageImage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before featuring this product on the homepage.',
+          400
+        );
+      }
       if (!slot || ![1, 2, 3].includes(slot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
       }
@@ -306,6 +322,13 @@ export const featureProduct = async (req: Request, res: Response) => {
       if (!product.is_active) {
         return sendError(res, 'Only active products can be featured on the homepage.', 400);
       }
+      if (!product.image_homepage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before assigning this product to a homepage slot.',
+          400
+        );
+      }
       if (!nextSlot || ![1, 2, 3].includes(nextSlot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
       }
@@ -394,15 +417,15 @@ export const uploadHomepageImage = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found.', 404);
     }
 
-    // homepage: prefer local storage (Cloudinary only if USE_CLOUDINARY=true)
+    // Large homepage cover for big posters (local stores original; Cloudinary uses these dims)
     const imageUrl = await uploadImage(
       req.file.buffer,
       'products/homepage',
       req.file.originalname,
-      1000,
-      1250,
-      'fill',
-      85
+      1600,
+      2000,
+      'limit',
+      90
     );
 
     const updatedProduct = await db.product.update({
@@ -410,7 +433,7 @@ export const uploadHomepageImage = async (req: Request, res: Response) => {
       data: { image_homepage: imageUrl },
     });
 
-    return sendSuccess(res, { imageUrl, product: updatedProduct }, 'Homepage thumbnail uploaded successfully');
+    return sendSuccess(res, { imageUrl, product: updatedProduct }, 'Homepage cover uploaded successfully');
   } catch (error) {
     console.error('Error uploading homepage image:', error);
     return sendError(res, 'Internal server error', 500);

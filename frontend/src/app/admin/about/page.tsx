@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
 
 interface Section {
   id: string;
@@ -203,14 +205,30 @@ export default function AboutManagementPage() {
                                 Object.keys(item).map(subKey => (
                                   <div key={subKey} className="space-y-1">
                                     <label className="text-[10px] text-gray-500 uppercase">{subKey}</label>
-                                    <textarea 
-                                      value={item[subKey]}
-                                      onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
-                                      className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors resize-none"
-                                      rows={2}
-                                    />
+                                    {isImageFieldKey(subKey) ? (
+                                      <ImageUploadField
+                                        label=""
+                                        value={item[subKey] || ''}
+                                        folder="about"
+                                        onChange={(url) => handleArrayContentChange(section.id, key, idx, subKey, url)}
+                                      />
+                                    ) : (
+                                      <textarea 
+                                        value={item[subKey]}
+                                        onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
+                                        className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors resize-none"
+                                        rows={2}
+                                      />
+                                    )}
                                   </div>
                                 ))
+                              ) : isImageFieldKey(key) ? (
+                                <ImageUploadField
+                                  label=""
+                                  value={item || ''}
+                                  folder="about"
+                                  onChange={(url) => handleArrayContentChange(section.id, key, idx, null, url)}
+                                />
                               ) : (
                                 <textarea 
                                   value={item}
@@ -233,34 +251,34 @@ export default function AboutManagementPage() {
                   );
                 }
 
-                const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value.toString().startsWith('/') || value.toString().includes('http');
-                const isLongText = value.toString().length > 50;
+                const isImage = isImageFieldKey(key);
+                const isLongText = !isImage && value.toString().length > 50;
 
                 return (
-                  <div key={key} className={isLongText ? 'col-span-2 space-y-2' : 'space-y-2'}>
+                  <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-2' : 'space-y-2'}>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
                       {key.replace(/([A-Z])/g, ' $1')}
                     </label>
-                    {isLongText ? (
+                    {isImage ? (
+                      <ImageUploadField
+                        label=""
+                        value={value || ''}
+                        folder="about"
+                        onChange={(url) => handleContentChange(section.id, key, url)}
+                      />
+                    ) : isLongText ? (
                       <textarea 
                         value={value}
                         onChange={(e) => handleContentChange(section.id, key, e.target.value)}
                         className="w-full bg-black border border-white/10 p-4 text-sm focus:border-[#f26522] transition-colors min-h-[100px]"
                       />
                     ) : (
-                      <div className="flex gap-4 items-center">
-                        <input 
-                          type="text" 
-                          value={value}
-                          onChange={(e) => handleContentChange(section.id, key, e.target.value)}
-                          className="flex-1 bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
-                        />
-                        {isImage && (
-                          <div className="w-12 h-12 bg-white/5 border border-white/10 overflow-hidden shrink-0">
-                            <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
+                      <input 
+                        type="text" 
+                        value={value}
+                        onChange={(e) => handleContentChange(section.id, key, e.target.value)}
+                        className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
+                      />
                     )}
                   </div>
                 );

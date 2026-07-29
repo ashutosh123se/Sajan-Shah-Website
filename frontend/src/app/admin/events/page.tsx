@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Calendar, Layout } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
 
 interface Event {
   id: string;
@@ -464,15 +466,22 @@ export default function AdminEventsPage() {
                   <div className="p-6 bg-zinc-950 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
-                        const isLongText = value?.toString().length > 60;
-                        const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value?.toString().startsWith('/') || value?.toString().startsWith('http');
+                        const isImage = isImageFieldKey(key);
+                        const isLongText = !isImage && value?.toString().length > 60;
 
                         return (
-                          <div key={key} className={isLongText ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
-                            {isLongText ? (
+                            {isImage ? (
+                              <ImageUploadField
+                                label=""
+                                value={value || ''}
+                                folder="events"
+                                onChange={(url) => handleSectionContentChange(section.id, key, url)}
+                              />
+                            ) : isLongText ? (
                               <textarea
                                 value={value}
                                 onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
@@ -480,19 +489,12 @@ export default function AdminEventsPage() {
                                 rows={3}
                               />
                             ) : (
-                              <div className="flex gap-4 items-center">
-                                <input
-                                  type="text"
-                                  value={value}
-                                  onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
-                                  className="flex-1 border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
-                                />
-                                {isImage && value && (
-                                  <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 bg-zinc-900 shadow-md">
-                                    <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                              </div>
+                              <input
+                                type="text"
+                                value={value}
+                                onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
+                                className="w-full border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
+                              />
                             )}
                           </div>
                         );

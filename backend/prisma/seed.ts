@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import { execSync } from 'child_process';
 import path from 'path';
 import { seedInitiatives, seedTestimonials, seedLegalPages } from './seedExtras';
+import { seedProducts } from './seedProducts';
+import { seedPress } from './seedPress';
 
 const prisma = new PrismaClient();
 
@@ -284,8 +286,10 @@ async function main() {
   await seedTestimonials();
   await seedLegalPages();
   await seedSettings();
+  await seedProducts(prisma);
+  await seedPress(prisma);
 
-  console.log('✅ Database seeded successfully (admins, page sections, initiatives, testimonials, legal pages, settings)');
+  console.log('✅ Database seeded successfully (admins, page sections, initiatives, testimonials, legal pages, settings, products, press)');
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());

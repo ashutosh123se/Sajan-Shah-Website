@@ -122,6 +122,11 @@ export default function AdminProductsPage() {
       let nextSlot: number | null = null;
 
       if (nextFeatured) {
+        if (!product.image_homepage) {
+          toast.error('Upload a large Homepage cover image before featuring this product.');
+          openModal(product);
+          return;
+        }
         // Find first empty slot
         const filledSlots = slots.filter(s => s.product !== null).map(s => s.slot);
         const emptySlot = [1, 2, 3].find(s => !filledSlots.includes(s));
@@ -157,6 +162,13 @@ export default function AdminProductsPage() {
 
   const handleSlotAssign = async (slotNum: number, productId: string) => {
     if (!productId) return;
+    const product = products.find((p) => p.id === productId);
+    if (product && !product.image_homepage) {
+      toast.error('Upload a large Homepage cover image before assigning this product to a slot.');
+      openModal(product);
+      setAssigningSlot(null);
+      return;
+    }
     try {
       await api.patch(`/v1/admin/products/${productId}/feature`, {
         is_featured: true,
@@ -205,6 +217,15 @@ export default function AdminProductsPage() {
         ...prev,
         [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
       }));
+      setEditingProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
+            }
+          : prev
+      );
+      fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Image upload failed');
     } finally {
@@ -236,12 +257,22 @@ export default function AdminProductsPage() {
       if (editingProduct) {
         await api.put(`/v1/admin/products/${editingProduct.id}`, payload);
         toast.success('Product updated successfully');
+        setIsModalOpen(false);
+        fetchData();
       } else {
-        await api.post('/v1/admin/products', payload);
-        toast.success('Product created successfully');
+        const res = await api.post('/v1/admin/products', payload);
+        const created = res.data?.data?.product;
+        toast.success('Product created. Now upload homepage and catalog images.');
+        if (created) {
+          setEditingProduct(created);
+          setFormData((prev) => ({
+            ...prev,
+            image_homepage: created.image_homepage || '',
+            image_product_page: created.image_product_page || '',
+          }));
+        }
+        fetchData();
       }
-      setIsModalOpen(false);
-      fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Failed to save product');
     }
@@ -626,20 +657,27 @@ export default function AdminProductsPage() {
                   </>
                 )}
 
-                {/* Cloudinary Image Upload Fields */}
+                {/* Dual image uploads: large homepage cover + catalog/product page */}
                 {editingProduct ? (
                   <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images Upload (Cloudinary)</h3>
+                    <div>
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images</h3>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Homepage cover is required for homepage slots (use a large image so it does not blur). Catalog image is used on the products page.
+                      </p>
+                    </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       
-                      {/* Homepage Thumbnail */}
+                      {/* Homepage Cover */}
                       <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Homepage Thumbnail (400×500px)</label>
+                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">
+                          Homepage Cover (large, ~1600×2000)
+                        </label>
                         
                         {formData.image_homepage && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_homepage} alt="Homepage Thumbnail Preview" className="w-full h-full object-cover" />
+                          <div className="w-28 h-36 bg-[#222] border border-white/10 overflow-hidden">
+                            <img src={formData.image_homepage} alt="Homepage cover preview" className="w-full h-full object-cover" />
                           </div>
                         )}
 
@@ -655,18 +693,20 @@ export default function AdminProductsPage() {
                             htmlFor="homepage-upload"
                             className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
                           >
-                            {uploadingHome ? 'Uploading to Cloudinary...' : 'Upload Homepage Thumbnail'}
+                            {uploadingHome ? 'Uploading...' : 'Upload Homepage Cover'}
                           </label>
                         </div>
                       </div>
 
                       {/* Product Page Image */}
                       <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Product Page Image (Max 900px wide)</label>
+                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">
+                          Catalog / Product Page Image
+                        </label>
                         
                         {formData.image_product_page && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_product_page} alt="Product Page Preview" className="w-full h-full object-cover" />
+                          <div className="w-28 h-36 bg-[#222] border border-white/10 overflow-hidden">
+                            <img src={formData.image_product_page} alt="Product page preview" className="w-full h-full object-cover" />
                           </div>
                         )}
 
@@ -682,7 +722,7 @@ export default function AdminProductsPage() {
                             htmlFor="product-page-upload"
                             className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
                           >
-                            {uploadingPage ? 'Uploading to Cloudinary...' : 'Upload Product Page Image'}
+                            {uploadingPage ? 'Uploading...' : 'Upload Catalog Image'}
                           </label>
                         </div>
                       </div>
@@ -691,7 +731,7 @@ export default function AdminProductsPage() {
                   </div>
                 ) : (
                   <div className="md:col-span-2 bg-[#f26522]/10 border border-[#f26522]/20 p-4 text-center text-sm text-gray-300">
-                    💡 Please save this product first. Image upload buttons will be available once the product has been created.
+                    Save the product first — then upload a large Homepage cover and a Catalog image in this same form.
                   </div>
                 )}
 

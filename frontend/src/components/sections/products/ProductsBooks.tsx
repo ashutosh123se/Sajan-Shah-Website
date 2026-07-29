@@ -5,90 +5,10 @@ import { motion } from 'framer-motion';
 
 import api from '@/lib/api';
 
-const staticBooks = [
-  {
-    id: 'static-1',
-    name: 'YOU v/s YOU',
-    subtitle: 'A 100-Day Personal Transformation Challenge',
-    description: 'A powerful 100-day system designed to help you break old patterns, build discipline, and transform your thinking through daily action.',
-    image_homepage: '/you vs you F.png',
-    image_product_page: '/you vs you B.png',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-  },
-  {
-    id: 'static-2',
-    name: 'STUDENTING & PARENTING',
-    subtitle: 'Build a Positive, Happy Home Culture',
-    description: 'A practical guide for students and parents to improve communication, reduce stress, and create a growth-focused environment at home.',
-    image_homepage: '/Studenting & Parenting F.png',
-    image_product_page: '/Studenting & Parenting B.png',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-  },
-  {
-    id: 'static-3',
-    name: 'UNTOLD STORIES OF YOUR HEROES',
-    subtitle: '100 Transformational Journeys to Inspire',
-    description: 'A collection of powerful stories that build courage, mindset, and leadership by learning from real-life struggles and success journeys.',
-    image_homepage: '/Untold Stories of Your HEroes F.png',
-    image_product_page: '/Untold Stories of Your HEroes B.png',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: true,
-  },
-  {
-    id: 'static-4',
-    name: 'SMART STUDIES',
-    subtitle: 'Study Smarter. Perform Better.',
-    description: 'A practical system designed to help students improve focus, retention, and study efficiency using smarter learning techniques.',
-    image_homepage: '/Smart Studies F.jpeg',
-    image_product_page: '/Smart Studies B.jpeg',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-    isSoldOut: true,
-  },
-  {
-    id: 'static-5',
-    name: 'BUSINESS GROWTH',
-    subtitle: 'Build, Scale, and Lead with Clarity',
-    description: 'A results-driven guide for entrepreneurs and professionals to grow their business, improve decision-making, and create sustainable success.',
-    image_homepage: 'https://placehold.co/600x800/0a0a0a/f26522?text=BUSINESS+GROWTH',
-    image_product_page: '',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-  },
-  {
-    id: 'static-6',
-    name: 'YOUTH',
-    subtitle: 'Direction, Discipline, and Drive',
-    description: 'A powerful guide for young individuals to gain clarity, build discipline, and take control of their future with confidence.',
-    image_homepage: 'https://placehold.co/600x800/0a0a0a/f26522?text=YOUTH',
-    image_product_page: '',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-  },
-  {
-    id: 'static-7',
-    name: 'LIFE NOTES',
-    subtitle: 'Simple Thoughts. Powerful Impact.',
-    description: 'A collection of deep reflections and practical insights to help you think clearly, stay grounded, and grow consistently in everyday life.',
-    image_homepage: '/Life Notes F.png',
-    image_product_page: '/Life Notes B.png',
-    buy_url_flipkart: '#',
-    buy_url_amazon: '#',
-    is_featured: false,
-  },
-];
-
 interface BookProduct {
   id: string;
   name: string;
+  slug?: string;
   subtitle?: string;
   description: string;
   short_description?: string | null;
@@ -97,10 +17,6 @@ interface BookProduct {
   buy_url_flipkart?: string | null;
   buy_url_amazon?: string | null;
   is_featured: boolean;
-  image?: string;
-  backImage?: string;
-  flipkart?: string;
-  amazon?: string;
   isSoldOut?: boolean;
 }
 
@@ -114,10 +30,10 @@ export const ProductsBooks: React.FC = () => {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
         const dbBooks = dbProducts.filter((p: any) => p.category === 'book');
-        
-        if (dbBooks.length > 0) {
-          const mappedDb = dbBooks.map((b: any) => ({
+        setBooksList(
+          dbBooks.map((b: any) => ({
             id: b.id,
+            slug: b.slug,
             name: b.name,
             subtitle: b.short_description || 'A Book by Sajan Shah',
             description: b.description,
@@ -126,28 +42,18 @@ export const ProductsBooks: React.FC = () => {
             buy_url_flipkart: b.buy_url_flipkart,
             buy_url_amazon: b.buy_url_amazon,
             is_featured: b.is_featured,
-          }));
-          const dbNames = new Set(mappedDb.map((b: BookProduct) => b.name.toLowerCase()));
-          setBooksList([
-            ...mappedDb,
-            ...staticBooks.filter(s => !dbNames.has(s.name.toLowerCase())),
-          ]);
-        } else {
-          setBooksList(staticBooks);
-        }
+            isSoldOut: !b.is_active,
+          }))
+        );
       } catch (error) {
         console.error('Failed to fetch books:', error);
-        setBooksList(staticBooks);
+        setBooksList([]);
       } finally {
         setLoading(false);
       }
     };
     fetchBooks();
   }, []);
-
-  const activeBooks = booksList.length > 0 ? booksList : staticBooks;
-  const featuredBook = activeBooks.find((b: BookProduct) => b.is_featured) || activeBooks[0];
-  const otherBooks = activeBooks.filter((b: BookProduct) => b.id !== featuredBook.id);
 
   if (loading) {
     return (
@@ -156,6 +62,17 @@ export const ProductsBooks: React.FC = () => {
       </div>
     );
   }
+
+  if (booksList.length === 0) {
+    return (
+      <section id="books" className="py-24 bg-[#050505] text-center text-gray-500">
+        No books available yet.
+      </section>
+    );
+  }
+
+  const featuredBook = booksList.find((b) => b.is_featured) || booksList[0];
+  const otherBooks = booksList.filter((b) => b.id !== featuredBook.id);
 
   return (
     <section id="books" className="py-24 bg-[#050505]">
@@ -319,10 +236,10 @@ export const ProductsBooks: React.FC = () => {
                        SOLD OUT
                      </span>
                   </div>
-                ) : (book.image_product_page || book.backImage || book.buy_url_flipkart || book.buy_url_amazon || book.flipkart || book.amazon) ? (
+                ) : (book.image_product_page || book.buy_url_flipkart || book.buy_url_amazon) ? (
                   <div className="absolute inset-0 px-8 flex flex-col items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
                      <a 
-                       href={(book.buy_url_flipkart && book.buy_url_flipkart !== '#') ? book.buy_url_flipkart : (book.flipkart || `https://www.flipkart.com/search?q=Sajan+Shah+${encodeURIComponent(book.name)}`)} 
+                       href={(book.buy_url_flipkart && book.buy_url_flipkart !== '#') ? book.buy_url_flipkart : `https://www.flipkart.com/search?q=Sajan+Shah+${encodeURIComponent(book.name)}`} 
                        target="_blank"
                        rel="noopener noreferrer"
                        className="w-full bg-white text-black py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-[#f26522] hover:text-white transition-colors shadow-lg pointer-events-auto"
@@ -330,7 +247,7 @@ export const ProductsBooks: React.FC = () => {
                        Buy on Flipkart
                      </a>
                      <a 
-                       href={(book.buy_url_amazon && book.buy_url_amazon !== '#') ? book.buy_url_amazon : (book.amazon || `https://www.amazon.in/s?k=Sajan+Shah+${encodeURIComponent(book.name)}`)} 
+                       href={(book.buy_url_amazon && book.buy_url_amazon !== '#') ? book.buy_url_amazon : `https://www.amazon.in/s?k=Sajan+Shah+${encodeURIComponent(book.name)}`} 
                        target="_blank"
                        rel="noopener noreferrer"
                        className="w-full bg-transparent border border-white/30 text-white py-4 rounded-full font-bold text-[10px] uppercase tracking-widest text-center hover:bg-white hover:text-black transition-colors shadow-lg pointer-events-auto"

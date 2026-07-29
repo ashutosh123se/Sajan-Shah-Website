@@ -7,126 +7,6 @@ import { useCart } from '@/hooks/useCart';
 
 import api from '@/lib/api';
 
-const staticMerchandise: MerchProduct[] = [
-  {
-    id: 'static-m1',
-    name: 'T-SHIRTS',
-    title: 'T-SHIRTS',
-    subtitle: 'Wear Your Ambition.',
-    description: 'This is not just a T-shirt.\nIt\'s a statement that says you refuse to settle for average.\nDesigned for dreamers, achievers, leaders, and changemakers, every time you wear it, you\'re reminded of your commitment to growth, discipline, and excellence.\nDon\'t just wear a brand. Wear a mindset.',
-    image: '/MERCHANDISE/T-Shirt.jpeg',
-    galleryImages: ['/MERCHANDISE/T-Shirt mini  (1).png', '/MERCHANDISE/T-Shirt mini  (2).png', '/MERCHANDISE/T-Shirt mini  (3).png'],
-    objectPosition: 'center top',
-    hasImage: true,
-  },
-  {
-    id: 'static-m2',
-    name: 'BOTTLES',
-    title: 'BOTTLES',
-    subtitle: 'Fuel Your Dreams.',
-    description: 'Every goal requires energy. Every achievement starts with discipline.\nStay hydrated, stay focused, and stay committed to becoming the best version of yourself. Whether you\'re studying, working, training, or building your future, this bottle keeps your mission moving forward.\nSuccess flows through daily habits.',
-    image: '/MERCHANDISE/Bottle.png',
-    galleryImages: ['/MERCHANDISE/Bottle mini (1).png', '/MERCHANDISE/Bottle mini (2).png', '/MERCHANDISE/Bottle mini (3).png'],
-    objectPosition: 'center center',
-    hasImage: true,
-  },
-  {
-    id: 'static-m3',
-    name: 'BANDS',
-    title: 'BANDS',
-    subtitle: 'Small Band. Powerful Reminder.',
-    description: 'There will be days when motivation fades.\nThat\'s when commitment matters.\nThis wrist band is your daily reminder that champions don\'t quit when things get difficult—they grow stronger.\nWear determination. Carry confidence.',
-    image: '/MERCHANDISE/Bands.png',
-    objectPosition: 'center center',
-    hasImage: true,
-  },
-  {
-    id: 'static-m4',
-    name: 'EXAM PADS',
-    title: 'EXAM PADS',
-    subtitle: 'Write Your Success Story.',
-    description: 'Every topper starts with a blank page.\nEvery achievement begins with one answer, one idea, one effort at a time.\nDesigned for focused learners, this exam pad helps you prepare with confidence and perform at your best.\nBecause your future deserves your best effort.',
-    image: '',
-    objectPosition: 'center center',
-    hasImage: false,
-  },
-  {
-    id: 'static-m5',
-    name: 'KEY CHAINS (I-G Series)',
-    title: 'KEY CHAINS',
-    subtitle: 'Carry Your Purpose Everywhere.',
-    description: 'Your keys open doors.\nYour mindset opens opportunities.\nThis key chain is a symbol of growth, courage, and the commitment to keep moving forward no matter what challenges come your way.\nKeep your dreams within reach.',
-    image: '/MERCHANDISE/Key-chains.png',
-    galleryImages: ['/MERCHANDISE/Key-chains (1).png', '/MERCHANDISE/Key-chains (2).png', '/MERCHANDISE/Key-chains (3).png'],
-    objectPosition: 'center center',
-    hasImage: true,
-  },
-  {
-    id: 'static-m6',
-    name: '12-IN-1 PRODUCTIVITY KIT',
-    title: 'PRODUCTIVITY KIT',
-    subtitle: 'The Success Starter Pack.',
-    description: 'What separates successful people from everyone else?\nNot talent.\nNot luck.\nDaily habits.\nThe Productivity Kit is designed to help you plan smarter, focus better, and execute consistently. Every item inside is a step toward higher performance and greater achievement.\nOrganize your day. Transform your life.',
-    image: '',
-    objectPosition: 'center center',
-    hasImage: false,
-  },
-  {
-    id: 'static-m7',
-    name: 'PLANTABLE PENCILS',
-    title: 'PLANTABLE PENCILS',
-    subtitle: 'Learn. Grow. Give Back.',
-    description: 'Knowledge has the power to change lives.\nAnd now, it can help grow life too.\nOnce your pencil journey ends, plant it and watch it transform into a living plant—a beautiful reminder that every lesson learned can create something meaningful.\nPlant knowledge. Grow a better future.',
-    image: '',
-    objectPosition: 'center center',
-    hasImage: false,
-  },
-  {
-    id: 'static-m8',
-    name: 'CAP',
-    title: 'CAP',
-    subtitle: 'Wear Confidence.',
-    description: 'A cap doesn\'t change who you are.\nBut it can remind you who you\'re becoming.\nDesigned for leaders, achievers, and individuals who think beyond limits, this cap represents confidence, courage, and a growth mindset.\nLead with your head held high.',
-    image: '/MERCHANDISE/cap.png',
-    galleryImages: ['/MERCHANDISE/cap mini (1).png', '/MERCHANDISE/cap mini (2).png', '/MERCHANDISE/cap mini (3).png'],
-    objectPosition: 'center center',
-    objectFit: 'contain',
-    cardBg: '#111111',
-    hasImage: true,
-  },
-  {
-    id: 'static-m9',
-    name: 'PENS',
-    title: 'PENS',
-    subtitle: 'Where Dreams Meet Action.',
-    description: 'Ideas are powerful.\nBut only when they\'re written down and acted upon.\nWhether you\'re setting goals, creating plans, or capturing your next big breakthrough, this pen is designed for people who believe that action creates results.\nYour next success story starts with one line.',
-    image: '',
-    objectPosition: 'center center',
-    hasImage: false,
-  },
-  {
-    id: 'static-m10',
-    name: 'MUGS',
-    title: 'MUGS',
-    subtitle: 'Sip Motivation Every Day.',
-    description: 'Every morning is a new opportunity.\nA new beginning.\nA new chance to become better than yesterday.\nEnjoy your favorite beverage while fueling your mind with positivity, gratitude, and purpose.\nStart your day inspired. End it accomplished.',
-    image: '/MERCHANDISE/Mugs.jpeg',
-    objectPosition: 'center center',
-    hasImage: true,
-  },
-  {
-    id: 'static-m11',
-    name: 'CANDLES',
-    title: 'CANDLES',
-    subtitle: 'Light Up Your Potential.',
-    description: 'Great ideas are born in moments of calmness and clarity.\nCreate an environment that inspires focus, reflection, creativity, and inner peace. Perfect for studying, planning, journaling, meditation, or simply recharging your mind.\nSometimes the brightest breakthroughs begin with a single flame.',
-    image: '/MERCHANDISE/Candels.jpeg',
-    galleryImages: ['/MERCHANDISE/Candels mini (1).png', '/MERCHANDISE/Candels mini (2).png', '/MERCHANDISE/Candels mini (3).png'],
-    objectPosition: 'center center',
-    hasImage: true,
-  },
-];
-
 interface MerchProduct {
   id: string | number;
   name: string;
@@ -153,9 +33,7 @@ export const ProductsMerchandise: React.FC = () => {
   const router = useRouter();
 
   const handleProductClick = (item: MerchProduct) => {
-    if (item.id.toString().startsWith('static-') && item.hasImage === false) {
-      return;
-    }
+    if (!item.hasImage) return;
     setSelectedProduct(item);
     setActiveImage(item.image || '');
   };
@@ -204,28 +82,31 @@ export const ProductsMerchandise: React.FC = () => {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
         const dbMerch = dbProducts.filter((p: any) => p.category === 'merchandise');
-
-        if (dbMerch.length > 0) {
-          const mappedDb = dbMerch.map((m: any) => ({
-            id: m.id,
-            name: m.name,
-            subtitle: m.short_description || 'Exclusive Merchandise',
-            description: m.description,
-            image: m.image_homepage || m.image_product_page || 'https://placehold.co/600x600/0a0a0a/f26522?text=MERCHANDISE',
-            buy_url_internal: m.buy_url_internal || '#',
-            price: m.price !== null ? Number(m.price) : 499,
-          }));
-          const dbNames = new Set(mappedDb.map((m: MerchProduct) => m.name.toLowerCase()));
-          setMerchList([
-            ...mappedDb,
-            ...staticMerchandise.filter(s => !dbNames.has(s.name.toLowerCase())),
-          ]);
-        } else {
-          setMerchList(staticMerchandise);
-        }
+        setMerchList(
+          dbMerch.map((m: any) => {
+            const image = m.image_homepage || m.image_product_page || '';
+            const galleryImages = [m.image_product_page, m.image_homepage].filter(
+              (url: string | null | undefined, i: number, arr: (string | null | undefined)[]) =>
+                Boolean(url) && arr.indexOf(url) === i
+            ) as string[];
+            return {
+              id: m.id,
+              name: m.name,
+              title: m.name,
+              subtitle: m.short_description || 'Exclusive Merchandise',
+              description: m.description,
+              image,
+              galleryImages,
+              buy_url_internal: m.buy_url_internal || '#',
+              price: m.price !== null ? Number(m.price) : 0,
+              hasImage: Boolean(image),
+              objectPosition: 'center center',
+            };
+          })
+        );
       } catch (error) {
         console.error('Failed to fetch merchandise:', error);
-        setMerchList(staticMerchandise);
+        setMerchList([]);
       } finally {
         setLoading(false);
       }
@@ -233,13 +114,21 @@ export const ProductsMerchandise: React.FC = () => {
     fetchMerchandise();
   }, []);
 
-  const activeMerch = merchList.length > 0 ? merchList : staticMerchandise;
+  const activeMerch = merchList;
 
   if (loading) {
     return (
       <div className="py-24 text-center text-gray-500 bg-[#0a0a0a]">
         Loading Merchandise...
       </div>
+    );
+  }
+
+  if (activeMerch.length === 0) {
+    return (
+      <section id="merchandise" className="py-32 bg-[#0a0a0a] text-center text-gray-500">
+        No merchandise available yet.
+      </section>
     );
   }
 

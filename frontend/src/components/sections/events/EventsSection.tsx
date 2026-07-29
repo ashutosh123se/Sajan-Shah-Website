@@ -9,7 +9,7 @@ import EventsPast from './EventsPast';
 import EventsCTA from './EventsCTA';
 import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
-import { SajanEvent, EventFormat, EventCategory, MOCK_EVENTS } from './eventsData';
+import { SajanEvent, EventFormat, EventCategory } from './eventsData';
 
 const mapDbEventToSajanEvent = (e: any): SajanEvent => {
   const isWebinar = e.eventType === 'webinar';
@@ -61,23 +61,20 @@ export default function EventsSection() {
           api.get('/events-page')
         ]);
         
+        // Public page must only show active DB events.
+        // Do NOT merge MOCK_EVENTS here — that kept inactive/hidden events visible.
         const dbEvents = (eventsRes.data.data.events || [])
-          .filter((e: any) => e.isActive !== false)
+          .filter((e: any) => e.isActive === true || e.isActive === undefined)
           .map(mapDbEventToSajanEvent);
 
-        const dbTitles = new Set(dbEvents.map((e: SajanEvent) => e.title.toLowerCase()));
-        const mergedEvents = [
-          ...dbEvents,
-          ...MOCK_EVENTS.filter(m => !dbTitles.has(m.title.toLowerCase()))
-        ];
-        setEventsList(mergedEvents);
+        setEventsList(dbEvents);
 
         if (sectionsRes.data.success) {
           setSections(sectionsRes.data.data.sections || []);
         }
       } catch (error) {
         console.error('Failed to fetch events page data:', error);
-        setEventsList(MOCK_EVENTS);
+        setEventsList([]);
       } finally {
         setLoading(false);
       }
@@ -89,7 +86,7 @@ export default function EventsSection() {
     return sections.find(s => s.key === key)?.content;
   };
 
-  const activeEvents = eventsList.length > 0 ? eventsList : MOCK_EVENTS;
+  const activeEvents = eventsList;
 
   // Filter lists for children
   const upcomingEvents = activeEvents.filter(e => !e.isPast && !e.isWebinar);
