@@ -17,6 +17,4 @@ backend/.env
 frontend/.env
 backend/dist/
 frontend/.next/
-backend/uploads/*
-!backend/uploads/.gitkeep
 
