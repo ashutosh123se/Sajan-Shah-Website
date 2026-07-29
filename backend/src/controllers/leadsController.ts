@@ -14,6 +14,22 @@ export const getAllLeads = async (req: Request, res: Response) => {
   }
 };
 
+export const getLeadById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const lead = await db.lead.findUnique({ where: { id } });
+
+    if (!lead) {
+      return sendError(res, 'Lead not found', 404);
+    }
+
+    sendSuccess(res, { lead });
+  } catch (error) {
+    console.error('Get lead by id error:', error);
+    sendError(res, 'Internal server error', 500);
+  }
+};
+
 export const updateLeadStatus = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;

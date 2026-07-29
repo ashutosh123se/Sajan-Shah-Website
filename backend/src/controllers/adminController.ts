@@ -10,8 +10,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       totalProducts,
       totalEvents,
       totalLeads,
-      recentOrders,
-      catalogSection
+      recentOrders
     ] = await Promise.all([
       db.user.count(),
       db.order.count(),
@@ -22,19 +21,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         take: 5,
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { name: true } } }
-      }),
-      db.speakingPageSection.findUnique({
-        where: { key: 'catalog' }
       })
     ]);
-
-    let totalPrograms = 0;
-    if (catalogSection?.content) {
-      const content = catalogSection.content as any;
-      if (content && Array.isArray(content.programs)) {
-        totalPrograms = content.programs.length || 0;
-      }
-    }
 
     // Calculate revenue (sum of paid orders)
     const orders = await db.order.findMany({
@@ -50,7 +38,6 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         totalRevenue: totalRevenue || 0,
         totalProducts: totalProducts || 0,
         totalEvents: totalEvents || 0,
-        totalPrograms: totalPrograms || 0,
         totalLeads: totalLeads || 0
       },
       recentActivity: (recentOrders || []).map(order => ({

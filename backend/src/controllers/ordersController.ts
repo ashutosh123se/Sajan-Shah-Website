@@ -52,47 +52,41 @@ const getOrCreateUser = async (email: string, name: string) => {
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { items, userEmail, userName, paymentMethod = 'RAZORPAY', shippingAddress, phone } = req.body;
-    
+    const { items, userEmail, userName, shippingAddress, phone } = req.body;
+
+    if (!items?.length) {
+      return sendError(res, 'Cart is empty', 400);
+    }
+    if (!userEmail) {
+      return sendError(res, 'Email is required', 400);
+    }
+
     // Get or Create User
-    const { user, isNew, setupToken } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
+    const { user } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
 
     // Calculate total amount
     const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
     const amountPaise = Math.round(total * 100);
-    
-    let rzpOrderId = null;
-    let orderStatus: any = 'PENDING';
 
-    if (paymentMethod === 'RAZORPAY') {
-      const razorpay = await getRazorpayInstance();
-      if (!razorpay) {
-        return sendError(res, 'Online payment is not configured. Please use Cash on Delivery or contact support.', 503);
-      }
-
-      const rzpOrder = await razorpay.orders.create({
-        amount: amountPaise,
-        currency: 'INR',
-        receipt: `rcpt_${Date.now()}`
-      });
-      rzpOrderId = rzpOrder.id;
-    } else if (paymentMethod === 'COD') {
-      orderStatus = 'PROCESSING'; // COD orders start as processing
-      
-      // For COD, if it's a new user, send setup email immediately
-      if (isNew && setupToken) {
-        await EmailService.sendPasswordSetupEmail(user.email, user.name, setupToken);
-      }
+    const razorpay = await getRazorpayInstance();
+    if (!razorpay) {
+      return sendError(res, 'Razorpay is not configured. Please add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.', 503);
     }
-    
+
+    const rzpOrder = await razorpay.orders.create({
+      amount: amountPaise,
+      currency: 'INR',
+      receipt: `rcpt_${Date.now()}`
+    });
+
     const order = await db.order.create({
       data: {
         userEmail: user.email,
         amount: total,
         amountPaise,
-        razorpayOrderId: rzpOrderId,
-        status: orderStatus,
-        paymentMethod,
+        razorpayOrderId: rzpOrder.id,
+        status: 'PENDING',
+        paymentMethod: 'RAZORPAY',
         shippingAddress,
         phone,
         items: {
@@ -107,10 +101,10 @@ export const createOrder = async (req: Request, res: Response) => {
     
     sendSuccess(res, {
       orderId: order.id,
-      razorpayOrderId: rzpOrderId,
+      razorpayOrderId: rzpOrder.id,
       amount: amountPaise,
       currency: 'INR',
-      key: paymentMethod === 'RAZORPAY' ? (await getPaymentConfig()).keyId : null
+      key: (await getPaymentConfig()).keyId
     }, 'Order created successfully');
   } catch (error) {
     console.error('Create order error:', error);

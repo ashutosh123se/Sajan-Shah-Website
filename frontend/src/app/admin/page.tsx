@@ -10,7 +10,7 @@ export default function AdminDashboard() {
     totalRevenue: 0,
     totalProducts: 0,
     totalEvents: 0,
-    totalPrograms: 0
+    totalLeads: 0
   });
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,18 +68,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className="bg-white/5 p-6 border border-white/10 hover:border-white/30 transition-all duration-300">
-          <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Programs</h3>
-          <p className="text-4xl font-light text-white">{stats.totalPrograms}</p>
-        </div>
-
-        <div className="bg-white/5 p-6 border border-white/10 hover:border-white/30 transition-all duration-300">
           <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Events</h3>
           <p className="text-4xl font-light text-white">{stats.totalEvents}</p>
         </div>
 
         <div className="bg-white/5 p-6 border border-white/10 hover:border-white/30 transition-all duration-300">
           <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">Total Leads</h3>
-          <p className="text-4xl font-light text-[#f26522]">{((stats as any).totalLeads || 0).toLocaleString()}</p>
+          <p className="text-4xl font-light text-[#f26522]">{stats.totalLeads.toLocaleString()}</p>
         </div>
       </div>
 

@@ -206,7 +206,6 @@ async function main() {
         slug: slug,
         description: 'Discover transformation with Sajan Shah. Rewire your limiting beliefs and unlock self-mastery in this exclusive program.',
         posterUrl: event.posterUrl,
-        cloudinaryPublicId: 'default',
         webinarUrl: event.eventType === 'webinar' ? 'https://zoom.us' : '',
         eventDate: event.eventDate,
         city: event.city,

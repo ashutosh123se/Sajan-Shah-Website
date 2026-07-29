@@ -64,7 +64,6 @@ model Event {
   description        String?  @db.Text
   posterUrl          String
   homepageImageUrl   String?
-  cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
   city               String?
@@ -83,7 +82,6 @@ model Member {
   name               String
   email              String?
   photoUrl           String
-  cloudinaryPublicId String?
   bio                String   @db.Text
   tier               String   // Gold | Silver | Community
   joinedAt           DateTime @default(now())
@@ -104,7 +102,6 @@ model Contributor {
   id                 String @id @default(cuid())
   name               String
   photoUrl           String
-  cloudinaryPublicId String?
   role               String
   description        String @db.Text
   order              Int    @default(0)

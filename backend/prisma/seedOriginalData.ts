@@ -75,7 +75,6 @@ async function main() {
         availability: e.availability,
         colorCode: e.colorCode,
         eventType: e.eventType || 'upcoming',
-        cloudinaryPublicId: 'seed',
         posterUrl: e.thumbnail || '/images/placeholder.jpg',
         topic: e.topic,
         isTop5: e.isTop5 || false,

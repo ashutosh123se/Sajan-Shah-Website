@@ -20,6 +20,7 @@ interface HeroSliderProps {
 
 export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loadVideo, setLoadVideo] = useState(false);
   const defaultSlides = [
     {
       id: 1,
@@ -60,18 +61,38 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  // Defer Vimeo so first paint is not blocked by external video
+  useEffect(() => {
+    const idle = typeof window !== 'undefined' && 'requestIdleCallback' in window
+      ? window.requestIdleCallback(() => setLoadVideo(true), { timeout: 2500 })
+      : null;
+    const timer = window.setTimeout(() => setLoadVideo(true), 1200);
+    return () => {
+      if (idle != null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idle);
+      }
+      window.clearTimeout(timer);
+    };
+  }, []);
+
   const slide = slides[currentSlide];
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
-      {/* Loopable Background Video */}
+      {/* Loopable Background Video — loaded after first paint */}
       <div className="absolute inset-0 z-0 bg-black">
-        <iframe
-          className="w-full h-full object-cover opacity-40 pointer-events-none scale-150 md:scale-125"
-          src="https://player.vimeo.com/video/1204461566?background=1"
-          allow="autoplay; fullscreen"
-          frameBorder="0"
-        />
+        {loadVideo ? (
+          <iframe
+            className="w-full h-full object-cover opacity-40 pointer-events-none scale-150 md:scale-125"
+            src="https://player.vimeo.com/video/1204461566?background=1"
+            allow="autoplay; fullscreen"
+            frameBorder="0"
+            loading="lazy"
+            title="Hero background"
+          />
+        ) : (
+          <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,_#1a1a1a_0%,_#000_70%)]" />
+        )}
         {/* Stronger bottom-to-top dark overlay to make text pop while keeping the video clear */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/50 to-black/30 z-10 pointer-events-none" />
       </div>

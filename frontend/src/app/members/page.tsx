@@ -11,8 +11,7 @@ interface Member {
   bio?: string;
   achievements?: string[];
   tier?: string;
-  joinDate: string;
-  isActive: boolean;
+  joinedAt: string;
 }
 
 export default function MembersPage() {
@@ -23,6 +22,7 @@ export default function MembersPage() {
     search: '',
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
     fetchMembers();
@@ -38,6 +38,7 @@ export default function MembersPage() {
       
       const response = await api.get(`/members?${params}`);
       setMembers(response.data.data.members || []);
+      setHasNextPage(Boolean(response.data.data.pagination?.hasNextPage));
     } catch (error) {
       console.error('Failed to fetch members:', error);
     } finally {
@@ -76,8 +77,7 @@ export default function MembersPage() {
     email: '',
     phone: '',
     bio: '',
-    achievements: '',
-    tier: 'bronze',
+    whyJoin: '',
   });
 
   const handleApplicationSubmit = async (e: React.FormEvent) => {
@@ -91,8 +91,7 @@ export default function MembersPage() {
         email: '',
         phone: '',
         bio: '',
-        achievements: '',
-        tier: 'bronze',
+        whyJoin: '',
       });
       setShowApplicationForm(false);
     } catch (error) {
@@ -200,19 +199,16 @@ export default function MembersPage() {
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
-                  Preferred Membership Tier
+                  Why Do You Want To Join?
                 </label>
-                <select
-                  value={applicationData.tier}
-                  onChange={(e) => setApplicationData(prev => ({ ...prev, tier: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white transition-colors appearance-none"
-                >
-                  <option value="bronze">Bronze</option>
-                  <option value="silver">Silver</option>
-                  <option value="gold">Gold</option>
-                  <option value="platinum">Platinum</option>
-                  <option value="diamond">Diamond</option>
-                </select>
+                <textarea
+                  required
+                  rows={4}
+                  value={applicationData.whyJoin}
+                  onChange={(e) => setApplicationData(prev => ({ ...prev, whyJoin: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
+                  placeholder="Tell us why you want to become a member..."
+                />
               </div>
 
               <div className="flex gap-4 pt-4">
@@ -322,7 +318,7 @@ export default function MembersPage() {
 
                   {/* Join Date */}
                   <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">
-                    EST. {formatDate(member.joinDate)}
+                    EST. {formatDate(member.joinedAt)}
                   </div>
                 </div>
               ))}
@@ -348,6 +344,7 @@ export default function MembersPage() {
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => prev + 1)}
+                  disabled={!hasNextPage}
                   className="w-14 h-14 flex items-center justify-center border border-white/10 text-white hover:bg-white hover:text-black transition-all"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

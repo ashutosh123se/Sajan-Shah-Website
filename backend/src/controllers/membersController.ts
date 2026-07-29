@@ -6,12 +6,42 @@ import { EmailService } from '../services/emailService';
 
 export const getMembers = async (req: Request, res: Response) => {
   try {
-    const { tier } = req.query;
+    const { tier, search, page = '1', limit = '12' } = req.query as Record<string, string>;
+    const parsedPage = Math.max(parseInt(page || '1', 10), 1);
+    const parsedLimit = Math.max(parseInt(limit || '12', 10), 1);
+    const skip = (parsedPage - 1) * parsedLimit;
+
     const where: any = {};
     if (tier) where.tier = tier;
-    
-    const members = await db.member.findMany({ where });
-    sendSuccess(res, { members });
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { email: { contains: search } },
+        { bio: { contains: search } },
+      ];
+    }
+
+    const [members, total] = await Promise.all([
+      db.member.findMany({
+        where,
+        orderBy: { joinedAt: 'desc' },
+        skip,
+        take: parsedLimit,
+      }),
+      db.member.count({ where }),
+    ]);
+
+    sendSuccess(res, {
+      members,
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total,
+        totalPages: Math.max(Math.ceil(total / parsedLimit), 1),
+        hasNextPage: skip + members.length < total,
+        hasPrevPage: parsedPage > 1,
+      },
+    });
   } catch (error) {
     console.error('Get members error:', error);
     sendError(res, 'Internal server error', 500);

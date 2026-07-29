@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Calendar as CalendarIcon, MapPin, CheckCircle2 } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { SajanEvent, currentDate } from './eventsData';
 
@@ -18,10 +18,13 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
   const [formatFilter, setFormatFilter] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('');
 
-  const upcomingEvents = events;
+  const upcomingEvents = useMemo(() => {
+    return [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [events]);
 
   const filteredUpcoming = useMemo(() => {
-    return upcomingEvents.filter(e => {
+    return upcomingEvents
+      .filter(e => {
       if (cityFilter && e.city !== cityFilter) return false;
       if (categoryFilter && e.category !== categoryFilter) return false;
       if (formatFilter && e.format !== formatFilter) return false;
@@ -29,6 +32,15 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
       return true;
     });
   }, [upcomingEvents, cityFilter, categoryFilter, formatFilter, availabilityFilter]);
+
+  const formatEventPrice = (event: SajanEvent) => {
+    if (event.isFree || !event.price) return 'FREE';
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(event.price);
+  };
 
   const [startMonthOffset, setStartMonthOffset] = useState(0);
 
@@ -276,15 +288,27 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                 <div className="col-span-full py-12 text-center text-gray-500">No events found matching filters.</div>
              ) : (
                filteredUpcoming.map(event => (
-                 <div key={event.id} id={`event-card-${event.id}`} className="bg-[#111] border border-white/10 p-6 rounded-xl hover:border-brand-orange transition-all duration-300">
-                    <div className="flex items-center mb-4">
-                      <div className={`w-3 h-3 rounded-full mr-3 ${event.colorCode.split(' ')[0]}`}></div>
-                      <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">{event.format} - {event.category}</span>
+                 <div key={event.id} id={`event-card-${event.id}`} className="bg-[#111] border border-white/10 rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300">
+                    {event.thumbnail && (
+                      <div className="h-44 overflow-hidden">
+                        <img src={event.thumbnail} alt={event.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className={`w-3 h-3 rounded-full mr-3 ${event.colorCode.split(' ')[0]}`}></div>
+                        <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">{event.format} - {event.category}</span>
+                      </div>
+                      <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${event.isFree || !event.price ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/30'}`}>
+                        {formatEventPrice(event)}
+                      </span>
                     </div>
                     <h3 className="text-xl font-bold mb-4 line-clamp-2">{event.title}</h3>
                     <div className="space-y-2 mb-6 text-sm text-gray-300">
                       <div className="flex items-center"><CalendarIcon className="w-4 h-4 mr-3 text-brand-orange" /> {format(event.date, 'dd MMM yyyy, HH:mm')} {event.endDate && `- ${format(event.endDate, 'dd MMM yyyy, HH:mm')}`}</div>
                       <div className="flex items-center"><MapPin className="w-4 h-4 mr-3 text-brand-orange" /> {event.city}</div>
+                      <div className="flex items-center"><IndianRupee className="w-4 h-4 mr-3 text-brand-orange" /> {formatEventPrice(event)}</div>
                       <div className="flex items-center"><CheckCircle2 className="w-4 h-4 mr-3 text-brand-orange" /> {event.availability}</div>
                     </div>
                     <Button 
@@ -297,8 +321,9 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                       }}
                       className="w-full bg-white text-black hover:bg-brand-orange hover:text-white"
                     >
-                      View Details
+                      {event.isFree || !event.price ? 'Register Free' : 'Register Now'}
                     </Button>
+                    </div>
                  </div>
                ))
              )}

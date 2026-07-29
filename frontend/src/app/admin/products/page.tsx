@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 interface Product {
   id: string;
@@ -43,10 +44,6 @@ export default function AdminProductsPage() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
-  // Image upload progress states
-  const [uploadingHome, setUploadingHome] = useState(false);
-  const [uploadingPage, setUploadingPage] = useState(false);
 
   // Slot changing state
   const [assigningSlot, setAssigningSlot] = useState<number | null>(null);
@@ -122,6 +119,11 @@ export default function AdminProductsPage() {
       let nextSlot: number | null = null;
 
       if (nextFeatured) {
+        if (!product.image_homepage) {
+          toast.error('Upload a large Homepage cover image before featuring this product.');
+          openModal(product);
+          return;
+        }
         // Find first empty slot
         const filledSlots = slots.filter(s => s.product !== null).map(s => s.slot);
         const emptySlot = [1, 2, 3].find(s => !filledSlots.includes(s));
@@ -157,6 +159,13 @@ export default function AdminProductsPage() {
 
   const handleSlotAssign = async (slotNum: number, productId: string) => {
     if (!productId) return;
+    const product = products.find((p) => p.id === productId);
+    if (product && !product.image_homepage) {
+      toast.error('Upload a large Homepage cover image before assigning this product to a slot.');
+      openModal(product);
+      setAssigningSlot(null);
+      return;
+    }
     try {
       await api.patch(`/v1/admin/products/${productId}/feature`, {
         is_featured: true,
@@ -182,37 +191,6 @@ export default function AdminProductsPage() {
     }));
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'homepage' | 'product_page') => {
-    const file = e.target.files?.[0];
-    if (!file || !editingProduct) return;
-
-    const data = new FormData();
-    data.append('image', file);
-
-    const isHome = type === 'homepage';
-    if (isHome) setUploadingHome(true);
-    else setUploadingPage(true);
-
-    try {
-      const endpoint = `/v1/admin/products/${editingProduct.id}/upload-${isHome ? 'homepage' : 'product'}-image`;
-      const res = await api.post(endpoint, data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      
-      const uploadedUrl = res.data.data.imageUrl;
-      toast.success('Image uploaded successfully');
-      setFormData(prev => ({
-        ...prev,
-        [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
-      }));
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Image upload failed');
-    } finally {
-      if (isHome) setUploadingHome(false);
-      else setUploadingPage(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -223,6 +201,8 @@ export default function AdminProductsPage() {
         description: formData.description,
         short_description: formData.short_description,
         is_active: formData.is_active,
+        image_homepage: formData.image_homepage || null,
+        image_product_page: formData.image_product_page || null,
       };
 
       if (formData.category === 'book') {
@@ -626,74 +606,36 @@ export default function AdminProductsPage() {
                   </>
                 )}
 
-                {/* Cloudinary Image Upload Fields */}
-                {editingProduct ? (
-                  <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images Upload (Cloudinary)</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      
-                      {/* Homepage Thumbnail */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Homepage Thumbnail (400×500px)</label>
-                        
-                        {formData.image_homepage && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_homepage} alt="Homepage Thumbnail Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
+                {/* Dual image uploads: available while creating and editing */}
+                <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images</h3>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Upload both images here while adding the product. Homepage cover is needed for homepage slots (large ~1600×2000). Catalog image is used on the products page.
+                    </p>
+                  </div>
 
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="homepage-upload"
-                            onChange={(e) => handleImageUpload(e, 'homepage')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="homepage-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingHome ? 'Uploading to Cloudinary...' : 'Upload Homepage Thumbnail'}
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Product Page Image */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Product Page Image (Max 900px wide)</label>
-                        
-                        {formData.image_product_page && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_product_page} alt="Product Page Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="product-page-upload"
-                            onChange={(e) => handleImageUpload(e, 'product_page')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="product-page-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingPage ? 'Uploading to Cloudinary...' : 'Upload Product Page Image'}
-                          </label>
-                        </div>
-                      </div>
-
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Homepage Cover (large)"
+                        value={formData.image_homepage}
+                        folder="products/homepage"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_homepage: url }))}
+                      />
+                    </div>
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Catalog / Product Page Image"
+                        value={formData.image_product_page}
+                        folder="products/product_page"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_product_page: url }))}
+                      />
                     </div>
                   </div>
-                ) : (
-                  <div className="md:col-span-2 bg-[#f26522]/10 border border-[#f26522]/20 p-4 text-center text-sm text-gray-300">
-                    💡 Please save this product first. Image upload buttons will be available once the product has been created.
-                  </div>
-                )}
+                </div>
 
               </div>
 

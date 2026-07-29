@@ -7,36 +7,6 @@ import api from '@/lib/api';
 import { useCart } from '@/hooks/useCart';
 import { useRouter } from 'next/navigation';
 
-const staticCourses = [
-  {
-    id: 'static-c1',
-    name: 'PARENTING PROGRAM',
-    subtitle: 'Build a Strong, Positive Home Environment',
-    description: 'A practical system to help parents understand their child better, improve communication, and create a growth-driven, stress-free home culture.',
-    image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=PARENTING+PROGRAM',
-    buy_url_internal: '#',
-    isSoldOut: false,
-  },
-  {
-    id: 'static-c2',
-    name: 'MEMORY PROGRAM',
-    subtitle: 'Unlock Your Brain’s True Potential',
-    description: 'Learn proven techniques to improve memory, focus, and retention—so you can learn faster and perform better in academics and life.',
-    image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=MEMORY+PROGRAM',
-    buy_url_internal: '#',
-    isSoldOut: false,
-  },
-  {
-    id: 'static-c3',
-    name: 'TRAIN THE TRAINER',
-    subtitle: 'Become a Powerful Speaker & Influencer',
-    description: 'A structured program to help you develop communication skills, stage confidence, and the ability to impact and influence others.',
-    image: 'https://placehold.co/800x600/0a0a0a/3b82f6?text=TRAIN+THE+TRAINER',
-    buy_url_internal: '#',
-    isSoldOut: true,
-  },
-];
-
 interface CourseProduct {
   id: string;
   name: string;
@@ -60,29 +30,21 @@ export const ProductsCourses: React.FC = () => {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
         const dbCourses = dbProducts.filter((p: any) => p.category === 'course');
-        
-        if (dbCourses.length > 0) {
-          const mappedDb = dbCourses.map((c: any) => ({
+        setCoursesList(
+          dbCourses.map((c: any) => ({
             id: c.id,
             name: c.name,
             subtitle: c.short_description || 'A Premium Course',
             description: c.description,
             image: c.image_product_page || c.image_homepage || 'https://placehold.co/800x600/0a0a0a/3b82f6?text=COURSE',
             buy_url_internal: c.buy_url_internal || '#',
-            price: c.price !== null ? Number(c.price) : 4999,
+            price: c.price !== null ? Number(c.price) : 0,
             isSoldOut: !c.is_active,
-          }));
-          const dbNames = new Set(mappedDb.map((c: any) => c.name.toLowerCase()));
-          setCoursesList([
-            ...mappedDb,
-            ...staticCourses.filter(s => !dbNames.has(s.name.toLowerCase())),
-          ]);
-        } else {
-          setCoursesList(staticCourses);
-        }
+          }))
+        );
       } catch (error) {
         console.error('Failed to fetch courses:', error);
-        setCoursesList(staticCourses);
+        setCoursesList([]);
       } finally {
         setLoading(false);
       }
@@ -90,13 +52,21 @@ export const ProductsCourses: React.FC = () => {
     fetchCourses();
   }, []);
 
-  const activeCourses = coursesList.length > 0 ? coursesList : staticCourses;
+  const activeCourses = coursesList;
 
   if (loading) {
     return (
       <div className="py-24 text-center text-gray-500 bg-[#0a0a0a]">
         Loading Courses...
       </div>
+    );
+  }
+
+  if (activeCourses.length === 0) {
+    return (
+      <section id="courses" className="py-24 bg-[#0a0a0a] text-center text-gray-500">
+        No courses available yet.
+      </section>
     );
   }
 

@@ -9,7 +9,7 @@ import EventsPast from './EventsPast';
 import EventsCTA from './EventsCTA';
 import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
-import { SajanEvent, EventFormat, EventCategory, MOCK_EVENTS } from './eventsData';
+import { SajanEvent, EventFormat, EventCategory } from './eventsData';
 
 const mapDbEventToSajanEvent = (e: any): SajanEvent => {
   const isWebinar = e.eventType === 'webinar';
@@ -44,7 +44,9 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     isPast: e.isPast || new Date(e.eventDate).getTime() < new Date().setHours(0,0,0,0),
     isTop5: e.isTop5 || false,
     tag: e.venue || 'Corporate',
-    buttonUrl: e.buttonUrl
+    buttonUrl: e.buttonUrl,
+    isFree: e.isFree ?? true,
+    price: e.price ?? undefined,
   };
 };
 
@@ -61,23 +63,20 @@ export default function EventsSection() {
           api.get('/events-page')
         ]);
         
+        // Public page must only show active DB events.
+        // Do NOT merge MOCK_EVENTS here — that kept inactive/hidden events visible.
         const dbEvents = (eventsRes.data.data.events || [])
-          .filter((e: any) => e.isActive !== false)
+          .filter((e: any) => e.isActive === true || e.isActive === undefined)
           .map(mapDbEventToSajanEvent);
 
-        const dbTitles = new Set(dbEvents.map((e: SajanEvent) => e.title.toLowerCase()));
-        const mergedEvents = [
-          ...dbEvents,
-          ...MOCK_EVENTS.filter(m => !dbTitles.has(m.title.toLowerCase()))
-        ];
-        setEventsList(mergedEvents);
+        setEventsList(dbEvents);
 
         if (sectionsRes.data.success) {
           setSections(sectionsRes.data.data.sections || []);
         }
       } catch (error) {
         console.error('Failed to fetch events page data:', error);
-        setEventsList(MOCK_EVENTS);
+        setEventsList([]);
       } finally {
         setLoading(false);
       }
@@ -89,12 +88,18 @@ export default function EventsSection() {
     return sections.find(s => s.key === key)?.content;
   };
 
-  const activeEvents = eventsList.length > 0 ? eventsList : MOCK_EVENTS;
+  const activeEvents = eventsList;
 
-  // Filter lists for children
-  const upcomingEvents = activeEvents.filter(e => !e.isPast && !e.isWebinar);
-  const webinars = activeEvents.filter(e => e.isWebinar);
-  const pastEvents = activeEvents.filter(e => e.isPast);
+  // Filter lists for children (upcoming sorted soonest-first)
+  const upcomingEvents = activeEvents
+    .filter(e => !e.isPast && !e.isWebinar)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const webinars = activeEvents
+    .filter(e => e.isWebinar)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const pastEvents = activeEvents
+    .filter(e => e.isPast)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   if (loading) {
     return (

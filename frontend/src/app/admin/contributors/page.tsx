@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Users, Layers, Layout } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
 
 interface Contributor {
   id: string;
@@ -395,6 +397,24 @@ export default function AdminContributorsPage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Team Contributors Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Updates contributor profile cards shown on the public `Contributions` page.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Social Initiatives Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Controls initiative cards and visibility state for visitors in real time.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Page Layout Copy Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Edits text, media, and ordering of all dynamic content blocks on `/contributions`.</p>
+        </div>
+      </div>
+
       {/* --- TAB 1: TEAM CONTRIBUTORS --- */}
       {activeTab === 'contributors' && (
         <div className="space-y-6">
@@ -588,8 +608,8 @@ export default function AdminContributorsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
                         const isArrayOrObject = typeof value === 'object';
-                        const isLongText = value && !isArrayOrObject && value.toString().length > 60;
-                        const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || (value && !isArrayOrObject && (value.toString().startsWith('/') || value.toString().startsWith('http')));
+                        const isImage = !isArrayOrObject && isImageFieldKey(key);
+                        const isLongText = value && !isArrayOrObject && !isImage && value.toString().length > 60;
 
                         if (isArrayOrObject) {
                           if (key === 'stats') {
@@ -751,21 +771,13 @@ export default function AdminContributorsPage() {
                                           rows={2}
                                         />
                                       </div>
-                                      <div className="flex gap-2 items-center">
-                                        <div className="flex-1">
-                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Image URL</label>
-                                          <input
-                                            type="text"
-                                            value={item.imageUrl || ''}
-                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', e.target.value)}
-                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
-                                          />
-                                        </div>
-                                        {item.imageUrl && (
-                                          <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 mt-4 bg-zinc-950 shadow-md">
-                                            <img src={item.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                          </div>
-                                        )}
+                                      <div>
+                                        <ImageUploadField
+                                          label="Image"
+                                          value={item.imageUrl || ''}
+                                          folder="contributions"
+                                          onChange={(url) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', url)}
+                                        />
                                       </div>
                                     </div>
                                   ))}
@@ -957,21 +969,13 @@ export default function AdminContributorsPage() {
                                           className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                         />
                                       </div>
-                                      <div className="flex gap-2 items-center">
-                                        <div className="flex-1">
-                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Image URL</label>
-                                          <input
-                                            type="text"
-                                            value={item.imageUrl || ''}
-                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', e.target.value)}
-                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
-                                          />
-                                        </div>
-                                        {item.imageUrl && (
-                                          <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 mt-4 bg-zinc-950 shadow-md">
-                                            <img src={item.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                          </div>
-                                        )}
+                                      <div>
+                                        <ImageUploadField
+                                          label="Image"
+                                          value={item.imageUrl || ''}
+                                          folder="contributions"
+                                          onChange={(url) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', url)}
+                                        />
                                       </div>
                                     </div>
                                   ))}
@@ -983,11 +987,18 @@ export default function AdminContributorsPage() {
                         }
 
                         return (
-                          <div key={key} className={isLongText ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
-                            {isLongText ? (
+                            {isImage ? (
+                              <ImageUploadField
+                                label=""
+                                value={value || ''}
+                                folder="contributions"
+                                onChange={(url) => handleSectionContentChange(section.id, key, url)}
+                              />
+                            ) : isLongText ? (
                               <textarea
                                 value={value || ''}
                                 onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
@@ -995,19 +1006,12 @@ export default function AdminContributorsPage() {
                                 rows={3}
                               />
                             ) : (
-                              <div className="flex gap-4 items-center">
-                                <input
-                                  type="text"
-                                  value={value || ''}
-                                  onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
-                                  className="flex-1 border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white font-sans"
-                                />
-                                {isImage && value && (
-                                  <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 bg-zinc-900 shadow-md">
-                                    <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                              </div>
+                              <input
+                                type="text"
+                                value={value || ''}
+                                onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
+                                className="w-full border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white font-sans"
+                              />
                             )}
                           </div>
                         );
@@ -1043,8 +1047,14 @@ export default function AdminContributorsPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Photo URL</label>
-                  <input type="text" required value={contribFormData.photoUrl} onChange={(e) => setContribFormData({...contribFormData, photoUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/team/member.jpg" />
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Photo</label>
+                  <ImageUploadField
+                    label=""
+                    value={contribFormData.photoUrl}
+                    folder="contributors"
+                    required
+                    onChange={(photoUrl) => setContribFormData({ ...contribFormData, photoUrl })}
+                  />
                 </div>
 
                 <div className="col-span-2">
@@ -1094,8 +1104,12 @@ export default function AdminContributorsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Image Banner URL</label>
-                  <input type="text" value={initFormData.imageUrl} onChange={(e) => setInitFormData({...initFormData, imageUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/initiative.jpg" />
+                  <ImageUploadField
+                    label="Image Banner"
+                    value={initFormData.imageUrl}
+                    folder="initiatives"
+                    onChange={(imageUrl) => setInitFormData({ ...initFormData, imageUrl })}
+                  />
                 </div>
 
                 <div>
