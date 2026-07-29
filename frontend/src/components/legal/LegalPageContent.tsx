@@ -59,11 +59,47 @@ export function LegalPageContent({ slug, fallbackTitle }: LegalPageContentProps)
           <p className="text-center text-gray-500">{error}</p>
         ) : (
           <div
-            className="space-y-6 text-gray-700 text-[15px] leading-[1.9] prose prose-neutral max-w-none"
+            className="legal-public-content space-y-6 text-gray-700 text-[15px] leading-[1.9] max-w-none"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         )}
       </div>
+
+      <style jsx global>{`
+        .legal-public-content h2 {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #111;
+          margin: 1.5rem 0 0.6rem;
+        }
+        .legal-public-content h3 {
+          font-size: 1.15rem;
+          font-weight: 600;
+          color: #222;
+          margin: 1.2rem 0 0.5rem;
+        }
+        .legal-public-content p {
+          margin: 0.7rem 0;
+        }
+        .legal-public-content ul {
+          list-style: disc;
+          padding-left: 1.4rem;
+          margin: 0.7rem 0;
+        }
+        .legal-public-content ol {
+          list-style: decimal;
+          padding-left: 1.4rem;
+          margin: 0.7rem 0;
+        }
+        .legal-public-content a {
+          color: #f26522;
+          text-decoration: underline;
+        }
+        .legal-public-content strong {
+          font-weight: 700;
+          color: #111;
+        }
+      `}</style>
     </main>
   );
 }
