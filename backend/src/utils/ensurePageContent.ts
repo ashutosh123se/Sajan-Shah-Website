@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import path from 'path';
 import { db } from './database';
+import { seedInitiatives, seedTestimonials, seedLegalPages } from './seedExtras';
 
 const PAGE_SEED_SCRIPTS = [
   'seedHomePage.js',
@@ -28,7 +29,6 @@ export async function ensurePageContentSeeded(): Promise<{ seeded: boolean; mess
     runScript(script);
   }
 
-  const { seedInitiatives, seedTestimonials, seedLegalPages } = await import('../../prisma/seedExtras');
   await seedInitiatives();
   await seedTestimonials();
   await seedLegalPages();
@@ -41,7 +41,6 @@ export async function forceSeedPageContent(): Promise<{ message: string }> {
   for (const script of PAGE_SEED_SCRIPTS) {
     runScript(script);
   }
-  const { seedInitiatives, seedTestimonials, seedLegalPages } = await import('../../prisma/seedExtras');
   await seedInitiatives();
   await seedTestimonials();
   await seedLegalPages();

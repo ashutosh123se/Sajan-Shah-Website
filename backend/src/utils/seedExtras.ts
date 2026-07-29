@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { db } from './database';
 
 export const defaultInitiatives = [
   { slug: 'ethos-global-advisory', title: 'Ethos Global Advisory', description: 'Strategic consultancy for social impact.', imageUrl: '/Our Core Initiatives/Ethos Global Advisory cover.png', order: 1 },
@@ -44,7 +42,7 @@ export const defaultLegalPages = [
 
 export async function seedInitiatives() {
   for (const initiative of defaultInitiatives) {
-    await prisma.initiative.upsert({
+    await db.initiative.upsert({
       where: { slug: initiative.slug },
       update: {
         title: initiative.title,
@@ -60,14 +58,14 @@ export async function seedInitiatives() {
 }
 
 export async function seedTestimonials() {
-  const existing = await prisma.testimonial.count();
+  const existing = await db.testimonial.count();
   if (existing > 0) {
     console.log('⏭️ Testimonials already exist, skipping bulk seed');
     return;
   }
 
   for (const testimonial of defaultTestimonials) {
-    await prisma.testimonial.create({
+    await db.testimonial.create({
       data: { ...testimonial, isActive: true },
     });
   }
@@ -76,15 +74,11 @@ export async function seedTestimonials() {
 
 export async function seedLegalPages() {
   for (const page of defaultLegalPages) {
-    await prisma.legalPage.upsert({
+    await db.legalPage.upsert({
       where: { slug: page.slug },
       update: { title: page.title, content: page.content },
       create: page,
     });
   }
   console.log('✅ Legal pages seeded');
-}
-
-export async function disconnectSeedExtras() {
-  await prisma.$disconnect();
 }
