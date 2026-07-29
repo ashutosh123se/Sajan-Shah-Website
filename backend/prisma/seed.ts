@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { execSync } from 'child_process';
 import path from 'path';
-import { seedInitiatives, seedTestimonials, seedLegalPages } from './seedExtras';
+import { seedInitiatives, seedTestimonials, seedLegalPages } from '../src/utils/seedExtras';
 import { seedProducts } from './seedProducts';
 import { seedPress } from './seedPress';
 
