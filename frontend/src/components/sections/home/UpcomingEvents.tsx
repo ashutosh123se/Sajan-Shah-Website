@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Event {
   id: string;
@@ -92,7 +93,7 @@ export const UpcomingEvents: React.FC = () => {
               >
                 {/* Event Poster */}
                 <div className="relative h-64 bg-gray-100">
-                  <img
+                  <MediaImage
                     src={event.posterUrl}
                     alt={event.title}
                     className="w-full h-full object-cover"

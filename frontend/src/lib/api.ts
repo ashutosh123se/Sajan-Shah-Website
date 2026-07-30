@@ -1,7 +1,15 @@
 import axios from 'axios';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+
+if (typeof window !== 'undefined' && API_BASE.includes('localhost') && window.location.hostname !== 'localhost') {
+  console.error(
+    '[API] NEXT_PUBLIC_API_URL was not set at build time — requests will fail. Rebuild frontend with the production API URL.'
+  );
+}
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
+  baseURL: API_BASE,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -35,7 +43,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+          `${API_BASE}/auth/refresh`,
           {},
           { withCredentials: true }
         );

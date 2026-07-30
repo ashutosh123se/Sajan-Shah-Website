@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface GalleryPhoto {
   cat: string;
@@ -83,7 +84,7 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
               key={idx}
               className="relative w-[300px] md:w-[400px] h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden flex-shrink-0 group shadow-2xl border border-gray-900"
             >
-              <img
+              <MediaImage
                 src={item.imageUrl || item.img}
                 alt={item.title}
                 className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.15] group-hover:scale-[1.10] ${item.pos || 'object-center'}`}

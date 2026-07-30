@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface PressArticle {
   id: string;
@@ -95,7 +96,7 @@ export const MediaPress: React.FC = () => {
                 >
                   <div className="h-36 bg-black/40 overflow-hidden">
                     {article.thumbnail ? (
-                      <img
+                      <MediaImage
                         src={article.thumbnail}
                         alt={article.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

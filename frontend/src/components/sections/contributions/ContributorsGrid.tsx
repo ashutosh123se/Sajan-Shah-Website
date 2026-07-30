@@ -1,4 +1,5 @@
 import React from 'react';
+import { MediaImage } from '@/components/common/MediaImage';
 
 type Contributor = {
   id: string;
@@ -38,8 +39,7 @@ export function ContributorsGrid({ contributors }: ContributorsGridProps) {
                 key={contributor.id}
                 className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 md:p-6 hover:border-zinc-800 transition-colors"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <MediaImage
                   src={contributor.photoUrl || 'https://via.placeholder.com/320x320'}
                   alt={contributor.name}
                   className="w-full h-56 object-cover rounded-xl border border-zinc-900"

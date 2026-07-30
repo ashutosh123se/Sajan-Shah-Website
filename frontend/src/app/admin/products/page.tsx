@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Product {
   id: string;
@@ -305,7 +306,7 @@ export default function AdminProductsPage() {
                   <div className="flex gap-4 items-center mt-2">
                     <div className="w-16 h-20 bg-black border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
                       {slotItem.product.image_homepage ? (
-                        <img src={slotItem.product.image_homepage} alt={slotItem.product.name} className="w-full h-full object-cover" />
+                        <MediaImage src={slotItem.product.image_homepage} alt={slotItem.product.name} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-[10px] text-gray-600">No Image</span>
                       )}
@@ -394,7 +395,7 @@ export default function AdminProductsPage() {
                     <td className="p-4">
                       <div className="w-10 h-12 bg-black border border-white/10 overflow-hidden flex items-center justify-center">
                         {product.image_homepage ? (
-                          <img src={product.image_homepage} alt={product.name} className="w-full h-full object-cover" />
+                          <MediaImage src={product.image_homepage} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
                           <span className="text-[8px] text-gray-600">No Image</span>
                         )}

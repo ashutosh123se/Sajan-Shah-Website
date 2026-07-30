@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { MediaImage } from '@/components/common/MediaImage';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CartPage() {
@@ -209,7 +210,7 @@ export default function CartPage() {
                         return (
                         <div key={product.id} className="py-8 first:pt-0 flex gap-8 group">
                           <div className="w-32 h-40 bg-white/[0.03] overflow-hidden relative border border-white/5">
-                            <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <MediaImage src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                           </div>
                           <div className="flex-1 flex flex-col justify-between py-2">

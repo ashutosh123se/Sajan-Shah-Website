@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Resource {
   id: string;
@@ -186,7 +187,7 @@ export default function ResourcesPage() {
                   {/* Thumbnail */}
                   <div className="h-32 bg-gray-100">
                     {resource.thumbnailUrl ? (
-                      <img
+                      <MediaImage
                         src={resource.thumbnailUrl}
                         alt={resource.title}
                         className="w-full h-full object-cover"

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface MerchProduct {
   id: string | number;
@@ -299,7 +300,7 @@ export const ProductsMerchandise: React.FC = () => {
                       onClick={() => setActiveImage(selectedProduct.image!)}
                       className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 ${activeImage === selectedProduct.image || (!activeImage && true) ? 'border-[#f26522] scale-105' : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'}`}
                     >
-                      <img src={selectedProduct.image} className="w-full h-full object-cover" />
+                      <MediaImage src={selectedProduct.image} alt={selectedProduct.name || 'Product'} className="w-full h-full object-cover" />
                     </button>
                     {selectedProduct.galleryImages.map((img, idx) => (
                       <button 
@@ -307,7 +308,7 @@ export const ProductsMerchandise: React.FC = () => {
                         onClick={() => setActiveImage(img)}
                         className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 ${activeImage === img ? 'border-[#f26522] scale-105' : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/30'}`}
                       >
-                        <img src={img} className="w-full h-full object-cover" />
+                        <MediaImage src={img} alt="Product view" className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>

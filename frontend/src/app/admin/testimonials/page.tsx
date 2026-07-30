@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Testimonial {
   id: string;
@@ -128,7 +129,7 @@ export default function AdminTestimonialsPage() {
             <div key={item.id} className="bg-[#141414] border border-white/10 p-6 flex flex-col md:flex-row md:items-center gap-4 justify-between">
               <div className="flex gap-4 items-start">
                 {item.photoUrl && (
-                  <img src={item.photoUrl} alt={item.name} className="w-16 h-16 rounded-full object-cover border border-[#f26522]/40" />
+                  <MediaImage src={item.photoUrl} alt={item.name} className="w-16 h-16 rounded-full object-cover border border-[#f26522]/40" />
                 )}
                 <div>
                   <h3 className="text-white font-semibold">{item.name}</h3>

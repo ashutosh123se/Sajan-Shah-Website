@@ -8,6 +8,7 @@ import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Calendar, Layout } from 'lucide-react';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { EventCardPreview } from '@/components/admin/EventCardPreview';
+import { MediaImage } from '@/components/common/MediaImage';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
 
 interface Event {
@@ -603,14 +604,14 @@ export default function AdminEventsPage() {
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Page Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'thumbnailUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
                   {uploadingPoster && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
-                  {formData.thumbnailUrl && <img src={formData.thumbnailUrl} alt="Poster preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
+                  {formData.thumbnailUrl && <MediaImage src={formData.thumbnailUrl} alt="Poster preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
                 </div>
 
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Home Page Carousel Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'homepageImageUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
                   {uploadingHomepage && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
-                  {formData.homepageImageUrl && <img src={formData.homepageImageUrl} alt="Homepage preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
+                  {formData.homepageImageUrl && <MediaImage src={formData.homepageImageUrl} alt="Homepage preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
                 </div>
 
                 <div className="col-span-2">
