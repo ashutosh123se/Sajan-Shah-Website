@@ -21,6 +21,7 @@ export interface SajanEvent {
   buttonUrl?: string;
   isFree?: boolean;
   price?: number;
+  showOnCard?: boolean;
 }
 
 export const currentDate = new Date();

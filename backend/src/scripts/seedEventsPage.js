@@ -28,20 +28,16 @@ const sections = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding Events Page sections...');
+  console.log('🌱 Seeding Events Page sections (create-only, never overwrites)...');
 
   for (const section of sections) {
-    await db.eventsPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
-    console.log(`  ✅ Seeded: ${section.key}`);
+    const existing = await db.eventsPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await db.eventsPageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
 
   console.log('✨ Events page seeding complete!');

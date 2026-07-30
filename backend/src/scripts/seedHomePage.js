@@ -80,7 +80,7 @@ const homeSections = [
         },
         {
           title: "Speaking",
-          image: "/speaking.jpeg",
+          image: "/IMG_7631.jpg",
           desc: "High-impact keynote experiences designed to transform thinking, performance, and leadership.",
           ctaText: "Find Out More",
           ctaLink: "/speaking"
@@ -90,7 +90,7 @@ const homeSections = [
           image: "/impact.png",
           desc: "Real transformation initiatives creating meaningful social and educational impact across communities.",
           ctaText: "Find Out More",
-          ctaLink: "/impact"
+          ctaLink: "/contributions"
         }
       ]
     }
@@ -181,13 +181,15 @@ const homeSections = [
 ];
 
 async function main() {
-  console.log('Seeding Home Page sections...');
+  console.log('Seeding Home Page sections (create-only, never overwrites)...');
   for (const section of homeSections) {
-    await prisma.homePageSection.upsert({
-      where: { key: section.key },
-      update: section,
-      create: section,
-    });
+    const existing = await prisma.homePageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await prisma.homePageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
   console.log('Home Page sections seeded successfully.');
 }

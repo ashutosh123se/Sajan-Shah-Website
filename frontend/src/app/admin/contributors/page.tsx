@@ -268,7 +268,7 @@ export default function AdminContributorsPage() {
         title: initFormData.title,
         slug: slugVal,
         description: initFormData.description,
-        imageUrl: initFormData.imageUrl || 'https://via.placeholder.com/800x600',
+        imageUrl: initFormData.imageUrl || '/impact.png',
         stats: initFormData.stats || null,
         order: Number(initFormData.order) || 0,
         isActive: initFormData.isActive,
@@ -435,7 +435,7 @@ export default function AdminContributorsPage() {
               contributors.sort((a,b) => a.order - b.order).map(contrib => (
                 <div key={contrib.id} className="bg-zinc-950 border border-zinc-900 p-5 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
                   <div className="flex gap-4 mb-4">
-                    <MediaImage src={contrib.photoUrl || "https://via.placeholder.com/150"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
+                    <MediaImage src={contrib.photoUrl || "/LOGO.png"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
                     <div>
                       <h3 className="text-lg font-bold text-white mb-0.5">{contrib.name}</h3>
                       <p className="text-xs text-brand-orange font-bold uppercase tracking-wide">{contrib.role}</p>

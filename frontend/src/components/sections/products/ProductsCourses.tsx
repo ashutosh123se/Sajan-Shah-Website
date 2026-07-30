@@ -29,7 +29,9 @@ export const ProductsCourses: React.FC = () => {
       try {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
-        const dbCourses = dbProducts.filter((p: any) => p.category === 'course');
+        const dbCourses = dbProducts.filter(
+          (p: any) => String(p.category || '').toLowerCase() === 'course' && p.is_active !== false
+        );
         setCoursesList(
           dbCourses.map((c: any) => ({
             id: c.id,

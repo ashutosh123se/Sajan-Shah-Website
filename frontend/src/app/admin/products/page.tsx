@@ -26,6 +26,9 @@ interface Product {
   price?: number | null;
 }
 
+const FIELD_CLASS =
+  'w-full bg-zinc-950 border border-white/15 text-white placeholder:text-zinc-400 px-4 py-3 focus:border-[#f26522] focus:outline-none caret-white [color-scheme:dark] selection:bg-[#f26522]/40 autofill:shadow-[inset_0_0_0_1000px_#09090b] [&:-webkit-autofill]:[-webkit-text-fill-color:#fff] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]';
+
 interface Slot {
   slot: number;
   product: {
@@ -198,7 +201,7 @@ export default function AdminProductsPage() {
       const payload: any = {
         name: formData.name,
         slug: formData.slug,
-        category: formData.category,
+        category: String(formData.category || 'book').toLowerCase().trim(),
         description: formData.description,
         short_description: formData.short_description,
         is_active: formData.is_active,
@@ -206,12 +209,16 @@ export default function AdminProductsPage() {
         image_product_page: formData.image_product_page || null,
       };
 
-      if (formData.category === 'book') {
-        payload.buy_url_amazon = formData.buy_url_amazon;
-        payload.buy_url_flipkart = formData.buy_url_flipkart;
+      if (payload.category === 'book') {
+        payload.buy_url_amazon = formData.buy_url_amazon || null;
+        payload.buy_url_flipkart = formData.buy_url_flipkart || null;
+        payload.price = null;
+        payload.buy_url_internal = null;
       } else {
         payload.price = Number(formData.price);
-        payload.buy_url_internal = formData.buy_url_internal;
+        payload.buy_url_internal = formData.buy_url_internal || null;
+        payload.buy_url_amazon = null;
+        payload.buy_url_flipkart = null;
       }
 
       if (editingProduct) {
@@ -409,6 +416,15 @@ export default function AdminProductsPage() {
                       <span className="bg-white/10 text-white text-[10px] px-2 py-0.5 uppercase font-bold tracking-wider">
                         {product.category}
                       </span>
+                      <div className="text-[10px] text-zinc-500 mt-1">
+                        {product.category === 'book'
+                          ? '→ Books'
+                          : product.category === 'course'
+                            ? '→ Courses'
+                            : product.category === 'merchandise'
+                              ? '→ Merchandise'
+                              : '→ Unknown section'}
+                      </div>
                     </td>
                     <td className="p-4">
                       <button 
@@ -467,17 +483,17 @@ export default function AdminProductsPage() {
 
       {/* Form Modal (Create / Edit) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
-          <div className="bg-[#141414] border border-white/10 w-full max-w-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="bg-[#141414] border border-white/10 w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-[#141414] p-6 border-b border-white/10 flex justify-between items-center z-10">
+            <div className="shrink-0 bg-[#141414] p-6 border-b border-white/10 flex justify-between items-center">
               <h2 className="text-xl font-bold tracking-tight text-white">
                 {editingProduct ? `Edit Product: ${editingProduct.name}` : 'Create New Product'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white text-xl">✕</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white text-xl leading-none">✕</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1 min-h-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Product Name */}
@@ -488,7 +504,7 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.name} 
                     onChange={(e) => handleNameChange(e.target.value)} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
                     placeholder="Enter product title"
                   />
                 </div>
@@ -501,26 +517,56 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.slug} 
                     onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-')})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
+                    placeholder="product-slug"
                   />
                 </div>
 
-                {/* Category */}
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Category</label>
-                  <select 
-                    value={formData.category} 
-                    onChange={(e) => setFormData({...formData, category: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
-                  >
-                    <option value="book">Book</option>
-                    <option value="course">Course</option>
-                    <option value="merchandise">Merchandise</option>
-                  </select>
+                {/* Category — controls which Products page section this appears in */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">
+                    Product Type (where it appears on /products)
+                  </label>
+                  <p className="text-xs text-zinc-500 mb-3">
+                    Choose one. The item will only show in that section on the public Products page.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { value: 'book', label: 'Book', hint: 'Shows only under Books' },
+                      { value: 'course', label: 'Course', hint: 'Shows only under Courses' },
+                      { value: 'merchandise', label: 'Merchandise', hint: 'Shows only under Merchandise' },
+                    ].map((opt) => {
+                      const selected = formData.category === opt.value;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, category: opt.value })}
+                          className={`text-left px-4 py-3 border rounded-lg transition-all ${
+                            selected
+                              ? 'border-[#f26522] bg-[#f26522]/10 ring-1 ring-[#f26522]/40'
+                              : 'border-white/10 bg-zinc-950 hover:border-white/25'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                                selected ? 'border-[#f26522]' : 'border-zinc-600'
+                              }`}
+                            >
+                              {selected && <span className="w-2 h-2 rounded-full bg-[#f26522]" />}
+                            </span>
+                            <span className="text-sm font-bold text-white">{opt.label}</span>
+                          </div>
+                          <p className="text-[11px] text-zinc-400 pl-5">{opt.hint}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Active Toggle */}
-                <div className="flex items-center">
+                <div className="md:col-span-2 flex items-center">
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input 
                       type="checkbox" 
@@ -528,7 +574,7 @@ export default function AdminProductsPage() {
                       onChange={(e) => setFormData({...formData, is_active: e.target.checked})} 
                       className="w-5 h-5 bg-black border border-white/20 text-[#f26522] focus:ring-0 cursor-pointer" 
                     />
-                    <span className="text-sm font-bold uppercase tracking-wider text-gray-300">Is Active / Visible</span>
+                    <span className="text-sm font-bold uppercase tracking-wider text-gray-300">Is Active / Visible on site</span>
                   </label>
                 </div>
 
@@ -539,7 +585,7 @@ export default function AdminProductsPage() {
                     type="text" 
                     value={formData.short_description} 
                     onChange={(e) => setFormData({...formData, short_description: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
                     placeholder="Enter short tagline"
                   />
                 </div>
@@ -551,7 +597,7 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.description} 
                     onChange={(e) => setFormData({...formData, description: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 h-32 focus:border-[#f26522] focus:outline-none resize-none"
+                    className={`${FIELD_CLASS} h-32 resize-none`}
                     placeholder="Enter full product details"
                   />
                 </div>
@@ -565,7 +611,7 @@ export default function AdminProductsPage() {
                         type="url" 
                         value={formData.buy_url_amazon} 
                         onChange={(e) => setFormData({...formData, buy_url_amazon: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="https://amazon.com/..."
                       />
                     </div>
@@ -575,7 +621,7 @@ export default function AdminProductsPage() {
                         type="url" 
                         value={formData.buy_url_flipkart} 
                         onChange={(e) => setFormData({...formData, buy_url_flipkart: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="https://flipkart.com/..."
                       />
                     </div>
@@ -589,7 +635,7 @@ export default function AdminProductsPage() {
                         required 
                         value={formData.price} 
                         onChange={(e) => setFormData({...formData, price: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="e.g. 999"
                       />
                     </div>
@@ -600,7 +646,7 @@ export default function AdminProductsPage() {
                         required 
                         value={formData.buy_url_internal} 
                         onChange={(e) => setFormData({...formData, buy_url_internal: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="https://yoursite.com/checkout/..."
                       />
                     </div>

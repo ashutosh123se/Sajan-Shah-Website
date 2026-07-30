@@ -35,12 +35,15 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
   }, [upcomingEvents, cityFilter, categoryFilter, formatFilter, availabilityFilter]);
 
   const formatEventPrice = (event: SajanEvent) => {
-    if (event.isFree || !event.price) return 'FREE';
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(event.price);
+    if (event.isFree === true || event.price === 0) return 'FREE';
+    if (typeof event.price === 'number' && event.price > 0) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0,
+      }).format(event.price);
+    }
+    return event.isFree === false ? 'Paid' : 'FREE';
   };
 
   const [startMonthOffset, setStartMonthOffset] = useState(0);
@@ -301,7 +304,7 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                         <div className={`w-3 h-3 rounded-full mr-3 ${event.colorCode.split(' ')[0]}`}></div>
                         <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">{event.format} - {event.category}</span>
                       </div>
-                      <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${event.isFree || !event.price ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/30'}`}>
+                      <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${formatEventPrice(event) === 'FREE' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/30'}`}>
                         {formatEventPrice(event)}
                       </span>
                     </div>
@@ -322,7 +325,7 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                       }}
                       className="w-full bg-white text-black hover:bg-brand-orange hover:text-white"
                     >
-                      {event.isFree || !event.price ? 'Register Free' : 'Register Now'}
+                      {formatEventPrice(event) === 'FREE' ? 'Register Free' : `Register · ${formatEventPrice(event)}`}
                     </Button>
                     </div>
                  </div>

@@ -30,6 +30,7 @@ interface Event {
   homepageImageUrl?: string;
   buttonUrl?: string;
   isActive: boolean;
+  showOnCard?: boolean;
 }
 
 interface PageSection {
@@ -84,6 +85,7 @@ export default function AdminEventsPage() {
     homepageImageUrl: '',
     buttonUrl: '',
     isActive: true,
+    showOnCard: false,
   });
 
   // Page Sections State
@@ -177,11 +179,12 @@ export default function AdminEventsPage() {
         price: formData.isFree ? 0 : Number(formData.ticketPrice),
         isFree: formData.isFree,
         capacity: formData.capacity ? Number(formData.capacity) : null,
-        posterUrl: formData.thumbnailUrl || 'https://via.placeholder.com/800x600',
+        posterUrl: formData.thumbnailUrl || '/EVENT.png',
         homepageImageUrl: formData.homepageImageUrl || '',
         buttonUrl: formData.buttonUrl || null,
-        webinarUrl: 'https://zoom.us',
+        webinarUrl: formData.buttonUrl || null,
         isActive: formData.isActive,
+        showOnCard: formData.showOnCard,
       };
 
       if (editingEvent) {
@@ -222,6 +225,7 @@ export default function AdminEventsPage() {
         homepageImageUrl: event.homepageImageUrl || '',
         buttonUrl: event.buttonUrl || '',
         isActive: event.isActive,
+        showOnCard: event.showOnCard === true,
       });
     } else {
       setEditingEvent(null);
@@ -242,6 +246,7 @@ export default function AdminEventsPage() {
         homepageImageUrl: '',
         buttonUrl: '',
         isActive: true,
+        showOnCard: false,
       });
     }
     setIsModalOpen(true);
@@ -375,6 +380,12 @@ export default function AdminEventsPage() {
                         <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Status</p>
                         <p className={`font-medium ${event.isActive ? 'text-green-400' : 'text-red-400'}`}>
                           {event.isActive ? 'Active' : 'Draft'}
+                        </p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Big Ticket Card</p>
+                        <p className={`font-medium ${event.showOnCard ? 'text-[#f26522]' : 'text-zinc-500'}`}>
+                          {event.showOnCard ? 'Shown on card section' : 'Calendar / list only'}
                         </p>
                       </div>
                     </div>
@@ -619,7 +630,7 @@ export default function AdminEventsPage() {
                   <input type="text" value={formData.buttonUrl} onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. https://rzp.io/l/event-ticket or https://sol.sajanshah.com" />
                 </div>
 
-                <div className="col-span-2 flex items-center space-x-6 pt-2">
+                <div className="col-span-2 flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input type="checkbox" checked={formData.isFree} onChange={(e) => setFormData({...formData, isFree: e.target.checked, ticketPrice: e.target.checked ? '' : formData.ticketPrice})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
                     <span className="text-sm text-zinc-300">Free Event (hides price field)</span>
@@ -628,6 +639,11 @@ export default function AdminEventsPage() {
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({...formData, isActive: e.target.checked})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
                     <span className="text-sm text-zinc-300">Active (Visible)</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" checked={formData.showOnCard} onChange={(e) => setFormData({...formData, showOnCard: e.target.checked})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
+                    <span className="text-sm text-zinc-300">Show on big ticket card</span>
                   </label>
                 </div>
 
