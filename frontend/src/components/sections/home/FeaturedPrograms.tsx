@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Program {
   id: string;
@@ -85,7 +86,7 @@ export const FeaturedPrograms: React.FC = () => {
                 {/* Thumbnail */}
                 {program.thumbnailUrl && (
                   <div className="h-48 bg-gray-100">
-                    <img
+                    <MediaImage
                       src={program.thumbnailUrl}
                       alt={program.title}
                       className="w-full h-full object-cover"

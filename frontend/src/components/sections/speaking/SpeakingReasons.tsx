@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Reason {
   number: string;
@@ -174,7 +175,7 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
                 <div className="absolute bottom-12 left-10 text-left">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full border-2 border-[#f26522] p-0.5">
-                      <img src={data.logoImage} className="w-full h-full object-contain rounded-full bg-black" />
+                      <MediaImage src={data.logoImage} alt="Logo" className="w-full h-full object-contain rounded-full bg-black" />
                     </div>
                     <div className="text-white text-[10px] font-bold tracking-widest uppercase">Sajan Shah</div>
                   </div>

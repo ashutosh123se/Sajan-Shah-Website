@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Banner {
   id: string;
@@ -210,7 +211,7 @@ export default function AdminBannerPage() {
             banners.map((banner) => (
               <div key={banner.id} className="bg-[#1a1a1a] border border-white/10 overflow-hidden flex flex-col">
                 <div className="relative aspect-video bg-[#222]">
-                  <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
+                  <MediaImage src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
                   {banner.isActive && (
                     <div className="absolute top-2 right-2 bg-green-500 text-black text-xs font-bold px-2 py-1 uppercase tracking-wide shadow-lg">
                       Active

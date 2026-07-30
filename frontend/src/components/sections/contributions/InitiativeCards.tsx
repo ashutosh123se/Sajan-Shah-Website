@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { MediaImage } from '@/components/common/MediaImage';
 import { AppPromoModal } from './AppPromoModal';
 import { PlantablePencilsModal } from './PlantablePencilsModal';
 import { UVGlassesModal } from './UVGlassesModal';
@@ -87,7 +88,7 @@ export const InitiativeCards: React.FC<InitiativeCardsProps> = ({ initiatives: a
               }}
               className="group relative h-[450px] md:h-[480px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl"
             >
-              <img
+              <MediaImage
                 src={item.img}
                 alt={item.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 scale-[1.15] group-hover:scale-[1.25] grayscale group-hover:grayscale-0"

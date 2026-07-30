@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Banner {
   id: string;
@@ -68,7 +69,7 @@ export default function EventPopup() {
           className="cursor-pointer group relative overflow-hidden"
           onClick={handleClick}
         >
-          <img 
+          <MediaImage 
             src={banner.imageUrl} 
             alt={banner.title}
             className="w-full h-auto object-cover max-h-[70vh] group-hover:scale-105 transition-transform duration-500"

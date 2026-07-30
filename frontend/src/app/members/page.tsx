@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Member {
   id: string;
@@ -282,7 +283,7 @@ export default function MembersPage() {
                   {/* Photo */}
                   <div className="relative mb-8">
                     {member.photoUrl ? (
-                      <img
+                      <MediaImage
                         src={member.photoUrl}
                         alt={member.name}
                         className="w-32 h-32 rounded-full mx-auto object-cover grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-white/10 group-hover:border-white"

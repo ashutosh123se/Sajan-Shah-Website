@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Users, Layers, Layout } from 'lucide-react';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
 
 interface Contributor {
@@ -434,7 +435,7 @@ export default function AdminContributorsPage() {
               contributors.sort((a,b) => a.order - b.order).map(contrib => (
                 <div key={contrib.id} className="bg-zinc-950 border border-zinc-900 p-5 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
                   <div className="flex gap-4 mb-4">
-                    <img src={contrib.photoUrl || "https://via.placeholder.com/150"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
+                    <MediaImage src={contrib.photoUrl || "https://via.placeholder.com/150"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
                     <div>
                       <h3 className="text-lg font-bold text-white mb-0.5">{contrib.name}</h3>
                       <p className="text-xs text-brand-orange font-bold uppercase tracking-wide">{contrib.role}</p>
@@ -483,7 +484,7 @@ export default function AdminContributorsPage() {
                 <div key={init.id} className="bg-zinc-950 border border-zinc-900 p-6 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
                   <div className="flex gap-4 mb-4">
                     {init.imageUrl && (
-                      <img src={init.imageUrl} alt={init.title} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
+                      <MediaImage src={init.imageUrl} alt={init.title} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
                     )}
                     <div>
                       <h3 className="text-xl font-bold text-white mb-1">{init.title}</h3>

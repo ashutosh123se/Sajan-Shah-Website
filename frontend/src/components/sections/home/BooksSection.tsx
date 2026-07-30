@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface FeaturedProduct {
   id: string;
@@ -155,7 +156,7 @@ export const BooksSection: React.FC = () => {
                 }`}
               >
                 {book.image_homepage ? (
-                  <img
+                  <MediaImage
                     src={book.image_homepage}
                     alt={book.name}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] hover:scale-105"

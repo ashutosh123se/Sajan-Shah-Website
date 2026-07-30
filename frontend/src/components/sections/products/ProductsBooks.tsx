@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface BookProduct {
   id: string;
@@ -115,7 +116,7 @@ export const ProductsBooks: React.FC = () => {
                   
                   {/* Front Side */}
                   <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d]">
-                    <img 
+                    <MediaImage 
                       src={featuredBook.image_homepage || 'https://placehold.co/600x800/0a0a0a/f26522?text=Product'} 
                       alt={featuredBook.name}
                       className="w-full h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
@@ -124,7 +125,7 @@ export const ProductsBooks: React.FC = () => {
 
                   {/* Back Side */}
                   <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d]">
-                    <img 
+                    <MediaImage 
                       src={featuredBook.image_product_page || featuredBook.image_homepage || 'https://placehold.co/600x800/0a0a0a/f26522?text=Product'} 
                       alt={featuredBook.name}
                       className="w-full h-full object-contain opacity-100"
@@ -191,7 +192,7 @@ export const ProductsBooks: React.FC = () => {
                 
                 {/* Front Side */}
                 <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d]">
-                  <img 
+                  <MediaImage 
                     src={book.image_homepage || 'https://placehold.co/600x800/0a0a0a/f26522?text=Product'} 
                     alt={book.name}
                     className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-500"
@@ -205,7 +206,7 @@ export const ProductsBooks: React.FC = () => {
 
                 {/* Back Side */}
                 <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d]">
-                  <img 
+                  <MediaImage 
                     src={book.image_product_page || book.image_homepage || 'https://placehold.co/600x800/0a0a0a/f26522?text=Product'} 
                     alt={book.name}
                     className="w-full h-full object-contain"

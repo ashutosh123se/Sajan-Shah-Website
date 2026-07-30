@@ -18,21 +18,15 @@ export const uploadToLocal = async (
   const fullPath = path.join(targetDir, filename);
   fs.writeFileSync(fullPath, fileBuffer);
 
-  const baseUrl = (
-    process.env.BACKEND_PUBLIC_URL ||
-    `http://localhost:${process.env.PORT || 5001}`
-  ).replace(/\/$/, '');
+  const relativePath = `/uploads/${safeFolder}/${filename}`.replace(/([^:]\/)\/+/g, '$1');
+  const publicBase = process.env.BACKEND_PUBLIC_URL?.replace(/\/$/, '');
 
-  if (
-    process.env.NODE_ENV === 'production' &&
-    (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1'))
-  ) {
-    console.warn(
-      '⚠️ BACKEND_PUBLIC_URL is not set — uploaded image URLs will use localhost and break on production.'
-    );
+  if (publicBase) {
+    return `${publicBase}${relativePath}`;
   }
 
-  return `${baseUrl}/uploads/${safeFolder}/${filename}`.replace(/([^:]\/)\/+/g, '$1');
+  // Relative path — frontend resolves via NEXT_PUBLIC_API_URL at display time
+  return relativePath;
 };
 
 /** Upload entry point — always stores files locally on the server. */

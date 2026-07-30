@@ -2,6 +2,12 @@ import axios from 'axios';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
+if (typeof window !== 'undefined' && API_BASE.includes('localhost') && window.location.hostname !== 'localhost') {
+  console.error(
+    '[API] NEXT_PUBLIC_API_URL was not set at build time — requests will fail. Rebuild frontend with the production API URL.'
+  );
+}
+
 const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true,

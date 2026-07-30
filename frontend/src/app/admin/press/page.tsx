@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface PressArticle {
   id: string;
@@ -139,7 +140,7 @@ export default function PressAdmin() {
         {articles.map((article) => (
           <div key={article.id} className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
             <div className="h-48 bg-gray-900 relative">
-              <img src={article.thumbnail} alt={article.title} className="w-full h-full object-cover" />
+              <MediaImage src={article.thumbnail} alt={article.title} className="w-full h-full object-cover" />
               {!article.isActive && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                   <span className="text-white font-bold px-3 py-1 bg-red-500 rounded text-sm">INACTIVE</span>

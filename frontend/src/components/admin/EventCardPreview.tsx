@@ -1,6 +1,4 @@
-'use client';
-
-import React from 'react';
+import { MediaImage } from '@/components/common/MediaImage';
 import { Calendar as CalendarIcon, MapPin, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -62,7 +60,7 @@ export function EventCardPreview({ event, compact = false }: EventCardPreviewPro
     return (
       <div className="bg-[#111] border border-white/10 rounded-xl overflow-hidden">
         <div className="relative h-36 bg-zinc-900">
-          <img src={poster} alt={event.title || 'Event preview'} className="w-full h-full object-cover" />
+          <MediaImage src={poster} alt={event.title || 'Event preview'} className="w-full h-full object-cover" />
           <div className="absolute top-3 right-3">
             <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${event.isFree ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-[#f26522]/20 text-[#f26522] border border-[#f26522]/30'}`}>
               {formatPrice(event.isFree, event.ticketPrice)}
@@ -87,7 +85,7 @@ export function EventCardPreview({ event, compact = false }: EventCardPreviewPro
     <div className="bg-[#111] border border-white/10 p-6 rounded-xl">
       {event.thumbnailUrl && (
         <div className="mb-4 rounded-lg overflow-hidden h-40">
-          <img src={poster} alt={event.title || 'Event preview'} className="w-full h-full object-cover" />
+          <MediaImage src={poster} alt={event.title || 'Event preview'} className="w-full h-full object-cover" />
         </div>
       )}
       <div className="flex items-center justify-between mb-4">

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { SajanEvent, currentDate } from './eventsData';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface EventsCalendarProps {
   events: SajanEvent[];
@@ -291,7 +292,7 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                  <div key={event.id} id={`event-card-${event.id}`} className="bg-[#111] border border-white/10 rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300">
                     {event.thumbnail && (
                       <div className="h-44 overflow-hidden">
-                        <img src={event.thumbnail} alt={event.title} className="w-full h-full object-cover" />
+                        <MediaImage src={event.thumbnail} alt={event.title} className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className="p-6">

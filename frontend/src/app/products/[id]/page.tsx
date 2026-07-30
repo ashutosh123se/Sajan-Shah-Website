@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Product {
   id: string;
@@ -160,7 +161,7 @@ export default function ProductDetailPage() {
           {/* Image */}
           <div className="relative group">
             <div className="aspect-square bg-white/5 border border-white/10 overflow-hidden">
-              <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <MediaImage src={product.imageUrl} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             </div>
           </div>
 
