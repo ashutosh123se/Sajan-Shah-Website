@@ -32,9 +32,9 @@ const FIELD_LABELS: Record<string, string> = {
   headingHighlight: 'Main Heading Part 3 (Highlighted in Orange)',
   gridImages: 'Background Image Grid',
   primaryButtonText: 'Primary Button Label',
-  primaryButtonScrollTarget: 'Primary Button Scroll Target ID (e.g., #message)',
+  primaryButtonScrollTarget: 'Primary Button Link (e.g. /events#book-sajan)',
   secondaryButtonText: 'Secondary Button Label',
-  secondaryButtonUrl: 'Secondary Button Link URL',
+  secondaryButtonUrl: 'Secondary Button Link URL (e.g. https://webinar.sajanshah.com)',
 
   // Logos Section
   label: 'Section Label Text',

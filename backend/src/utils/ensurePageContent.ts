@@ -13,16 +13,21 @@ const PAGE_SEED_SCRIPTS = [
 
 function runScript(scriptName: string) {
   const scriptPath = path.join(__dirname, '../scripts', scriptName);
-  execSync(`node "${scriptPath}"`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
+  execSync(`node "${scriptPath}"`, {
+    stdio: 'inherit',
+    cwd: path.join(__dirname, '..'),
+    env: { ...process.env, SEED_CREATE_ONLY: '1' },
+  });
 }
 
+/** Seed CMS only when empty — never overwrites admin/user content. */
 export async function ensurePageContentSeeded(): Promise<{ seeded: boolean; message: string }> {
   const speakingCount = await db.speakingPageSection.count();
   if (speakingCount > 0) {
     return { seeded: false, message: 'Page content already exists' };
   }
 
-  console.log('📦 CMS tables empty — seeding default page content...');
+  console.log('📦 CMS tables empty — seeding default page content (create-only)...');
 
   for (const script of PAGE_SEED_SCRIPTS) {
     console.log(`  → Running ${script}`);
@@ -37,12 +42,26 @@ export async function ensurePageContentSeeded(): Promise<{ seeded: boolean; mess
   return { seeded: true, message: 'Default page content seeded successfully' };
 }
 
-export async function forceSeedPageContent(): Promise<{ message: string }> {
+/**
+ * Fill ONLY missing CMS sections. Never overwrites existing images, links, or text.
+ * Safe to run on production after deploy.
+ */
+export async function forceSeedPageContent(): Promise<{ message: string; created: string[] }> {
+  process.env.SEED_CREATE_ONLY = '1';
+  const created: string[] = [];
+
   for (const script of PAGE_SEED_SCRIPTS) {
+    console.log(`  → Fill-missing only: ${script}`);
     runScript(script);
+    created.push(script);
   }
+
   await seedInitiatives();
   await seedTestimonials();
   await seedLegalPages();
-  return { message: 'Page content re-seeded (existing sections updated via upsert)' };
+
+  return {
+    message: 'Filled missing CMS rows only — existing content was not changed',
+    created,
+  };
 }

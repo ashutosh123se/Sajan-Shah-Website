@@ -296,35 +296,19 @@ const merchandise: SeedProduct[] = [
 ];
 
 export async function seedProducts(prisma: PrismaClient) {
-  console.log('🌱 Seeding products catalog...');
-
-  // Clear previous featured slots so the three homepage books own slots 1–3
-  await prisma.product.updateMany({
-    where: { is_featured: true },
-    data: { is_featured: false, featured_order: null },
-  });
+  console.log('🌱 Seeding products catalog (create-only, never overwrites)...');
 
   const allProducts = [...books, ...courses, ...merchandise];
 
   for (const prod of allProducts) {
-    await prisma.product.upsert({
-      where: { slug: prod.slug },
-      update: {
-        name: prod.name,
-        short_description: prod.short_description,
-        description: prod.description,
-        image_homepage: prod.image_homepage,
-        image_product_page: prod.image_product_page || null,
-        buy_url_flipkart: prod.buy_url_flipkart || null,
-        buy_url_amazon: prod.buy_url_amazon || null,
-        buy_url_internal: prod.buy_url_internal || null,
-        category: prod.category,
-        is_active: prod.is_active,
-        is_featured: prod.is_featured || false,
-        featured_order: prod.featured_order ?? null,
-        price: prod.price ?? null,
-      },
-      create: {
+    const existing = await prisma.product.findUnique({ where: { slug: prod.slug } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${prod.name}`);
+      continue;
+    }
+
+    await prisma.product.create({
+      data: {
         name: prod.name,
         slug: prod.slug,
         short_description: prod.short_description,
@@ -341,7 +325,7 @@ export async function seedProducts(prisma: PrismaClient) {
         price: prod.price ?? null,
       },
     });
-    console.log(`  ✅ Upserted ${prod.category}: ${prod.name}`);
+    console.log(`  ✅ Created ${prod.category}: ${prod.name}`);
   }
 
   console.log('✨ Products catalog seeding complete!');

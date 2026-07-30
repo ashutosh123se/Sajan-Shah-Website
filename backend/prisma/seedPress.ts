@@ -82,16 +82,8 @@ export async function seedPress(prisma: PrismaClient) {
     });
 
     if (existing) {
-      await prisma.pressArticle.update({
-        where: { id: existing.id },
-        data: {
-          url: article.url,
-          imageUrl: article.imageUrl,
-          date: article.date,
-          isActive: true,
-          order: article.order,
-        },
-      });
+      console.log(`  ⏭️ Skip existing press: ${article.source}`);
+      continue;
     } else {
       await prisma.pressArticle.create({
         data: {
@@ -117,15 +109,7 @@ export async function seedPress(prisma: PrismaClient) {
     });
 
     if (existing) {
-      await prisma.pressArticle.update({
-        where: { id: existing.id },
-        data: {
-          isActive: true,
-          order,
-          imageUrl: existing.imageUrl || placeholderImage(outlet),
-          url: existing.url || `https://www.google.com/search?q=${encodeURIComponent(outlet + ' Sajan Shah')}`,
-        },
-      });
+      console.log(`  ⏭️ Skip existing outlet: ${outlet}`);
     } else {
       await prisma.pressArticle.create({
         data: {

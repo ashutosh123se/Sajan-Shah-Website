@@ -154,20 +154,16 @@ const sections = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding Contributions Page sections...');
+  console.log('🌱 Seeding Contributions Page sections (create-only, never overwrites)...');
 
   for (const section of sections) {
-    await db.contributionsPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
-    console.log(`  ✅ Seeded: ${section.key}`);
+    const existing = await db.contributionsPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await db.contributionsPageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
 
   console.log('✨ Contributions page seeding complete!');

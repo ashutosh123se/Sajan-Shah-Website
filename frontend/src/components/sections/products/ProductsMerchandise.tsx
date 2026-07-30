@@ -82,7 +82,9 @@ export const ProductsMerchandise: React.FC = () => {
       try {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
-        const dbMerch = dbProducts.filter((p: any) => p.category === 'merchandise');
+        const dbMerch = dbProducts.filter(
+          (p: any) => String(p.category || '').toLowerCase() === 'merchandise' && p.is_active !== false
+        );
         setMerchList(
           dbMerch.map((m: any) => {
             const image = m.image_homepage || m.image_product_page || '';

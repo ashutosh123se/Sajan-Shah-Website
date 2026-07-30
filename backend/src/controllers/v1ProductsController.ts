@@ -87,12 +87,14 @@ export const createProduct = async (req: Request, res: Response) => {
       image_product_page,
     } = req.body;
 
+    const normalizedCategory = String(category || '').toLowerCase().trim();
+
     // 1. Validate Category-specific Fields
-    if (category === 'course' || category === 'merchandise') {
+    if (normalizedCategory === 'course' || normalizedCategory === 'merchandise') {
       if (price === undefined || price === null || price === '') {
         return sendError(res, 'Courses and merchandise require a price.', 400);
       }
-    } else if (category !== 'book') {
+    } else if (normalizedCategory !== 'book') {
       return sendError(res, "Category must be 'book', 'course', or 'merchandise'.", 400);
     }
 
@@ -145,7 +147,7 @@ export const createProduct = async (req: Request, res: Response) => {
       data: {
         name,
         slug: uniqueSlug,
-        category,
+        category: normalizedCategory,
         description,
         short_description: short_description || null,
         is_active: active,
@@ -193,7 +195,13 @@ export const updateProduct = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found', 404);
     }
 
-    const nextCategory = category || existingProduct.category;
+    const nextCategory = String(category || existingProduct.category || '')
+      .toLowerCase()
+      .trim();
+
+    if (!['book', 'course', 'merchandise'].includes(nextCategory)) {
+      return sendError(res, "Category must be 'book', 'course', or 'merchandise'.", 400);
+    }
 
     // Validate Category-specific Fields
     if (nextCategory === 'course' || nextCategory === 'merchandise') {

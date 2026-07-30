@@ -84,18 +84,18 @@ const aboutSections = [
     order: 5,
     content: {
       mainTitle: 'And then what?',
-      row1Image1: 'https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg',
+      row1Image1: '/about 2.jpeg',
       row1Tagline: 'From Speaker to',
       row1Heading: 'Movement Builder',
       row1Description: 'Sajan Shah is not just a speaker — he is a catalyst for global change, driving transformation at the individual, institutional, and societal level.',
       row1SubTagline: 'United First Initiative',
       row1SubDescription: 'Driving global impact aligned with UN Sustainable Development Goals (SDG 2030).',
-      row1Image2: 'https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg',
+      row1Image2: '/about 3.jpeg',
       row2Text1Heading: 'From Learning to Execution',
       row2Text1Description: 'Most people know what to do. Very few actually do it. Sajan bridges that gap through action-driven frameworks and daily execution systems. Knowledge without execution is useless.',
       row2Text1SubTagline: 'Live to Inspire Trust',
       row2Text1SubDescription: 'Transforming communities through education, awareness, and massive youth empowerment.',
-      row2Image3: 'https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg',
+      row2Image3: '/about 1.jpeg',
       row2Image3Tagline: 'Global Stage',
       row2Image3Heading: '16+ Million Lives Impacted',
       row2Text2Heading: 'Global Impact at Scale',
@@ -152,13 +152,15 @@ const aboutSections = [
 ];
 
 async function main() {
-  console.log('Seeding About Page sections...');
+  console.log('Seeding About Page sections (create-only, never overwrites)...');
   for (const section of aboutSections) {
-    await prisma.aboutPageSection.upsert({
-      where: { key: section.key },
-      update: section,
-      create: section,
-    });
+    const existing = await prisma.aboutPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await prisma.aboutPageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
   console.log('About Page sections seeded successfully.');
 }

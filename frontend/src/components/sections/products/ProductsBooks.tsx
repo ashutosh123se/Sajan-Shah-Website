@@ -30,7 +30,9 @@ export const ProductsBooks: React.FC = () => {
       try {
         const response = await api.get('/v1/products');
         const dbProducts = response.data.data.products || [];
-        const dbBooks = dbProducts.filter((p: any) => p.category === 'book');
+        const dbBooks = dbProducts.filter(
+          (p: any) => String(p.category || '').toLowerCase() === 'book' && p.is_active !== false
+        );
         setBooksList(
           dbBooks.map((b: any) => ({
             id: b.id,

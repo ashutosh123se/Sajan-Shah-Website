@@ -13,7 +13,7 @@ const sections = [
       headingItalic: "This Is",
       headingHighlight: "Transformation.",
       gridImages: [
-        '/impact.png',
+        '/Speking Hero.jpeg',
         '/webinar.png',
         '/You vs You.png',
         '/speaking.jpeg',
@@ -25,7 +25,7 @@ const sections = [
         '/speaking.jpeg'
       ],
       primaryButtonText: "Book Sajan to Speak →",
-      primaryButtonScrollTarget: "#message",
+      primaryButtonScrollTarget: "/events#book-sajan",
       secondaryButtonText: "Virtual Training →",
       secondaryButtonUrl: "https://webinar.sajanshah.com"
     }
@@ -159,20 +159,16 @@ const sections = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding Speaking Page sections...');
+  console.log('🌱 Seeding Speaking Page sections (create-only, never overwrites)...');
 
   for (const section of sections) {
-    await db.speakingPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
-    console.log(`  ✅ Seeded: ${section.key}`);
+    const existing = await db.speakingPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await db.speakingPageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
 
   console.log('✨ Speaking page seeding complete!');

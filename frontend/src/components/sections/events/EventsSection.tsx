@@ -45,8 +45,12 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     isTop5: e.isTop5 || false,
     tag: e.venue || 'Corporate',
     buttonUrl: e.buttonUrl,
-    isFree: e.isFree ?? true,
-    price: e.price ?? undefined,
+    isFree:
+      typeof e.isFree === 'boolean'
+        ? e.isFree
+        : !(typeof e.price === 'number' && Number(e.price) > 0),
+    price: e.price != null && e.price !== '' ? Number(e.price) : undefined,
+    showOnCard: e.showOnCard === true,
   };
 };
 
@@ -90,15 +94,16 @@ export default function EventsSection() {
 
   const activeEvents = eventsList;
 
-  // Filter lists for children (upcoming sorted soonest-first)
+  // All upcoming admin events → calendar + list (webinars + offline)
   const upcomingEvents = activeEvents
-    .filter(e => !e.isPast && !e.isWebinar)
+    .filter((e) => !e.isPast)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  const webinars = activeEvents
-    .filter(e => e.isWebinar)
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  // Big ticket cards: only events marked in admin (showOnCard), soonest first
+  const featuredUpcoming = upcomingEvents.filter((e) => e.showOnCard);
+
   const pastEvents = activeEvents
-    .filter(e => e.isPast)
+    .filter((e) => e.isPast)
     .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   if (loading) {
@@ -114,7 +119,7 @@ export default function EventsSection() {
     <div className="min-h-screen bg-brand-dark text-white pb-24">
       <EventsHero content={getSection('hero')} />
       <EventsCalendar events={upcomingEvents} allEvents={activeEvents} />
-      <EventsWebinars events={webinars} />
+      <EventsWebinars events={featuredUpcoming} />
       <EventsPast events={pastEvents} />
       <EventsCTA content={getSection('cta')} />
       <ProductsTransformation />

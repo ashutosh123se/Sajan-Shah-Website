@@ -181,44 +181,36 @@ const mockEvents = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding Events collection in Sajan Shah database...');
+  console.log('🌱 Seeding Events (create-only, never overwrites)...');
 
   for (const event of mockEvents) {
     const slug = event.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    
-    await db.event.upsert({
-      where: { slug: slug },
-      update: {
+    const existing = await db.event.findUnique({ where: { slug } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${event.title}`);
+      continue;
+    }
+
+    await db.event.create({
+      data: {
         title: event.title,
+        slug,
+        description: 'Discover transformation with Sajan Shah. Rewire your limiting beliefs and unlock self-mastery in this exclusive program.',
+        posterUrl: event.posterUrl,
+        webinarUrl: event.eventType === 'webinar' ? 'https://webinar.sajanshah.com' : 'https://sol.sajanshah.com',
+        buttonUrl: event.eventType === 'webinar' ? 'https://webinar.sajanshah.com' : 'https://sol.sajanshah.com',
         eventDate: event.eventDate,
-        eventType: event.eventType,
         city: event.city,
         venue: event.venue,
+        eventType: event.eventType,
         isPast: event.isPast,
         isFree: event.isFree,
         price: event.price,
         capacity: event.capacity,
         isActive: event.isActive,
-        posterUrl: event.posterUrl
       },
-      create: {
-        title: event.title,
-        slug: slug,
-        description: 'Discover transformation with Sajan Shah. Rewire your limiting beliefs and unlock self-mastery in this exclusive program.',
-        posterUrl: event.posterUrl,
-        webinarUrl: event.eventType === 'webinar' ? 'https://zoom.us' : '',
-        eventDate: event.eventDate,
-        city: event.city,
-        venue: event.venue,
-        eventType: event.eventType,
-        isPast: event.isPast,
-        isFree: event.isFree,
-        price: event.price,
-        capacity: event.capacity,
-        isActive: event.isActive
-      }
     });
-    console.log(`  ✅ Upserted event: ${event.title} in ${event.city}`);
+    console.log(`  ✅ Created event: ${event.title} in ${event.city}`);
   }
 
   console.log('✨ Events seeding completed successfully!');

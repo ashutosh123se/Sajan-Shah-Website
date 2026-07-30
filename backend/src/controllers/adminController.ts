@@ -58,3 +58,14 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     sendError(res, 'Internal server error', 500);
   }
 };
+
+export const reseedCmsContent = async (_req: Request, res: Response) => {
+  try {
+    const { forceSeedPageContent } = await import('../utils/ensurePageContent');
+    const result = await forceSeedPageContent();
+    sendSuccess(res, result, result.message);
+  } catch (error) {
+    console.error('Reseed CMS content error:', error);
+    sendError(res, 'Failed to reseed CMS content', 500);
+  }
+};

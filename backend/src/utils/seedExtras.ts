@@ -40,21 +40,14 @@ export const defaultLegalPages = [
   },
 ];
 
+/** Create-only — never overwrites admin-edited content. */
 export async function seedInitiatives() {
   for (const initiative of defaultInitiatives) {
-    await db.initiative.upsert({
-      where: { slug: initiative.slug },
-      update: {
-        title: initiative.title,
-        description: initiative.description,
-        imageUrl: initiative.imageUrl,
-        order: initiative.order,
-        isActive: true,
-      },
-      create: { ...initiative, isActive: true },
-    });
+    const existing = await db.initiative.findUnique({ where: { slug: initiative.slug } });
+    if (existing) continue;
+    await db.initiative.create({ data: { ...initiative, isActive: true } });
   }
-  console.log('✅ Initiatives seeded');
+  console.log('✅ Initiatives seeded (existing rows left untouched)');
 }
 
 export async function seedTestimonials() {
@@ -72,13 +65,12 @@ export async function seedTestimonials() {
   console.log('✅ Testimonials seeded');
 }
 
+/** Create-only — never overwrites legal page body. */
 export async function seedLegalPages() {
   for (const page of defaultLegalPages) {
-    await db.legalPage.upsert({
-      where: { slug: page.slug },
-      update: { title: page.title, content: page.content },
-      create: page,
-    });
+    const existing = await db.legalPage.findUnique({ where: { slug: page.slug } });
+    if (existing) continue;
+    await db.legalPage.create({ data: page });
   }
-  console.log('✅ Legal pages seeded');
+  console.log('✅ Legal pages seeded (existing rows left untouched)');
 }
