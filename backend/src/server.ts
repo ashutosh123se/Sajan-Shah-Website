@@ -35,6 +35,7 @@ import v1ProductsRoutes from './routes/v1Products';
 import speakingRoutes from './routes/speaking';
 import pressRoutes from './routes/press';
 import uploadRoutes from './routes/upload';
+import { ensurePageContentSeeded } from './utils/ensurePageContent';
 
 
 const app = express();
@@ -122,4 +123,10 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
+
+  ensurePageContentSeeded()
+    .then(({ seeded, message }) => {
+      if (seeded) console.log(`📦 ${message}`);
+    })
+    .catch((err) => console.error('CMS auto-seed failed:', err));
 });

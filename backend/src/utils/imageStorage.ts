@@ -23,6 +23,15 @@ export const uploadToLocal = async (
     `http://localhost:${process.env.PORT || 5001}`
   ).replace(/\/$/, '');
 
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1'))
+  ) {
+    console.warn(
+      '⚠️ BACKEND_PUBLIC_URL is not set — uploaded image URLs will use localhost and break on production.'
+    );
+  }
+
   return `${baseUrl}/uploads/${safeFolder}/${filename}`.replace(/([^:]\/)\/+/g, '$1');
 };
 

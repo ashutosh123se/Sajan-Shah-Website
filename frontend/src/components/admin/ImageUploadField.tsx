@@ -3,6 +3,7 @@
 import React, { useId, useState } from 'react';
 import toast from 'react-hot-toast';
 import { uploadAdminImage } from '@/lib/adminImageUpload';
+import { resolveMediaUrl } from '@/lib/resolveMediaUrl';
 
 interface ImageUploadFieldProps {
   label?: string;
@@ -55,7 +56,7 @@ export function ImageUploadField({
       <div className="flex flex-wrap items-center gap-4">
         {value ? (
           <div className={`${previewClassName} bg-black/40 border border-white/10 overflow-hidden shrink-0`}>
-            <img src={value} alt="Preview" className="w-full h-full object-cover" />
+            <img src={resolveMediaUrl(value)} alt="Preview" className="w-full h-full object-cover" />
           </div>
         ) : (
           <div
