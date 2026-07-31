@@ -27,7 +27,7 @@ const sections = [
       primaryButtonText: "Book Sajan to Speak →",
       primaryButtonScrollTarget: "/events#book-sajan",
       secondaryButtonText: "Virtual Training →",
-      secondaryButtonUrl: "https://webinar.sajanshah.com"
+      secondaryButtonUrl: "/products#courses"
     }
   },
   {
