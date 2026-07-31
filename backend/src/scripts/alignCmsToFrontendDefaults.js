@@ -131,7 +131,7 @@ async function alignCmsToFrontendDefaults() {
     content.primaryButtonText = content.primaryButtonText || 'Book Sajan to Speak →';
     content.primaryButtonScrollTarget = '/events#book-sajan';
     content.secondaryButtonText = content.secondaryButtonText || 'Virtual Training →';
-    content.secondaryButtonUrl = 'https://webinar.sajanshah.com';
+    content.secondaryButtonUrl = '/products#courses';
     if (!Array.isArray(content.gridImages) || content.gridImages.length === 0) {
       content.gridImages = ['/Speking Hero.jpeg'];
     } else {
