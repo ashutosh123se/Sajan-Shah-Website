@@ -24,7 +24,7 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   const primaryText = content?.primaryButtonText || 'Book Sajan to Speak →';
   const primaryTarget = content?.primaryButtonScrollTarget || '/events#book-sajan';
   const secondaryText = content?.secondaryButtonText || 'Virtual Training →';
-  const secondaryUrl = content?.secondaryButtonUrl || '/products#courses';
+  const secondaryUrl = content?.secondaryButtonUrl || 'https://webinar.sajanshah.com';
 
   const handlePrimary = () => {
     if (primaryTarget.startsWith('#')) {
