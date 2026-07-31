@@ -9,7 +9,7 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "ts-node --transpile-only prisma/seed.ts",
-    "align-cms": "node src/scripts/alignCmsToFrontendDefaults.js"
+    "align-cms": "ts-node --transpile-only -r tsconfig-paths/register src/scripts/runAlignCms.ts"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
