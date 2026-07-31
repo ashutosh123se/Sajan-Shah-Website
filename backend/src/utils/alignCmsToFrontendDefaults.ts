@@ -213,11 +213,11 @@ export async function alignCmsToFrontendDefaults(): Promise<{
     updated.push('home:hero');
   }
 
-  // HOME — SplitHero (local portrait + local card images)
+  // HOME — SplitHero (designer mentor portrait + local card images)
   const splitHero = await db.homePageSection.findUnique({ where: { key: 'split_hero' } });
   if (splitHero) {
     const content = parseContent(splitHero.content);
-    content.mainImage = '/IMG_7631.jpg';
+    content.mainImage = '/mentor-portrait.jpeg';
     content.cards = [
       {
         title: 'Webinar',
@@ -278,7 +278,7 @@ export async function alignCmsToFrontendDefaults(): Promise<{
     content.primaryButtonText = 'Book Sajan to Speak →';
     content.primaryButtonScrollTarget = '/events#book-sajan';
     content.secondaryButtonText = 'Virtual Training →';
-    content.secondaryButtonUrl = '/products#courses';
+    content.secondaryButtonUrl = 'https://webinar.sajanshah.com';
     content.gridImages = ['/Speking Hero.jpeg'];
     await db.speakingPageSection.update({ where: { id: speakingHero.id }, data: { content } });
     updated.push('speaking:hero');
