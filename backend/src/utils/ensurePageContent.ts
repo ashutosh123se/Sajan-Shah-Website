@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import path from 'path';
 import { db } from './database';
 import { seedInitiatives, seedTestimonials, seedLegalPages } from './seedExtras';
+import { alignCmsToFrontendDefaults } from './alignCmsToFrontendDefaults';
 
 const PAGE_SEED_SCRIPTS = [
   'seedHomePage.js',
@@ -43,8 +44,7 @@ export async function ensurePageContentSeeded(): Promise<{ seeded: boolean; mess
 }
 
 /**
- * Fill ONLY missing CMS sections. Never overwrites existing images, links, or text.
- * Safe to run on production after deploy.
+ * Fill missing CMS sections, then align designer images/links to frontend defaults.
  */
 export async function forceSeedPageContent(): Promise<{ message: string; created: string[] }> {
   process.env.SEED_CREATE_ONLY = '1';
@@ -60,8 +60,10 @@ export async function forceSeedPageContent(): Promise<{ message: string; created
   await seedTestimonials();
   await seedLegalPages();
 
+  const aligned = await alignCmsToFrontendDefaults();
+
   return {
-    message: 'Filled missing CMS rows only — existing content was not changed',
-    created,
+    message: `Filled missing CMS rows, then aligned designer images/links (${aligned.updated.join(', ') || 'none'})`,
+    created: [...created, ...aligned.updated.map((k) => `align:${k}`)],
   };
 }

@@ -8,7 +8,8 @@
     "dev": "ts-node --transpile-only -r tsconfig-paths/register src/server.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "ts-node --transpile-only prisma/seed.ts"
+    "seed": "ts-node --transpile-only prisma/seed.ts",
+    "align-cms": "node src/scripts/alignCmsToFrontendDefaults.js"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
