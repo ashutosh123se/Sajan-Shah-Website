@@ -18,41 +18,44 @@ interface HeroSliderProps {
   };
 }
 
+const DEFAULT_SLIDES = [
+  {
+    id: 1,
+    headline: "India’s Biggest Memory & Family Transformation Experience",
+    subheadline:
+      'One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.',
+    ctaText: 'Join Now',
+    ctaLink: 'https://sol.sajanshah.com',
+  },
+  {
+    id: 2,
+    headline: 'Transform From Home. No Travel Required.',
+    subheadline:
+      'Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.',
+    ctaText: 'Reserve Your Seat',
+    ctaLink: 'https://webinar.sajanshah.com',
+  },
+  {
+    id: 3,
+    headline: 'Upgrade Your Life With Proven Systems',
+    subheadline:
+      'Access powerful programs designed to improve thinking, performance, and personal growth - step by step.',
+    ctaText: 'Explore Programs',
+    ctaLink: '/products',
+  },
+  {
+    id: 4,
+    headline: 'Live to Inspire. Lead to Serve.',
+    subheadline:
+      'Be part of a movement focused on creating real impact through education, awareness, and human transformation.',
+    ctaText: 'Join the Initiative',
+    ctaLink: 'https://unitedfirst.in',
+  },
+];
+
 export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [loadVideo, setLoadVideo] = useState(false);
-  const defaultSlides = [
-    {
-      id: 1,
-      headline: "India’s Biggest Memory & Family Transformation Experience",
-      subheadline: "One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.",
-      ctaText: "Join Now",
-      ctaLink: "https://sol.sajanshah.com"
-    },
-    {
-      id: 2,
-      headline: "Transform From Home. No Travel Required.",
-      subheadline: "Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.",
-      ctaText: "Reserve Your Seat",
-      ctaLink: "https://webinar.sajanshah.com"
-    },
-    {
-      id: 3,
-      headline: "Upgrade Your Life With Proven Systems",
-      subheadline: "Access powerful programs designed to improve thinking, performance, and personal growth - step by step.",
-      ctaText: "Explore Programs",
-      ctaLink: "/products"
-    },
-    {
-      id: 4,
-      headline: "Live to Inspire. Lead to Serve.",
-      subheadline: "Be part of a movement focused on creating real impact through education, awareness, and human transformation.",
-      ctaText: "Join the Initiative",
-      ctaLink: "https://unitedfirst.in"
-    }
-  ];
-
-  const slides = content?.slides || defaultSlides;
+  const slides = content?.slides?.length ? content.slides : DEFAULT_SLIDES;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,43 +64,25 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
     return () => clearInterval(interval);
   }, [slides.length]);
 
-  // Defer Vimeo so first paint is not blocked by external video
-  useEffect(() => {
-    const idle = typeof window !== 'undefined' && 'requestIdleCallback' in window
-      ? window.requestIdleCallback(() => setLoadVideo(true), { timeout: 2500 })
-      : null;
-    const timer = window.setTimeout(() => setLoadVideo(true), 1200);
-    return () => {
-      if (idle != null && 'cancelIdleCallback' in window) {
-        window.cancelIdleCallback(idle);
-      }
-      window.clearTimeout(timer);
-    };
-  }, []);
-
   const slide = slides[currentSlide];
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
-      {/* Loopable Background Video — loaded after first paint */}
+      {/* Loopable Background Video */}
       <div className="absolute inset-0 z-0 bg-black">
-        {loadVideo ? (
-          <iframe
-            className="w-full h-full object-cover opacity-40 pointer-events-none scale-150 md:scale-125"
-            src="https://player.vimeo.com/video/1204461566?background=1"
-            allow="autoplay; fullscreen"
-            frameBorder="0"
-            loading="lazy"
-            title="Hero background"
-          />
-        ) : (
-          <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,_#1a1a1a_0%,_#000_70%)]" />
-        )}
-        {/* Stronger bottom-to-top dark overlay to make text pop while keeping the video clear */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/50 to-black/30 z-10 pointer-events-none" />
+        <video
+          className="w-full h-full object-cover opacity-85"
+          src="/sajan_hero.mp4"
+          poster="/EVENT.png"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
       </div>
 
-      {/* Content lower on the screen for better breathing room */}
       <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto pt-32 sm:pt-48 md:pt-64 pb-12">
         <AnimatePresence mode="wait">
           <motion.div
@@ -107,15 +92,15 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Solid white heading to stand out against the faded video */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 sm:mb-10 leading-[1.2] md:leading-[1.15] tracking-tight drop-shadow-2xl" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+            <h1
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white/60 mb-6 sm:mb-10 leading-[1.2] md:leading-[1.15] tracking-tight drop-shadow-2xl"
+              style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}
+            >
               {slide.headline}
             </h1>
-            {/* Faded subheadline (opacity-40) */}
-            <p className="text-lg sm:text-xl md:text-2xl font-medium text-white/90 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow-lg">
+            <p className="text-lg sm:text-xl md:text-2xl font-light text-white/40 mb-8 sm:mb-10 max-w-3xl mx-auto drop-shadow-md leading-relaxed">
               {slide.subheadline}
             </p>
-            {/* CTA Button */}
             <Link
               href={slide.ctaLink}
               className="inline-flex items-center text-[#f26522] hover:text-white uppercase tracking-widest text-sm font-bold transition-colors group mb-12"
@@ -127,11 +112,11 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
         </AnimatePresence>
       </div>
 
-      {/* Slide Indicators */}
       <div className="absolute bottom-10 left-0 right-0 z-30 flex justify-center space-x-4">
         {slides.map((_, idx) => (
           <button
             key={idx}
+            type="button"
             onClick={() => setCurrentSlide(idx)}
             className={`h-1.5 transition-all ${idx === currentSlide ? 'w-12 bg-[#f26522]' : 'w-8 bg-white/40 hover:bg-white/80'}`}
             aria-label={`Slide ${idx + 1}`}

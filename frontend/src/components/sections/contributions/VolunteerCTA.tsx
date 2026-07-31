@@ -143,13 +143,21 @@ export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none appearance-none text-gray-400"
+              className="w-full px-6 py-4 bg-zinc-950 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] focus:border-[#f26522] outline-none appearance-none text-white [color-scheme:dark]"
               required
             >
-              <option value="">Select Role</option>
-              <option value="volunteer">Volunteer</option>
-              <option value="csr">CSR Partner</option>
-              <option value="esg">ESG Partner</option>
+              <option value="" className="bg-zinc-950 text-zinc-400">
+                Select Role
+              </option>
+              <option value="volunteer" className="bg-zinc-950 text-white">
+                Volunteer
+              </option>
+              <option value="csr" className="bg-zinc-950 text-white">
+                CSR Partner
+              </option>
+              <option value="esg" className="bg-zinc-950 text-white">
+                ESG Partner
+              </option>
             </select>
             <button
               type="submit"

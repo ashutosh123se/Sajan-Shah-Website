@@ -2,6 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import { MediaImage } from '@/components/common/MediaImage';
 
+/** Matches the frontend designer SplitHero media. */
+const DESIGNER_MAIN_IMAGE = '/mentor-portrait.jpeg';
+const DESIGNER_CARDS = [
+  {
+    title: 'Webinar',
+    image: '/webinar.png',
+    desc: 'Join transformational online sessions focused on focus, confidence, performance, and mindset breakthroughs.',
+    ctaText: 'Find Out More',
+    ctaLink: 'https://webinar.sajanshah.com',
+  },
+  {
+    title: 'Speaking',
+    image: '/IMG_7631.jpg',
+    desc: 'High-impact keynote experiences designed to transform thinking, performance, and leadership.',
+    ctaText: 'Find Out More',
+    ctaLink: '/speaking',
+  },
+  {
+    title: 'Impact',
+    image: '/impact.png',
+    desc: 'Real transformation initiatives creating meaningful social and educational impact across communities.',
+    ctaText: 'Find Out More',
+    ctaLink: '/contributions',
+  },
+];
+
 interface SplitHeroProps {
   content?: {
     bannerText?: string;
@@ -30,12 +56,12 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
   const [currentWord, setCurrentWord] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentWord(prev => (prev + 1) % words.length), 3000);
+    const interval = setInterval(() => setCurrentWord((prev) => (prev + 1) % words.length), 3000);
     return () => clearInterval(interval);
   }, [words.length]);
 
   const bannerText = content?.bannerText || "This Is Not an Event.<br />It's a Transformation";
-  const mainImage = content?.mainImage || 'https://webinar.sajanshah.com/assets/mentor-portrait-DVhB0Q8D.jpeg';
+  const mainImage = DESIGNER_MAIN_IMAGE;
   const mainHeading =
     content?.mainHeading ||
     'In today’s ever-changing world, most people are trying harder… but <span class="font-bold">thinking the same.</span>';
@@ -55,36 +81,26 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
   const footerQuote =
     content?.footerQuote || 'The question is: Are you training your brain… or repeating old patterns?';
   const footerHighlight = content?.footerHighlight || 'Start your transformation today.';
-  const cards = content?.cards || [
-    {
-      title: 'Webinar',
-      image: '/webinar.png',
-      desc: 'Join transformational online sessions focused on focus, confidence, performance, and mindset breakthroughs.',
-      ctaText: 'Find Out More',
-      ctaLink: 'https://webinar.sajanshah.com',
-    },
-    {
-      title: 'Speaking',
-      image: '/IMG_7631.jpg',
-      desc: 'High-impact keynote experiences designed to transform thinking, performance, and leadership.',
-      ctaText: 'Find Out More',
-      ctaLink: '/speaking',
-    },
-    {
-      title: 'Impact',
-      image: '/impact.png',
-      desc: 'Real transformation initiatives creating meaningful social and educational impact across communities.',
-      ctaText: 'Find Out More',
-      ctaLink: '/contributions',
-    },
-  ];
+
+  const cards =
+    content?.cards?.length === 3
+      ? content.cards.map((card, idx) => ({
+          ...DESIGNER_CARDS[idx],
+          ...card,
+          image: DESIGNER_CARDS[idx].image,
+          ctaLink: card.ctaLink || DESIGNER_CARDS[idx].ctaLink,
+          ctaText: card.ctaText || DESIGNER_CARDS[idx].ctaText,
+        }))
+      : DESIGNER_CARDS;
 
   return (
     <section className="bg-white relative pb-32 pt-1">
       <div className="relative -mt-16 md:-mt-20 mx-auto w-[85%] max-w-[1100px] bg-[#f26522] p-8 md:p-12 text-center shadow-[0_20px_50px_rgba(242,101,34,0.3)] z-30">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white leading-tight tracking-wide">
           <span dangerouslySetInnerHTML={{ __html: bannerText }} />{' '}
-          <span className="font-bold inline-block min-w-[200px] md:min-w-[250px] text-left">{words[currentWord]}</span>
+          <span className="font-bold inline-block min-w-[200px] md:min-w-[250px] text-left">
+            {words[currentWord]}
+          </span>
         </h2>
       </div>
 
@@ -97,7 +113,7 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
               <img
                 src={mainImage}
                 alt="Sajan Shah"
-                className="absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-105"
               />
               <div className="absolute -inset-4 border border-gray-100/10 z-0 pointer-events-none"></div>
             </div>
@@ -144,7 +160,11 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
               <div className="relative w-full h-full transition-transform duration-[1200ms] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] ease-[cubic-bezier(0.23,1,0.32,1)]">
                 <div className="absolute inset-0 [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <MediaImage src={card.image} alt={card.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                  <MediaImage
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center [transform-style:preserve-3d]">
                     <h3 className="text-4xl md:text-5xl font-light text-white tracking-widest [transform:translateZ(70px)] drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] uppercase">
                       {card.title}
@@ -153,7 +173,11 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
                 </div>
                 <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] [transform-style:preserve-3d] overflow-hidden rounded-sm shadow-2xl bg-[#0a0a0a]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <MediaImage src={card.image} alt={card.title} className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110" />
+                  <MediaImage
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover opacity-20 transition-transform duration-1000 group-hover:scale-110"
+                  />
                   <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center [transform-style:preserve-3d]">
                     <div className="[transform:translateZ(130px)] flex flex-col items-center">
                       <h3 className="text-3xl md:text-4xl font-light text-white mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] uppercase tracking-wider">
