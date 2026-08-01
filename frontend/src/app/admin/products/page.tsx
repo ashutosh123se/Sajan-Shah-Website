@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Product {
   id: string;
@@ -23,6 +25,9 @@ interface Product {
   buy_url_internal?: string | null;
   price?: number | null;
 }
+
+const FIELD_CLASS =
+  'w-full bg-zinc-950 border border-white/15 text-white placeholder:text-zinc-400 px-4 py-3 focus:border-[#f26522] focus:outline-none caret-white [color-scheme:dark] selection:bg-[#f26522]/40 autofill:shadow-[inset_0_0_0_1000px_#09090b] [&:-webkit-autofill]:[-webkit-text-fill-color:#fff] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]';
 
 interface Slot {
   slot: number;
@@ -43,10 +48,6 @@ export default function AdminProductsPage() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
-  // Image upload progress states
-  const [uploadingHome, setUploadingHome] = useState(false);
-  const [uploadingPage, setUploadingPage] = useState(false);
 
   // Slot changing state
   const [assigningSlot, setAssigningSlot] = useState<number | null>(null);
@@ -122,6 +123,11 @@ export default function AdminProductsPage() {
       let nextSlot: number | null = null;
 
       if (nextFeatured) {
+        if (!product.image_homepage) {
+          toast.error('Upload a large Homepage cover image before featuring this product.');
+          openModal(product);
+          return;
+        }
         // Find first empty slot
         const filledSlots = slots.filter(s => s.product !== null).map(s => s.slot);
         const emptySlot = [1, 2, 3].find(s => !filledSlots.includes(s));
@@ -157,6 +163,13 @@ export default function AdminProductsPage() {
 
   const handleSlotAssign = async (slotNum: number, productId: string) => {
     if (!productId) return;
+    const product = products.find((p) => p.id === productId);
+    if (product && !product.image_homepage) {
+      toast.error('Upload a large Homepage cover image before assigning this product to a slot.');
+      openModal(product);
+      setAssigningSlot(null);
+      return;
+    }
     try {
       await api.patch(`/v1/admin/products/${productId}/feature`, {
         is_featured: true,
@@ -182,55 +195,30 @@ export default function AdminProductsPage() {
     }));
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'homepage' | 'product_page') => {
-    const file = e.target.files?.[0];
-    if (!file || !editingProduct) return;
-
-    const data = new FormData();
-    data.append('image', file);
-
-    const isHome = type === 'homepage';
-    if (isHome) setUploadingHome(true);
-    else setUploadingPage(true);
-
-    try {
-      const endpoint = `/v1/admin/products/${editingProduct.id}/upload-${isHome ? 'homepage' : 'product'}-image`;
-      const res = await api.post(endpoint, data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      
-      const uploadedUrl = res.data.data.imageUrl;
-      toast.success('Image uploaded successfully');
-      setFormData(prev => ({
-        ...prev,
-        [isHome ? 'image_homepage' : 'image_product_page']: uploadedUrl,
-      }));
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Image upload failed');
-    } finally {
-      if (isHome) setUploadingHome(false);
-      else setUploadingPage(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const payload: any = {
         name: formData.name,
         slug: formData.slug,
-        category: formData.category,
+        category: String(formData.category || 'book').toLowerCase().trim(),
         description: formData.description,
         short_description: formData.short_description,
         is_active: formData.is_active,
+        image_homepage: formData.image_homepage || null,
+        image_product_page: formData.image_product_page || null,
       };
 
-      if (formData.category === 'book') {
-        payload.buy_url_amazon = formData.buy_url_amazon;
-        payload.buy_url_flipkart = formData.buy_url_flipkart;
+      if (payload.category === 'book') {
+        payload.buy_url_amazon = formData.buy_url_amazon || null;
+        payload.buy_url_flipkart = formData.buy_url_flipkart || null;
+        payload.price = null;
+        payload.buy_url_internal = null;
       } else {
         payload.price = Number(formData.price);
-        payload.buy_url_internal = formData.buy_url_internal;
+        payload.buy_url_internal = formData.buy_url_internal || null;
+        payload.buy_url_amazon = null;
+        payload.buy_url_flipkart = null;
       }
 
       if (editingProduct) {
@@ -325,7 +313,7 @@ export default function AdminProductsPage() {
                   <div className="flex gap-4 items-center mt-2">
                     <div className="w-16 h-20 bg-black border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
                       {slotItem.product.image_homepage ? (
-                        <img src={slotItem.product.image_homepage} alt={slotItem.product.name} className="w-full h-full object-cover" />
+                        <MediaImage src={slotItem.product.image_homepage} alt={slotItem.product.name} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-[10px] text-gray-600">No Image</span>
                       )}
@@ -414,7 +402,7 @@ export default function AdminProductsPage() {
                     <td className="p-4">
                       <div className="w-10 h-12 bg-black border border-white/10 overflow-hidden flex items-center justify-center">
                         {product.image_homepage ? (
-                          <img src={product.image_homepage} alt={product.name} className="w-full h-full object-cover" />
+                          <MediaImage src={product.image_homepage} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
                           <span className="text-[8px] text-gray-600">No Image</span>
                         )}
@@ -428,6 +416,15 @@ export default function AdminProductsPage() {
                       <span className="bg-white/10 text-white text-[10px] px-2 py-0.5 uppercase font-bold tracking-wider">
                         {product.category}
                       </span>
+                      <div className="text-[10px] text-zinc-500 mt-1">
+                        {product.category === 'book'
+                          ? '→ Books'
+                          : product.category === 'course'
+                            ? '→ Courses'
+                            : product.category === 'merchandise'
+                              ? '→ Merchandise'
+                              : '→ Unknown section'}
+                      </div>
                     </td>
                     <td className="p-4">
                       <button 
@@ -486,17 +483,17 @@ export default function AdminProductsPage() {
 
       {/* Form Modal (Create / Edit) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
-          <div className="bg-[#141414] border border-white/10 w-full max-w-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="bg-[#141414] border border-white/10 w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-[#141414] p-6 border-b border-white/10 flex justify-between items-center z-10">
+            <div className="shrink-0 bg-[#141414] p-6 border-b border-white/10 flex justify-between items-center">
               <h2 className="text-xl font-bold tracking-tight text-white">
                 {editingProduct ? `Edit Product: ${editingProduct.name}` : 'Create New Product'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white text-xl">✕</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white text-xl leading-none">✕</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1 min-h-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Product Name */}
@@ -507,7 +504,7 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.name} 
                     onChange={(e) => handleNameChange(e.target.value)} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
                     placeholder="Enter product title"
                   />
                 </div>
@@ -520,26 +517,56 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.slug} 
                     onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-')})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
+                    placeholder="product-slug"
                   />
                 </div>
 
-                {/* Category */}
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Category</label>
-                  <select 
-                    value={formData.category} 
-                    onChange={(e) => setFormData({...formData, category: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
-                  >
-                    <option value="book">Book</option>
-                    <option value="course">Course</option>
-                    <option value="merchandise">Merchandise</option>
-                  </select>
+                {/* Category — controls which Products page section this appears in */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">
+                    Product Type (where it appears on /products)
+                  </label>
+                  <p className="text-xs text-zinc-500 mb-3">
+                    Choose one. The item will only show in that section on the public Products page.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { value: 'book', label: 'Book', hint: 'Shows only under Books' },
+                      { value: 'course', label: 'Course', hint: 'Shows only under Courses' },
+                      { value: 'merchandise', label: 'Merchandise', hint: 'Shows only under Merchandise' },
+                    ].map((opt) => {
+                      const selected = formData.category === opt.value;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, category: opt.value })}
+                          className={`text-left px-4 py-3 border rounded-lg transition-all ${
+                            selected
+                              ? 'border-[#f26522] bg-[#f26522]/10 ring-1 ring-[#f26522]/40'
+                              : 'border-white/10 bg-zinc-950 hover:border-white/25'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                                selected ? 'border-[#f26522]' : 'border-zinc-600'
+                              }`}
+                            >
+                              {selected && <span className="w-2 h-2 rounded-full bg-[#f26522]" />}
+                            </span>
+                            <span className="text-sm font-bold text-white">{opt.label}</span>
+                          </div>
+                          <p className="text-[11px] text-zinc-400 pl-5">{opt.hint}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Active Toggle */}
-                <div className="flex items-center">
+                <div className="md:col-span-2 flex items-center">
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input 
                       type="checkbox" 
@@ -547,7 +574,7 @@ export default function AdminProductsPage() {
                       onChange={(e) => setFormData({...formData, is_active: e.target.checked})} 
                       className="w-5 h-5 bg-black border border-white/20 text-[#f26522] focus:ring-0 cursor-pointer" 
                     />
-                    <span className="text-sm font-bold uppercase tracking-wider text-gray-300">Is Active / Visible</span>
+                    <span className="text-sm font-bold uppercase tracking-wider text-gray-300">Is Active / Visible on site</span>
                   </label>
                 </div>
 
@@ -558,7 +585,7 @@ export default function AdminProductsPage() {
                     type="text" 
                     value={formData.short_description} 
                     onChange={(e) => setFormData({...formData, short_description: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                    className={FIELD_CLASS}
                     placeholder="Enter short tagline"
                   />
                 </div>
@@ -570,7 +597,7 @@ export default function AdminProductsPage() {
                     required 
                     value={formData.description} 
                     onChange={(e) => setFormData({...formData, description: e.target.value})} 
-                    className="w-full bg-black border border-white/10 text-white px-4 py-3 h-32 focus:border-[#f26522] focus:outline-none resize-none"
+                    className={`${FIELD_CLASS} h-32 resize-none`}
                     placeholder="Enter full product details"
                   />
                 </div>
@@ -584,7 +611,7 @@ export default function AdminProductsPage() {
                         type="url" 
                         value={formData.buy_url_amazon} 
                         onChange={(e) => setFormData({...formData, buy_url_amazon: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="https://amazon.com/..."
                       />
                     </div>
@@ -594,7 +621,7 @@ export default function AdminProductsPage() {
                         type="url" 
                         value={formData.buy_url_flipkart} 
                         onChange={(e) => setFormData({...formData, buy_url_flipkart: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="https://flipkart.com/..."
                       />
                     </div>
@@ -608,92 +635,54 @@ export default function AdminProductsPage() {
                         required 
                         value={formData.price} 
                         onChange={(e) => setFormData({...formData, price: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
+                        className={FIELD_CLASS}
                         placeholder="e.g. 999"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Internal Buy URL</label>
+                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Internal Buy URL (Optional)</label>
                       <input 
-                        type="url" 
-                        required 
+                        type="text" 
                         value={formData.buy_url_internal} 
                         onChange={(e) => setFormData({...formData, buy_url_internal: e.target.value})} 
-                        className="w-full bg-black border border-white/10 text-white px-4 py-3 focus:border-[#f26522] focus:outline-none"
-                        placeholder="https://yoursite.com/checkout/..."
+                        className={FIELD_CLASS}
+                        placeholder="/products/pens or https://…"
                       />
+                      <p className="text-[10px] text-zinc-500 mt-1">Leave blank if not needed. Relative paths like /products/pens are allowed.</p>
                     </div>
                   </>
                 )}
 
-                {/* Cloudinary Image Upload Fields */}
-                {editingProduct ? (
-                  <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images Upload (Cloudinary)</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      
-                      {/* Homepage Thumbnail */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Homepage Thumbnail (400×500px)</label>
-                        
-                        {formData.image_homepage && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_homepage} alt="Homepage Thumbnail Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
+                {/* Dual image uploads: available while creating and editing */}
+                <div className="md:col-span-2 border-t border-white/10 pt-6 space-y-6">
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#f26522]">Product Images</h3>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Upload both images here while adding the product. Homepage cover is needed for homepage slots (large ~1600×2000). Catalog image is used on the products page.
+                    </p>
+                  </div>
 
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="homepage-upload"
-                            onChange={(e) => handleImageUpload(e, 'homepage')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="homepage-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingHome ? 'Uploading to Cloudinary...' : 'Upload Homepage Thumbnail'}
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Product Page Image */}
-                      <div className="bg-black/40 border border-white/5 p-4 space-y-4">
-                        <label className="block text-xs uppercase tracking-widest font-bold text-gray-400">Product Page Image (Max 900px wide)</label>
-                        
-                        {formData.image_product_page && (
-                          <div className="w-20 h-24 bg-[#222] border border-white/10 overflow-hidden">
-                            <img src={formData.image_product_page} alt="Product Page Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-
-                        <div className="relative">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            id="product-page-upload"
-                            onChange={(e) => handleImageUpload(e, 'product_page')} 
-                            className="hidden"
-                          />
-                          <label 
-                            htmlFor="product-page-upload"
-                            className="inline-block bg-white text-black hover:bg-[#f26522] hover:text-white transition-colors cursor-pointer text-xs font-bold uppercase tracking-wider px-4 py-2"
-                          >
-                            {uploadingPage ? 'Uploading to Cloudinary...' : 'Upload Product Page Image'}
-                          </label>
-                        </div>
-                      </div>
-
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Homepage Cover (large)"
+                        value={formData.image_homepage}
+                        folder="products/homepage"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_homepage: url }))}
+                      />
+                    </div>
+                    <div className="bg-black/40 border border-white/5 p-4">
+                      <ImageUploadField
+                        label="Catalog / Product Page Image"
+                        value={formData.image_product_page}
+                        folder="products/product_page"
+                        previewClassName="h-36 w-28"
+                        onChange={(url) => setFormData((prev) => ({ ...prev, image_product_page: url }))}
+                      />
                     </div>
                   </div>
-                ) : (
-                  <div className="md:col-span-2 bg-[#f26522]/10 border border-[#f26522]/20 p-4 text-center text-sm text-gray-300">
-                    💡 Please save this product first. Image upload buttons will be available once the product has been created.
-                  </div>
-                )}
+                </div>
 
               </div>
 

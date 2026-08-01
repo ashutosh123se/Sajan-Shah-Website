@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Reason {
   number: string;
@@ -20,6 +21,7 @@ interface ReasonsContent {
   marqueeImages: string[];
   marqueeEventName: string;
   logoImage: string;
+  marqueeLink?: string;
 }
 
 interface SpeakingReasonsProps {
@@ -35,6 +37,7 @@ interface SpeakingReasonsProps {
     marqueeImages?: string[];
     marqueeEventName?: string;
     logoImage?: string;
+    marqueeLink?: string;
   };
 }
 
@@ -75,6 +78,37 @@ const defaults: ReasonsContent = {
   logoImage: "/LOGO2.png"
 };
 
+function preferLocalImage(cmsImg?: string, fallback?: string) {
+  const img = (cmsImg || '').trim();
+  if (!img) return fallback || '';
+  if (img.startsWith('/') && !img.startsWith('//')) return img;
+  if (img.includes('/uploads/')) return img;
+  return fallback || img;
+}
+
+function isExternalStockImage(img?: string) {
+  const u = (img || '').trim().toLowerCase();
+  if (!u) return true;
+  if (u.startsWith('/') && !u.startsWith('//')) return false;
+  if (u.includes('/uploads/')) return false;
+  return (
+    u.startsWith('http') ||
+    u.includes('unsplash') ||
+    u.includes('pixabay') ||
+    u.includes('pexels')
+  );
+}
+
+function resolveMarqueeImages(cmsImages?: string[]) {
+  if (!cmsImages?.length) return defaults.marqueeImages;
+  const hasExternal = cmsImages.some((img) => isExternalStockImage(img));
+  if (hasExternal) return defaults.marqueeImages;
+  const resolved = cmsImages
+    .map((img, i) => preferLocalImage(img, defaults.marqueeImages[i % defaults.marqueeImages.length]))
+    .filter(Boolean);
+  return resolved.length >= 5 ? resolved : defaults.marqueeImages;
+}
+
 export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => {
   const data = {
     bigNumber: content?.bigNumber || defaults.bigNumber,
@@ -85,9 +119,10 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
     reasons: content?.reasons || defaults.reasons,
     marqueeSectionLabel: content?.marqueeSectionLabel || defaults.marqueeSectionLabel,
     marqueeSectionTitle: content?.marqueeSectionTitle || defaults.marqueeSectionTitle,
-    marqueeImages: content?.marqueeImages || defaults.marqueeImages,
+    marqueeImages: resolveMarqueeImages(content?.marqueeImages),
     marqueeEventName: content?.marqueeEventName || defaults.marqueeEventName,
-    logoImage: content?.logoImage || defaults.logoImage
+    logoImage: preferLocalImage(content?.logoImage, defaults.logoImage),
+    marqueeLink: content?.marqueeLink || 'https://www.instagram.com/sajan_shahh/',
   };
 
   return (
@@ -146,12 +181,16 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
             className="flex w-max"
           >
             {[...data.marqueeImages, ...data.marqueeImages].map((img, idx) => (
-              <div
+              <a
                 key={idx}
-                className="relative w-[320px] h-[570px] flex-shrink-0 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group bg-gray-50 mr-8"
+                href={data.marqueeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative w-[320px] h-[570px] flex-shrink-0 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group bg-gray-50 mr-8 cursor-pointer"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={img}
+                  src={encodeURI(img)}
                   alt="Stage Moment"
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
                 />
@@ -174,7 +213,7 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
                 <div className="absolute bottom-12 left-10 text-left">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full border-2 border-[#f26522] p-0.5">
-                      <img src={data.logoImage} className="w-full h-full object-contain rounded-full bg-black" />
+                      <MediaImage src={data.logoImage} alt="Logo" className="w-full h-full object-contain rounded-full bg-black" />
                     </div>
                     <div className="text-white text-[10px] font-bold tracking-widest uppercase">Sajan Shah</div>
                   </div>
@@ -182,7 +221,7 @@ export const SpeakingReasons: React.FC<SpeakingReasonsProps> = ({ content }) => 
                     {data.marqueeEventName}
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </motion.div>
         </div>

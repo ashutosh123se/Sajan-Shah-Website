@@ -4,6 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
+import { HeroSlidesEditor } from '@/components/admin/HeroSlidesEditor';
+import { normalizeHomeHeroContent } from '@/lib/homeHeroDefaults';
 
 interface Section {
   id: string;
@@ -27,7 +32,14 @@ export default function HomeManagementPage() {
     try {
       const response = await api.get('/home-page/all');
       if (response.data.success) {
-        setSections(response.data.data.sections);
+        const rows = (response.data.data.sections || []).map((s: Section) => {
+          const content = normalizeCmsContent(s.content);
+          return {
+            ...s,
+            content: s.key === 'hero' ? normalizeHomeHeroContent(content) : content,
+          };
+        });
+        setSections(rows);
       }
     } catch (error) {
       console.error('Error fetching sections:', error);
@@ -43,14 +55,23 @@ export default function HomeManagementPage() {
     if (!section) return;
 
     try {
+      const content =
+        section.key === 'hero'
+          ? normalizeHomeHeroContent(normalizeCmsContent(section.content))
+          : normalizeCmsContent(section.content);
       const response = await api.put(`/home-page/${id}`, {
         title: section.title,
-        content: section.content,
+        content,
         order: section.order,
         isActive: section.isActive
       });
       if (response.data.success) {
         toast.success('Section updated successfully');
+        if (section.key === 'hero') {
+          setSections((prev) =>
+            prev.map((s) => (s.id === id ? { ...s, content } : s))
+          );
+        }
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -63,9 +84,10 @@ export default function HomeManagementPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -187,12 +209,22 @@ export default function HomeManagementPage() {
             </div>
 
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+              {section.key === 'hero' ? (
+                <HeroSlidesEditor
+                  value={section.content}
+                  onChange={(next) => {
+                    setSections((prev) =>
+                      prev.map((s) => (s.id === section.id ? { ...s, content: next } : s))
+                    );
+                  }}
+                />
+              ) : (
+              cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                 if (Array.isArray(value)) {
                   // Custom defaults depending on the key name
                   let defaultNewItem: any = '';
                   if (key === 'slides') {
-                    defaultNewItem = { id: Date.now(), headline: '', subheadline: '', ctaText: '', ctaLink: '', video: '', image: '' };
+                    defaultNewItem = { id: Date.now(), headline: '', subheadline: '', ctaText: '', ctaLink: '', video: '', image: '', order: 1, isActive: true };
                   } else if (key === 'cards') {
                     defaultNewItem = { title: '', image: '', desc: '', ctaText: '', ctaLink: '' };
                   } else if (key === 'stats') {
@@ -219,6 +251,7 @@ export default function HomeManagementPage() {
                               {typeof item === 'object' ? (
                                 Object.keys(item).map(subKey => {
                                   const isBoolean = typeof item[subKey] === 'boolean';
+                                  const isImage = isImageFieldKey(subKey);
                                   return (
                                     <div key={subKey} className="space-y-1">
                                       <label className="text-[10px] text-gray-500 uppercase">{subKey}</label>
@@ -232,6 +265,13 @@ export default function HomeManagementPage() {
                                           />
                                           <span className="text-xs text-gray-400">Yes / True</span>
                                         </div>
+                                      ) : isImage ? (
+                                        <ImageUploadField
+                                          label=""
+                                          value={item[subKey] || ''}
+                                          folder="home"
+                                          onChange={(url) => handleArrayContentChange(section.id, key, idx, subKey, url)}
+                                        />
                                       ) : (
                                         <textarea 
                                           value={item[subKey] !== undefined ? item[subKey].toString() : ''}
@@ -243,6 +283,13 @@ export default function HomeManagementPage() {
                                     </div>
                                   );
                                 })
+                              ) : isImageFieldKey(key) ? (
+                                <ImageUploadField
+                                  label=""
+                                  value={item !== undefined ? item.toString() : ''}
+                                  folder="home"
+                                  onChange={(url) => handleArrayContentChange(section.id, key, idx, null, url)}
+                                />
                               ) : (
                                 <textarea 
                                   value={item !== undefined ? item.toString() : ''}
@@ -265,38 +312,39 @@ export default function HomeManagementPage() {
                   );
                 }
 
-                const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value.toString().startsWith('/') || value.toString().includes('http');
-                const isLongText = value.toString().length > 50;
+                const isImage = isImageFieldKey(key);
+                const isLongText = !isImage && value.toString().length > 50;
 
                 return (
-                  <div key={key} className={isLongText ? 'col-span-2 space-y-2' : 'space-y-2'}>
+                  <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-2' : 'space-y-2'}>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
                       {key.replace(/([A-Z])/g, ' $1')}
                     </label>
-                    {isLongText ? (
+                    {isImage ? (
+                      <ImageUploadField
+                        label=""
+                        value={value || ''}
+                        folder="home"
+                        onChange={(url) => handleContentChange(section.id, key, url)}
+                      />
+                    ) : isLongText ? (
                       <textarea 
                         value={value}
                         onChange={(e) => handleContentChange(section.id, key, e.target.value)}
                         className="w-full bg-black border border-white/10 p-4 text-sm focus:border-[#f26522] transition-colors min-h-[100px]"
                       />
                     ) : (
-                      <div className="flex gap-4 items-center">
-                        <input 
-                          type="text" 
-                          value={value}
-                          onChange={(e) => handleContentChange(section.id, key, e.target.value)}
-                          className="flex-1 bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
-                        />
-                        {isImage && (
-                          <div className="w-12 h-12 bg-white/5 border border-white/10 overflow-hidden shrink-0">
-                            <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
+                      <input 
+                        type="text" 
+                        value={value}
+                        onChange={(e) => handleContentChange(section.id, key, e.target.value)}
+                        className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
+                      />
                     )}
                   </div>
                 );
-              })}
+              })
+              )}
             </div>
           </div>
         ))}

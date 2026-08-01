@@ -66,11 +66,19 @@ const renderParagraph = (text: string, idx: number) => {
 };
 
 export const SpeakingMessage: React.FC<SpeakingMessageProps> = ({ content }) => {
+  const preferLocal = (cmsImg?: string, fallback?: string) => {
+    const img = (cmsImg || '').trim();
+    if (!img) return fallback || '';
+    if (img.startsWith('/') && !img.startsWith('//')) return img;
+    if (img.includes('/uploads/')) return img;
+    return fallback || img;
+  };
+
   const data = {
     sectionLabel: content?.sectionLabel || defaults.sectionLabel,
     speakerName: content?.speakerName || defaults.speakerName,
-    speakerImage: content?.speakerImage || defaults.speakerImage,
-    signatureImage: content?.signatureImage || defaults.signatureImage,
+    speakerImage: preferLocal(content?.speakerImage, defaults.speakerImage),
+    signatureImage: preferLocal(content?.signatureImage, defaults.signatureImage),
     signOffText: content?.signOffText || defaults.signOffText,
     paragraphs: content?.paragraphs || defaults.paragraphs,
     pillars: content?.pillars || defaults.pillars

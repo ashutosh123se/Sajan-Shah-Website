@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Section {
   id: string;
@@ -27,7 +30,11 @@ export default function AboutManagementPage() {
     try {
       const response = await api.get('/about/all');
       if (response.data.success) {
-        setSections(response.data.data.sections);
+        const rows = (response.data.data.sections || []).map((s: Section) => ({
+          ...s,
+          content: normalizeCmsContent(s.content),
+        }));
+        setSections(rows);
       }
     } catch (error) {
       console.error('Error fetching sections:', error);
@@ -45,7 +52,7 @@ export default function AboutManagementPage() {
     try {
       const response = await api.put(`/about/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive
       });
@@ -63,9 +70,10 @@ export default function AboutManagementPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -179,7 +187,7 @@ export default function AboutManagementPage() {
             </div>
 
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+              {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                 if (Array.isArray(value)) {
                   return (
                     <div key={key} className="col-span-2 space-y-4">
@@ -203,14 +211,30 @@ export default function AboutManagementPage() {
                                 Object.keys(item).map(subKey => (
                                   <div key={subKey} className="space-y-1">
                                     <label className="text-[10px] text-gray-500 uppercase">{subKey}</label>
-                                    <textarea 
-                                      value={item[subKey]}
-                                      onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
-                                      className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors resize-none"
-                                      rows={2}
-                                    />
+                                    {isImageFieldKey(subKey) ? (
+                                      <ImageUploadField
+                                        label=""
+                                        value={item[subKey] || ''}
+                                        folder="about"
+                                        onChange={(url) => handleArrayContentChange(section.id, key, idx, subKey, url)}
+                                      />
+                                    ) : (
+                                      <textarea 
+                                        value={item[subKey]}
+                                        onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
+                                        className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors resize-none"
+                                        rows={2}
+                                      />
+                                    )}
                                   </div>
                                 ))
+                              ) : isImageFieldKey(key) ? (
+                                <ImageUploadField
+                                  label=""
+                                  value={item || ''}
+                                  folder="about"
+                                  onChange={(url) => handleArrayContentChange(section.id, key, idx, null, url)}
+                                />
                               ) : (
                                 <textarea 
                                   value={item}
@@ -233,34 +257,34 @@ export default function AboutManagementPage() {
                   );
                 }
 
-                const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value.toString().startsWith('/') || value.toString().includes('http');
-                const isLongText = value.toString().length > 50;
+                const isImage = isImageFieldKey(key);
+                const isLongText = !isImage && value.toString().length > 50;
 
                 return (
-                  <div key={key} className={isLongText ? 'col-span-2 space-y-2' : 'space-y-2'}>
+                  <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-2' : 'space-y-2'}>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
                       {key.replace(/([A-Z])/g, ' $1')}
                     </label>
-                    {isLongText ? (
+                    {isImage ? (
+                      <ImageUploadField
+                        label=""
+                        value={value || ''}
+                        folder="about"
+                        onChange={(url) => handleContentChange(section.id, key, url)}
+                      />
+                    ) : isLongText ? (
                       <textarea 
                         value={value}
                         onChange={(e) => handleContentChange(section.id, key, e.target.value)}
                         className="w-full bg-black border border-white/10 p-4 text-sm focus:border-[#f26522] transition-colors min-h-[100px]"
                       />
                     ) : (
-                      <div className="flex gap-4 items-center">
-                        <input 
-                          type="text" 
-                          value={value}
-                          onChange={(e) => handleContentChange(section.id, key, e.target.value)}
-                          className="flex-1 bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
-                        />
-                        {isImage && (
-                          <div className="w-12 h-12 bg-white/5 border border-white/10 overflow-hidden shrink-0">
-                            <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
+                      <input 
+                        type="text" 
+                        value={value}
+                        onChange={(e) => handleContentChange(section.id, key, e.target.value)}
+                        className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
+                      />
                     )}
                   </div>
                 );

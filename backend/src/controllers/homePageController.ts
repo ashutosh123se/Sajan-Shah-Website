@@ -1,15 +1,19 @@
 import { Request, Response } from 'express';
 import { db } from '../utils/database';
 import { sendSuccess, sendError } from '../utils/apiResponse';
-import { Prisma } from '@prisma/client';
+import { normalizeJsonContent, toPrismaJson } from '../utils/jsonContent';
+
+function withNormalizedContent<T extends { content?: unknown }>(section: T) {
+  return { ...section, content: normalizeJsonContent(section.content) };
+}
 
 export const getHomePageSections: any = async (req: Request, res: Response) => {
   try {
     const sections = await db.homePageSection.findMany({
       where: { isActive: true },
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
-    sendSuccess(res, { sections });
+    sendSuccess(res, { sections: sections.map(withNormalizedContent) });
   } catch (error) {
     console.error('Get home page sections error:', error);
     sendError(res, 'Internal server error', 500);
@@ -19,9 +23,9 @@ export const getHomePageSections: any = async (req: Request, res: Response) => {
 export const getAllHomePageSections: any = async (req: Request, res: Response) => {
   try {
     const sections = await db.homePageSection.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
-    sendSuccess(res, { sections });
+    sendSuccess(res, { sections: sections.map(withNormalizedContent) });
   } catch (error) {
     console.error('Get all home page sections error:', error);
     sendError(res, 'Internal server error', 500);
@@ -37,13 +41,13 @@ export const updateHomePageSection: any = async (req: Request, res: Response) =>
       where: { id: id as string },
       data: {
         title,
-        content: typeof content === 'string' ? content : JSON.stringify(content),
+        content: toPrismaJson(content),
         order: order !== undefined ? Number(order) : undefined,
-        isActive: isActive !== undefined ? Boolean(isActive) : undefined
-      }
+        isActive: isActive !== undefined ? Boolean(isActive) : undefined,
+      },
     });
 
-    sendSuccess(res, { section }, 'Section updated successfully');
+    sendSuccess(res, { section: withNormalizedContent(section) }, 'Section updated successfully');
   } catch (error) {
     console.error('Update home page section error:', error);
     sendError(res, 'Internal server error', 500);
@@ -58,13 +62,13 @@ export const createHomePageSection: any = async (req: Request, res: Response) =>
       data: {
         key,
         title,
-        content: typeof content === 'string' ? content : JSON.stringify(content),
+        content: toPrismaJson(content),
         order: order !== undefined ? Number(order) : 0,
-        isActive: isActive ?? true
-      }
+        isActive: isActive ?? true,
+      },
     });
 
-    sendSuccess(res, { section }, 'Section created successfully');
+    sendSuccess(res, { section: withNormalizedContent(section) }, 'Section created successfully');
   } catch (error) {
     console.error('Create home page section error:', error);
     sendError(res, 'Internal server error', 500);

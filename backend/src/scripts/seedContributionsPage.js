@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { DEFAULT_IMPACT_STORIES, DEFAULT_GALLERY_PHOTOS } = require('../utils/impactStoryDefaults');
 const db = new PrismaClient();
 
 const sections = [
@@ -54,15 +55,7 @@ const sections = [
     title: '📚 Impact Case Stories',
     order: 4,
     isActive: true,
-    content: {
-      heading: "CASE STUDIES",
-      subHeading: "Impact Stories",
-      stories: [
-        { "title": "The Pencils of Hope", "excerpt": "How 50,000 plantable pencils transformed a rural district's approach to green education.", "imageUrl": "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?q=80&w=2070&auto=format&fit=crop" },
-        { "title": "Empowering Educators", "excerpt": "A journey of training 500 teachers in Ahmedabad with cognitive science techniques.", "imageUrl": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop" },
-        { "title": "Vision for the Future", "excerpt": "The UV glasses drive that provided vision correction for thousands of students.", "imageUrl": "https://images.unsplash.com/photo-1511499767390-a73355326627?q=80&w=2070&auto=format&fit=crop" }
-      ]
-    }
+    content: DEFAULT_IMPACT_STORIES
   },
   {
     key: 'partnerships',
@@ -138,36 +131,25 @@ const sections = [
     order: 10,
     isActive: true,
     content: {
-      heading: "VISUAL PROOF",
+      heading: "Impact in Action",
       subHeading: "Gallery Archive",
       paragraph: "Capturing the raw essence of transformation on the field.",
-      photos: [
-        { "cat": "Social Impact", "title": "United First Initiative", "imageUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132&auto=format&fit=crop" },
-        { "cat": "Education", "title": "Neuroscience Workshops", "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop" },
-        { "cat": "Field Work", "title": "Sustainable Tools Drive", "imageUrl": "https://images.unsplash.com/photo-1526367790999-0150786486a2?q=80&w=2071&auto=format&fit=crop" },
-        { "cat": "Youth Forum", "title": "Motivation & Growth", "imageUrl": "https://images.unsplash.com/photo-1523580494863-6f30312248f5?q=80&w=2070&auto=format&fit=crop" },
-        { "cat": "Eco-Drive", "title": "Plantable Pencils", "imageUrl": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop" },
-        { "cat": "Community", "title": "Legacy of Giving", "imageUrl": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop" }
-      ]
+      photos: DEFAULT_GALLERY_PHOTOS
     }
   }
 ];
 
 async function main() {
-  console.log('🌱 Seeding Contributions Page sections...');
+  console.log('🌱 Seeding Contributions Page sections (create-only, never overwrites)...');
 
   for (const section of sections) {
-    await db.contributionsPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
-    console.log(`  ✅ Seeded: ${section.key}`);
+    const existing = await db.contributionsPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await db.contributionsPageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
 
   console.log('✨ Contributions page seeding complete!');

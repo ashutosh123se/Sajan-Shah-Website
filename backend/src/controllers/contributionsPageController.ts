@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { normalizeJsonContent, toPrismaJson } from '../utils/jsonContent';
 
 const prisma = new PrismaClient();
+
+function withNormalizedContent<T extends { content?: unknown }>(section: T) {
+  return { ...section, content: normalizeJsonContent(section.content) };
+}
 
 // Get active contributions page sections (Public)
 export const getContributionsPageSections = async (req: Request, res: Response) => {
@@ -12,7 +17,7 @@ export const getContributionsPageSections = async (req: Request, res: Response) 
     });
     res.json({
       success: true,
-      data: { sections },
+      data: { sections: sections.map(withNormalizedContent) },
     });
   } catch (error: any) {
     res.status(500).json({
@@ -30,7 +35,7 @@ export const getAllContributionsPageSections = async (req: Request, res: Respons
     });
     res.json({
       success: true,
-      data: { sections },
+      data: { sections: sections.map(withNormalizedContent) },
     });
   } catch (error: any) {
     res.status(500).json({
@@ -45,11 +50,17 @@ export const createContributionsPageSection = async (req: Request, res: Response
   try {
     const { key, title, content, order, isActive } = req.body;
     const section = await prisma.contributionsPageSection.create({
-      data: { key, title, content, order: Number(order) || 0, isActive },
+      data: {
+        key,
+        title,
+        content: toPrismaJson(content),
+        order: Number(order) || 0,
+        isActive,
+      },
     });
     res.status(201).json({
       success: true,
-      data: { section },
+      data: { section: withNormalizedContent(section) },
     });
   } catch (error: any) {
     res.status(500).json({
@@ -69,7 +80,7 @@ export const updateContributionsPageSection = async (req: Request, res: Response
       where: { id: id as string },
       data: {
         title,
-        content,
+        content: toPrismaJson(content),
         order: order !== undefined ? Number(order) : undefined,
         isActive,
       },
@@ -77,7 +88,7 @@ export const updateContributionsPageSection = async (req: Request, res: Response
 
     res.json({
       success: true,
-      data: { section },
+      data: { section: withNormalizedContent(section) },
     });
   } catch (error: any) {
     res.status(500).json({

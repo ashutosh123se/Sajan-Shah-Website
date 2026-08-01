@@ -64,7 +64,6 @@ model Event {
   description        String?  @db.Text
   posterUrl          String
   homepageImageUrl   String?
-  cloudinaryPublicId String
   webinarUrl         String
   eventDate          DateTime
   city               String?
@@ -75,6 +74,7 @@ model Event {
   price              Float?
   capacity           Int?
   isActive           Boolean  @default(true)
+  showOnCard         Boolean  @default(false)
   buttonUrl          String?
   createdAt          DateTime @default(now())
 }
@@ -84,7 +84,6 @@ model Member {
   name               String
   email              String?
   photoUrl           String
-  cloudinaryPublicId String?
   bio                String   @db.Text
   tier               String   // Gold | Silver | Community
   joinedAt           DateTime @default(now())
@@ -105,7 +104,6 @@ model Contributor {
   id                 String @id @default(cuid())
   name               String
   photoUrl           String
-  cloudinaryPublicId String?
   role               String
   description        String @db.Text
   order              Int    @default(0)
@@ -180,6 +178,8 @@ model Initiative {
   description String  @db.Text
   imageUrl    String?
   stats       String?
+  /// External URL, or modal key: modal:app | modal:pencils | modal:uv | modal:ethos
+  linkUrl     String?
   order       Int     @default(0)
   isActive    Boolean @default(true)
 }

@@ -9,7 +9,7 @@ import EventsPast from './EventsPast';
 import EventsCTA from './EventsCTA';
 import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
-import { SajanEvent, EventFormat, EventCategory, MOCK_EVENTS } from './eventsData';
+import { SajanEvent, EventFormat, EventCategory } from './eventsData';
 
 const mapDbEventToSajanEvent = (e: any): SajanEvent => {
   const isWebinar = e.eventType === 'webinar';
@@ -44,7 +44,13 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     isPast: e.isPast || new Date(e.eventDate).getTime() < new Date().setHours(0,0,0,0),
     isTop5: e.isTop5 || false,
     tag: e.venue || 'Corporate',
-    buttonUrl: e.buttonUrl
+    buttonUrl: e.buttonUrl,
+    isFree:
+      typeof e.isFree === 'boolean'
+        ? e.isFree
+        : !(typeof e.price === 'number' && Number(e.price) > 0),
+    price: e.price != null && e.price !== '' ? Number(e.price) : undefined,
+    showOnCard: e.showOnCard === true,
   };
 };
 
@@ -61,23 +67,20 @@ export default function EventsSection() {
           api.get('/events-page')
         ]);
         
+        // Public page must only show active DB events.
+        // Do NOT merge MOCK_EVENTS here — that kept inactive/hidden events visible.
         const dbEvents = (eventsRes.data.data.events || [])
-          .filter((e: any) => e.isActive !== false)
+          .filter((e: any) => e.isActive === true || e.isActive === undefined)
           .map(mapDbEventToSajanEvent);
 
-        const dbTitles = new Set(dbEvents.map((e: SajanEvent) => e.title.toLowerCase()));
-        const mergedEvents = [
-          ...dbEvents,
-          ...MOCK_EVENTS.filter(m => !dbTitles.has(m.title.toLowerCase()))
-        ];
-        setEventsList(mergedEvents);
+        setEventsList(dbEvents);
 
         if (sectionsRes.data.success) {
           setSections(sectionsRes.data.data.sections || []);
         }
       } catch (error) {
         console.error('Failed to fetch events page data:', error);
-        setEventsList(MOCK_EVENTS);
+        setEventsList([]);
       } finally {
         setLoading(false);
       }
@@ -89,12 +92,19 @@ export default function EventsSection() {
     return sections.find(s => s.key === key)?.content;
   };
 
-  const activeEvents = eventsList.length > 0 ? eventsList : MOCK_EVENTS;
+  const activeEvents = eventsList;
 
-  // Filter lists for children
-  const upcomingEvents = activeEvents.filter(e => !e.isPast && !e.isWebinar);
-  const webinars = activeEvents.filter(e => e.isWebinar);
-  const pastEvents = activeEvents.filter(e => e.isPast);
+  // All active events (upcoming + past) → calendar can browse history by month
+  const calendarEvents = activeEvents
+    .slice()
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  // Big ticket cards: only events marked in admin (showOnCard), soonest first
+  const featuredUpcoming = calendarEvents.filter((e) => !e.isPast && e.showOnCard);
+
+  const pastEvents = activeEvents
+    .filter((e) => e.isPast)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
   if (loading) {
     return (
@@ -106,26 +116,26 @@ export default function EventsSection() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white pb-24">
+    <div className="min-h-screen bg-brand-dark text-white">
       <EventsHero content={getSection('hero')} />
-      <EventsCalendar events={upcomingEvents} allEvents={activeEvents} />
-      <EventsWebinars events={webinars} />
+      <EventsCalendar events={calendarEvents} allEvents={activeEvents} />
+      <EventsWebinars events={featuredUpcoming} />
       <EventsPast events={pastEvents} />
       <EventsCTA content={getSection('cta')} />
       <ProductsTransformation />
 
       {/* Final Quote Section */}
-      <section className="pt-10 pb-6 bg-black text-center px-4">
+      <section className="pt-10 pb-0 bg-black text-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-6xl mx-auto px-4"
+          className="max-w-6xl mx-auto px-4 pb-10"
         >
-          <h3 className="text-3xl md:text-5xl font-light text-white italic mb-10 leading-tight">
+          <h3 className="text-3xl md:text-5xl font-light text-white italic mb-8 leading-tight">
             "Change your mental patterns.<br className="hidden md:block" /> Your results will follow."
           </h3>
-          <div className="w-20 h-1 bg-[#f26522] mx-auto mb-12"></div>
+          <div className="w-20 h-1 bg-[#f26522] mx-auto mb-8"></div>
           <a
             href="/contact"
             className="inline-block bg-[#f26522] hover:bg-white hover:text-black text-white font-bold uppercase tracking-[0.3em] text-xs px-12 py-5 transition-all duration-300 shadow-[0_25px_50px_-12px_rgba(242,101,34,0.4)] hover:shadow-none"

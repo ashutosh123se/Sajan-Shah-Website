@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { MediaImage } from '@/components/common/MediaImage';
 import { AppPromoModal } from './AppPromoModal';
 import { PlantablePencilsModal } from './PlantablePencilsModal';
 import { UVGlassesModal } from './UVGlassesModal';
@@ -14,7 +15,7 @@ import {
   Smartphone,
   Apple,
   Flame,
-  Scale
+  Scale,
 } from 'lucide-react';
 
 interface InitiativeCardsProps {
@@ -24,46 +25,161 @@ interface InitiativeCardsProps {
     description: string;
     imageUrl?: string;
     slug?: string;
+    linkUrl?: string | null;
   }>;
 }
 
+type ModalKey = 'app' | 'pencils' | 'uv' | 'ethos';
+
+const ICON_BY_SLUG: Record<string, React.ReactNode> = {
+  'ethos-global-advisory': <Scale size={32} />,
+  'live-to-inspire': <Flame size={32} />,
+  'plantable-pencils-drive': <PenTool size={32} />,
+  'sajan-shah-app': <Smartphone size={32} />,
+  'season-of-learning': <BookOpen size={32} />,
+  'teachers-training-program': <Apple size={32} />,
+  'uv-glasses-drive': <Glasses size={32} />,
+  'united-first-initiative': <Globe size={32} />,
+  'ymf-youth-motivation-forum': <GraduationCap size={32} />,
+};
+
+const DEFAULT_LINK_BY_SLUG: Record<string, string> = {
+  'ethos-global-advisory': 'modal:ethos',
+  'plantable-pencils-drive': 'modal:pencils',
+  'sajan-shah-app': 'modal:app',
+  'uv-glasses-drive': 'modal:uv',
+  'season-of-learning': 'https://sol.sajanshah.com/',
+  'live-to-inspire': 'https://www.unitedfirst.in/',
+  'united-first-initiative': 'https://www.unitedfirst.in/',
+};
+
 const defaultInitiatives = [
-  { title: 'Ethos Global Advisory', desc: 'Strategic consultancy for social impact.', icon: <Scale size={32} />, img: '/Our Core Initiatives/Ethos Global Advisory cover.png' },
-  { title: 'Live to Inspire', desc: 'Our core foundation for large-scale impact.', icon: <Flame size={32} />, img: '/live to bg.jpeg' },
-  { title: 'Plantable Pencils Drive', desc: 'Green education through sustainable tools.', icon: <PenTool size={32} />, img: '/Our Core Initiatives/Plantable Pencils Drive cover.jpeg' },
-  { title: 'Sajan Shah App', desc: 'Digital neuroscience tools in your pocket.', icon: <Smartphone size={32} />, img: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop' },
-  { title: 'Season of Learning', desc: 'Continuous education programs for all ages.', icon: <BookOpen size={32} />, img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2069&auto=format&fit=crop' },
-  { title: 'Teachers Training Program', desc: 'Upskilling educators with neuroscience.', icon: <Apple size={32} />, img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop' },
-  { title: 'UV Glasses Drive', desc: 'Vision health for underprivileged communities.', icon: <Glasses size={32} />, img: '/Our Core Initiatives/UV Glasses Drive cover.jpeg' },
-  { title: 'United First Initiative', desc: 'Aligning with UN SDGs to drive global change.', icon: <Globe size={32} />, img: '/united first.png' },
-  { title: 'YMF (Youth Motivation Forum)', desc: 'Empowering the next generation of leaders.', icon: <GraduationCap size={32} />, img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop' },
+  {
+    title: 'Ethos Global Advisory',
+    desc: 'Strategic consultancy for social impact.',
+    icon: <Scale size={32} />,
+    img: '/Our Core Initiatives/Ethos Global Advisory cover.png',
+    slug: 'ethos-global-advisory',
+    linkUrl: 'modal:ethos',
+  },
+  {
+    title: 'Live to Inspire',
+    desc: 'Our core foundation for large-scale impact.',
+    icon: <Flame size={32} />,
+    img: '/live to bg.jpeg',
+    slug: 'live-to-inspire',
+    linkUrl: 'https://www.unitedfirst.in/',
+  },
+  {
+    title: 'Plantable Pencils Drive',
+    desc: 'Green education through sustainable tools.',
+    icon: <PenTool size={32} />,
+    img: '/Our Core Initiatives/Plantable Pencils Drive cover.jpeg',
+    slug: 'plantable-pencils-drive',
+    linkUrl: 'modal:pencils',
+  },
+  {
+    title: 'Sajan Shah App',
+    desc: 'Digital neuroscience tools in your pocket.',
+    icon: <Smartphone size={32} />,
+    img: '/APP/app.webp',
+    slug: 'sajan-shah-app',
+    linkUrl: 'modal:app',
+  },
+  {
+    title: 'Season of Learning',
+    desc: 'Continuous education programs for all ages.',
+    icon: <BookOpen size={32} />,
+    img: '/EVENT.png',
+    slug: 'season-of-learning',
+    linkUrl: 'https://sol.sajanshah.com/',
+  },
+  {
+    title: 'Teachers Training Program',
+    desc: 'Upskilling educators with neuroscience.',
+    icon: <Apple size={32} />,
+    img: '/Sir Speaking.jpeg',
+    slug: 'teachers-training-program',
+    linkUrl: '',
+  },
+  {
+    title: 'UV Glasses Drive',
+    desc: 'Vision health for underprivileged communities.',
+    icon: <Glasses size={32} />,
+    img: '/Our Core Initiatives/UV Glasses Drive cover.jpeg',
+    slug: 'uv-glasses-drive',
+    linkUrl: 'modal:uv',
+  },
+  {
+    title: 'United First Initiative',
+    desc: 'Aligning with UN SDGs to drive global change.',
+    icon: <Globe size={32} />,
+    img: '/united first.png',
+    slug: 'united-first-initiative',
+    linkUrl: 'https://www.unitedfirst.in/',
+  },
+  {
+    title: 'YMF (Youth Motivation Forum)',
+    desc: 'Empowering the next generation of leaders.',
+    icon: <GraduationCap size={32} />,
+    img: '/impact.png',
+    slug: 'ymf-youth-motivation-forum',
+    linkUrl: '',
+  },
 ];
 
-export const InitiativeCards: React.FC<InitiativeCardsProps> = ({ initiatives: apiInitiatives = [] }) => {
-  const [isAppModalOpen, setIsAppModalOpen] = useState(false);
-  const [isPencilsModalOpen, setIsPencilsModalOpen] = useState(false);
-  const [isUVGlassesModalOpen, setIsUVGlassesModalOpen] = useState(false);
-  const [isEthosModalOpen, setIsEthosModalOpen] = useState(false);
+function resolveLink(slug?: string, linkUrl?: string | null, title?: string) {
+  if (linkUrl) return linkUrl;
+  if (slug && DEFAULT_LINK_BY_SLUG[slug]) return DEFAULT_LINK_BY_SLUG[slug];
+  // Legacy title fallbacks
+  if (title === 'Sajan Shah App') return 'modal:app';
+  if (title === 'Ethos Global Advisory') return 'modal:ethos';
+  if (title === 'Plantable Pencils Drive') return 'modal:pencils';
+  if (title === 'UV Glasses Drive') return 'modal:uv';
+  if (title === 'Season of Learning') return 'https://sol.sajanshah.com/';
+  if (title === 'Live to Inspire' || title === 'United First Initiative') {
+    return 'https://www.unitedfirst.in/';
+  }
+  return '';
+}
 
-  const dbInitiatives = apiInitiatives.map(init => ({
+export const InitiativeCards: React.FC<InitiativeCardsProps> = ({
+  initiatives: apiInitiatives = [],
+}) => {
+  const [activeModal, setActiveModal] = useState<ModalKey | null>(null);
+
+  const dbInitiatives = apiInitiatives.map((init) => ({
     title: init.title,
     desc: init.description,
-    icon: <Globe size={32} />,
+    icon: ICON_BY_SLUG[init.slug || ''] || <Globe size={32} />,
     img: init.imageUrl || '/LOGO.png',
     slug: init.slug,
+    linkUrl: resolveLink(init.slug, init.linkUrl, init.title),
   }));
 
-  const dbTitles = new Set(dbInitiatives.map(i => i.title.toLowerCase()));
-  const initiatives = [
-    ...dbInitiatives,
-    ...defaultInitiatives.filter(i => !dbTitles.has(i.title.toLowerCase())),
-  ];
+  const initiatives = dbInitiatives.length > 0 ? dbInitiatives : defaultInitiatives;
+
+  const handleClick = (item: { title: string; linkUrl?: string }) => {
+    const link = item.linkUrl || '';
+    if (link.startsWith('modal:')) {
+      const key = link.replace('modal:', '') as ModalKey;
+      if (['app', 'pencils', 'uv', 'ethos'].includes(key)) {
+        setActiveModal(key);
+      }
+      return;
+    }
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <section className="py-32 bg-black">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight uppercase">Our Core Initiatives</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight uppercase">
+            Our Core Initiatives
+          </h2>
           <div className="w-24 h-1 bg-[#f26522] mx-auto"></div>
         </div>
 
@@ -72,24 +188,10 @@ export const InitiativeCards: React.FC<InitiativeCardsProps> = ({ initiatives: a
             <motion.div
               key={`${item.title}-${idx}`}
               whileHover={{ y: -10 }}
-              onClick={() => {
-                if (item.title === 'Sajan Shah App') {
-                  setIsAppModalOpen(true);
-                } else if (item.title === 'Ethos Global Advisory') {
-                  setIsEthosModalOpen(true);
-                } else if (item.title === 'Plantable Pencils Drive') {
-                  setIsPencilsModalOpen(true);
-                } else if (item.title === 'UV Glasses Drive') {
-                  setIsUVGlassesModalOpen(true);
-                } else if (item.title === 'Season of Learning') {
-                  window.open('https://sol.sajanshah.com/', '_blank');
-                } else if (item.title === 'Live to Inspire' || item.title === 'United First Initiative') {
-                  window.open('https://www.unitedfirst.in/', '_blank');
-                }
-              }}
+              onClick={() => handleClick(item)}
               className="group relative h-[450px] md:h-[480px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl"
             >
-              <img
+              <MediaImage
                 src={item.img}
                 alt={item.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 scale-[1.15] group-hover:scale-[1.25] grayscale group-hover:grayscale-0"
@@ -112,10 +214,13 @@ export const InitiativeCards: React.FC<InitiativeCardsProps> = ({ initiatives: a
           ))}
         </div>
       </div>
-      <AppPromoModal isOpen={isAppModalOpen} onClose={() => setIsAppModalOpen(false)} />
-      <PlantablePencilsModal isOpen={isPencilsModalOpen} onClose={() => setIsPencilsModalOpen(false)} />
-      <UVGlassesModal isOpen={isUVGlassesModalOpen} onClose={() => setIsUVGlassesModalOpen(false)} />
-      <EthosGlobalModal isOpen={isEthosModalOpen} onClose={() => setIsEthosModalOpen(false)} />
+      <AppPromoModal isOpen={activeModal === 'app'} onClose={() => setActiveModal(null)} />
+      <PlantablePencilsModal
+        isOpen={activeModal === 'pencils'}
+        onClose={() => setActiveModal(null)}
+      />
+      <UVGlassesModal isOpen={activeModal === 'uv'} onClose={() => setActiveModal(null)} />
+      <EthosGlobalModal isOpen={activeModal === 'ethos'} onClose={() => setActiveModal(null)} />
     </section>
   );
 };

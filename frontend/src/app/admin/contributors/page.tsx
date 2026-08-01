@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Users, Layers, Layout } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Contributor {
   id: string;
@@ -23,6 +27,7 @@ interface Initiative {
   description: string;
   imageUrl?: string;
   stats?: string;
+  linkUrl?: string | null;
   order: number;
   isActive: boolean;
 }
@@ -101,6 +106,7 @@ export default function AdminContributorsPage() {
     description: '',
     imageUrl: '',
     stats: '',
+    linkUrl: '',
     order: 0,
     isActive: true,
   });
@@ -240,7 +246,7 @@ export default function AdminContributorsPage() {
 
   // --- 💡 Initiatives CRUD Operations ---
   const fetchInitiatives = async () => {
-    const response = await api.get('/initiatives');
+    const response = await api.get('/initiatives/admin/all');
     if (response.data.success) {
       setInitiatives(response.data.data.initiatives || []);
     }
@@ -265,8 +271,9 @@ export default function AdminContributorsPage() {
         title: initFormData.title,
         slug: slugVal,
         description: initFormData.description,
-        imageUrl: initFormData.imageUrl || 'https://via.placeholder.com/800x600',
+        imageUrl: initFormData.imageUrl || '/impact.png',
         stats: initFormData.stats || null,
+        linkUrl: initFormData.linkUrl?.trim() || null,
         order: Number(initFormData.order) || 0,
         isActive: initFormData.isActive,
       };
@@ -294,6 +301,7 @@ export default function AdminContributorsPage() {
         description: init.description || '',
         imageUrl: init.imageUrl || '',
         stats: init.stats || '',
+        linkUrl: init.linkUrl || '',
         order: init.order || 0,
         isActive: init.isActive,
       });
@@ -305,6 +313,7 @@ export default function AdminContributorsPage() {
         description: '',
         imageUrl: '',
         stats: '',
+        linkUrl: '',
         order: initiatives.length + 1,
         isActive: true,
       });
@@ -317,7 +326,12 @@ export default function AdminContributorsPage() {
     setErrorSections(null);
     const response = await api.get('/contributions-page/all');
     if (response.data.success) {
-      setSections(response.data.data.sections ?? []);
+      setSections(
+        (response.data.data.sections ?? []).map((s: PageSection) => ({
+          ...s,
+          content: normalizeCmsContent(s.content),
+        }))
+      );
     } else {
       setErrorSections('Failed to load sections');
     }
@@ -326,9 +340,10 @@ export default function AdminContributorsPage() {
   const handleSectionContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -343,7 +358,7 @@ export default function AdminContributorsPage() {
     try {
       const response = await api.put(`/contributions-page/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive,
       });
@@ -395,6 +410,24 @@ export default function AdminContributorsPage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Team Contributors Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Updates contributor profile cards shown on the public `Contributions` page.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Social Initiatives Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Controls initiative cards and visibility state for visitors in real time.</p>
+        </div>
+        <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+          <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Frontend Mapping</p>
+          <h3 className="text-white font-semibold text-sm">Page Layout Copy Tab</h3>
+          <p className="text-zinc-400 text-xs mt-2">Edits text, media, and ordering of all dynamic content blocks on `/contributions`.</p>
+        </div>
+      </div>
+
       {/* --- TAB 1: TEAM CONTRIBUTORS --- */}
       {activeTab === 'contributors' && (
         <div className="space-y-6">
@@ -414,7 +447,7 @@ export default function AdminContributorsPage() {
               contributors.sort((a,b) => a.order - b.order).map(contrib => (
                 <div key={contrib.id} className="bg-zinc-950 border border-zinc-900 p-5 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
                   <div className="flex gap-4 mb-4">
-                    <img src={contrib.photoUrl || "https://via.placeholder.com/150"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
+                    <MediaImage src={contrib.photoUrl || "/LOGO.png"} alt={contrib.name} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
                     <div>
                       <h3 className="text-lg font-bold text-white mb-0.5">{contrib.name}</h3>
                       <p className="text-xs text-brand-orange font-bold uppercase tracking-wide">{contrib.role}</p>
@@ -463,7 +496,7 @@ export default function AdminContributorsPage() {
                 <div key={init.id} className="bg-zinc-950 border border-zinc-900 p-6 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
                   <div className="flex gap-4 mb-4">
                     {init.imageUrl && (
-                      <img src={init.imageUrl} alt={init.title} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
+                      <MediaImage src={init.imageUrl} alt={init.title} className="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0" />
                     )}
                     <div>
                       <h3 className="text-xl font-bold text-white mb-1">{init.title}</h3>
@@ -586,10 +619,10 @@ export default function AdminContributorsPage() {
                 {expandedSectionId === section.id && (
                   <div className="p-6 bg-zinc-950 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+                      {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                         const isArrayOrObject = typeof value === 'object';
-                        const isLongText = value && !isArrayOrObject && value.toString().length > 60;
-                        const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || (value && !isArrayOrObject && (value.toString().startsWith('/') || value.toString().startsWith('http')));
+                        const isImage = !isArrayOrObject && isImageFieldKey(key);
+                        const isLongText = value && !isArrayOrObject && !isImage && value.toString().length > 60;
 
                         if (isArrayOrObject) {
                           if (key === 'stats') {
@@ -717,33 +750,56 @@ export default function AdminContributorsPage() {
                                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">Impact Case Stories</h4>
                                   <button
                                     type="button"
-                                    onClick={() => handleAddArrayItem(section.id, key, { title: '', excerpt: '', imageUrl: '' })}
+                                    onClick={() => handleAddArrayItem(section.id, key, {
+                                      title: '',
+                                      excerpt: '',
+                                      imageUrl: '',
+                                      authorName: 'Sajan Shah',
+                                      authorRole: 'Founder, Live to Inspire',
+                                      date: '',
+                                      readTime: '',
+                                      pullQuote: '',
+                                      bodyHtml: '',
+                                      order: (value?.length || 0) + 1,
+                                      isActive: true,
+                                    })}
                                     className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1 rounded-lg border-none cursor-pointer"
                                   >
                                     + Add Story
                                   </button>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-4">
                                   {(value || []).map((item: any, idx: number) => (
                                     <div key={idx} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 space-y-3 relative group">
                                       <button
                                         type="button"
                                         onClick={() => handleRemoveArrayItem(section.id, key, idx)}
-                                        className="absolute top-2 right-2 text-zinc-500 hover:text-red-400 bg-transparent border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-2 right-2 text-zinc-500 hover:text-red-400 bg-transparent border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                       >
                                         <Trash2 size={14} />
                                       </button>
-                                      <div>
-                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Story Title</label>
-                                        <input
-                                          type="text"
-                                          value={item.title || ''}
-                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'title', e.target.value)}
-                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
-                                        />
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Story Title</label>
+                                          <input
+                                            type="text"
+                                            value={item.title || ''}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'title', e.target.value)}
+                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Display Order</label>
+                                          <input
+                                            type="number"
+                                            value={item.order ?? idx + 1}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'order', Number(e.target.value))}
+                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          />
+                                        </div>
                                       </div>
                                       <div>
-                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Excerpt / Summary</label>
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Excerpt / Card Summary</label>
                                         <textarea
                                           value={item.excerpt || ''}
                                           onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'excerpt', e.target.value)}
@@ -751,22 +807,82 @@ export default function AdminContributorsPage() {
                                           rows={2}
                                         />
                                       </div>
-                                      <div className="flex gap-2 items-center">
-                                        <div className="flex-1">
-                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Image URL</label>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Author Name</label>
                                           <input
                                             type="text"
-                                            value={item.imageUrl || ''}
-                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', e.target.value)}
+                                            value={item.authorName || ''}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'authorName', e.target.value)}
                                             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                           />
                                         </div>
-                                        {item.imageUrl && (
-                                          <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 mt-4 bg-zinc-950 shadow-md">
-                                            <img src={item.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                          </div>
-                                        )}
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Author Role</label>
+                                          <input
+                                            type="text"
+                                            value={item.authorRole || ''}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'authorRole', e.target.value)}
+                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Date</label>
+                                          <input
+                                            type="text"
+                                            value={item.date || ''}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'date', e.target.value)}
+                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                            placeholder="May 15, 2024"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Read Time</label>
+                                          <input
+                                            type="text"
+                                            value={item.readTime || ''}
+                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'readTime', e.target.value)}
+                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                            placeholder="5 Min Read"
+                                          />
+                                        </div>
                                       </div>
+                                      <div>
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Pull Quote</label>
+                                        <textarea
+                                          value={item.pullQuote || ''}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'pullQuote', e.target.value)}
+                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          rows={2}
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Full Story Body (HTML)</label>
+                                        <textarea
+                                          value={item.bodyHtml || ''}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'bodyHtml', e.target.value)}
+                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs font-mono focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          rows={8}
+                                          placeholder="<p>Story content...</p><h4>Section</h4><ul><li>...</li></ul>"
+                                        />
+                                      </div>
+                                      <div>
+                                        <ImageUploadField
+                                          label="Optional Card Image"
+                                          value={item.imageUrl || ''}
+                                          folder="contributions"
+                                          onChange={(url) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', url)}
+                                        />
+                                      </div>
+                                      <label className="flex items-center gap-2 text-xs text-zinc-400">
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isActive !== false}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'isActive', e.target.checked)}
+                                          className="rounded border-zinc-700 bg-zinc-950 text-[#f26522]"
+                                        />
+                                        Active (visible on page)
+                                      </label>
                                     </div>
                                   ))}
                                 </div>
@@ -957,21 +1073,13 @@ export default function AdminContributorsPage() {
                                           className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                         />
                                       </div>
-                                      <div className="flex gap-2 items-center">
-                                        <div className="flex-1">
-                                          <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Image URL</label>
-                                          <input
-                                            type="text"
-                                            value={item.imageUrl || ''}
-                                            onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', e.target.value)}
-                                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
-                                          />
-                                        </div>
-                                        {item.imageUrl && (
-                                          <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 mt-4 bg-zinc-950 shadow-md">
-                                            <img src={item.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                          </div>
-                                        )}
+                                      <div>
+                                        <ImageUploadField
+                                          label="Image"
+                                          value={item.imageUrl || ''}
+                                          folder="contributions"
+                                          onChange={(url) => handleArrayFieldChange(section.id, key, idx, 'imageUrl', url)}
+                                        />
                                       </div>
                                     </div>
                                   ))}
@@ -983,11 +1091,18 @@ export default function AdminContributorsPage() {
                         }
 
                         return (
-                          <div key={key} className={isLongText ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
-                            {isLongText ? (
+                            {isImage ? (
+                              <ImageUploadField
+                                label=""
+                                value={value || ''}
+                                folder="contributions"
+                                onChange={(url) => handleSectionContentChange(section.id, key, url)}
+                              />
+                            ) : isLongText ? (
                               <textarea
                                 value={value || ''}
                                 onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
@@ -995,19 +1110,12 @@ export default function AdminContributorsPage() {
                                 rows={3}
                               />
                             ) : (
-                              <div className="flex gap-4 items-center">
-                                <input
-                                  type="text"
-                                  value={value || ''}
-                                  onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
-                                  className="flex-1 border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white font-sans"
-                                />
-                                {isImage && value && (
-                                  <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 bg-zinc-900 shadow-md">
-                                    <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                              </div>
+                              <input
+                                type="text"
+                                value={value || ''}
+                                onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
+                                className="w-full border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white font-sans"
+                              />
                             )}
                           </div>
                         );
@@ -1043,8 +1151,14 @@ export default function AdminContributorsPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Photo URL</label>
-                  <input type="text" required value={contribFormData.photoUrl} onChange={(e) => setContribFormData({...contribFormData, photoUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/team/member.jpg" />
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Photo</label>
+                  <ImageUploadField
+                    label=""
+                    value={contribFormData.photoUrl}
+                    folder="contributors"
+                    required
+                    onChange={(photoUrl) => setContribFormData({ ...contribFormData, photoUrl })}
+                  />
                 </div>
 
                 <div className="col-span-2">
@@ -1094,8 +1208,26 @@ export default function AdminContributorsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Image Banner URL</label>
-                  <input type="text" value={initFormData.imageUrl} onChange={(e) => setInitFormData({...initFormData, imageUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. /images/initiative.jpg" />
+                  <ImageUploadField
+                    label="Image Banner"
+                    value={initFormData.imageUrl}
+                    folder="initiatives"
+                    onChange={(imageUrl) => setInitFormData({ ...initFormData, imageUrl })}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Link / Action</label>
+                  <input
+                    type="text"
+                    value={initFormData.linkUrl}
+                    onChange={(e) => setInitFormData({ ...initFormData, linkUrl: e.target.value })}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30"
+                    placeholder="https://… or modal:app | modal:pencils | modal:uv | modal:ethos"
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Use a full URL for external pages, or a modal key for built-in popup details.
+                  </p>
                 </div>
 
                 <div>

@@ -6,6 +6,11 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Calendar, Layout } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { EventCardPreview } from '@/components/admin/EventCardPreview';
+import { MediaImage } from '@/components/common/MediaImage';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Event {
   id: string;
@@ -16,14 +21,17 @@ interface Event {
   eventType: string;
   city?: string;
   venue?: string;
+  price?: number;
   ticketPrice?: number;
   currency: string;
   isFree: boolean;
   capacity?: number;
+  posterUrl?: string;
   thumbnailUrl?: string;
   homepageImageUrl?: string;
   buttonUrl?: string;
   isActive: boolean;
+  showOnCard?: boolean;
 }
 
 interface PageSection {
@@ -67,6 +75,7 @@ export default function AdminEventsPage() {
     description: '',
     eventDate: '',
     eventType: 'workshop',
+    isOnline: false,
     city: '',
     venue: '',
     ticketPrice: '',
@@ -77,6 +86,7 @@ export default function AdminEventsPage() {
     homepageImageUrl: '',
     buttonUrl: '',
     isActive: true,
+    showOnCard: false,
   });
 
   // Page Sections State
@@ -126,12 +136,16 @@ export default function AdminEventsPage() {
     }
   };
 
+  const getEventPrice = (event: Event) => event.price ?? event.ticketPrice;
+
   // --- Calendar Events Operations ---
   const fetchEvents = async () => {
     try {
       setLoadingEvents(true);
       const response = await api.get('/events/admin/all');
-      setEvents(response.data.data.events || []);
+      const list: Event[] = response.data.data.events || [];
+      // Admin shows latest-dated events first (API already sorts desc)
+      setEvents(list);
     } catch (error) {
       toast.error('Failed to fetch events');
     } finally {
@@ -153,23 +167,25 @@ export default function AdminEventsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const normalizedCity = formData.isOnline ? 'Online' : formData.city;
+      const normalizedVenue = formData.isOnline ? 'Live Webinar' : formData.venue;
       const payload = {
         title: formData.title,
         slug: formData.slug || `${formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
         description: formData.description,
         eventDate: new Date(formData.eventDate).toISOString(),
         eventType: formData.eventType,
-        city: formData.city,
-        venue: formData.venue,
+        city: normalizedCity,
+        venue: normalizedVenue,
         price: formData.isFree ? 0 : Number(formData.ticketPrice),
         isFree: formData.isFree,
         capacity: formData.capacity ? Number(formData.capacity) : null,
-        posterUrl: formData.thumbnailUrl || 'https://via.placeholder.com/800x600',
+        posterUrl: formData.thumbnailUrl || '/EVENT.png',
         homepageImageUrl: formData.homepageImageUrl || '',
         buttonUrl: formData.buttonUrl || null,
-        cloudinaryPublicId: 'default',
-        webinarUrl: 'https://zoom.us',
+        webinarUrl: formData.buttonUrl || null,
         isActive: formData.isActive,
+        showOnCard: formData.showOnCard,
       };
 
       if (editingEvent) {
@@ -195,9 +211,14 @@ export default function AdminEventsPage() {
         description: event.description || '',
         eventDate: new Date(event.eventDate).toISOString().slice(0, 16),
         eventType: event.eventType || 'workshop',
+        isOnline:
+          (event.eventType || '').toLowerCase() === 'webinar' ||
+          (event.city || '').toLowerCase() === 'online' ||
+          (event.venue || '').toLowerCase().includes('online') ||
+          (event.venue || '').toLowerCase().includes('webinar'),
         city: event.city || '',
         venue: event.venue || '',
-        ticketPrice: event.ticketPrice?.toString() || '',
+        ticketPrice: getEventPrice(event)?.toString() || '',
         currency: event.currency || 'INR',
         isFree: event.isFree,
         capacity: event.capacity?.toString() || '',
@@ -205,6 +226,7 @@ export default function AdminEventsPage() {
         homepageImageUrl: event.homepageImageUrl || '',
         buttonUrl: event.buttonUrl || '',
         isActive: event.isActive,
+        showOnCard: event.showOnCard === true,
       });
     } else {
       setEditingEvent(null);
@@ -214,6 +236,7 @@ export default function AdminEventsPage() {
         description: '',
         eventDate: new Date().toISOString().slice(0, 16),
         eventType: 'workshop',
+        isOnline: false,
         city: '',
         venue: '',
         ticketPrice: '',
@@ -224,6 +247,7 @@ export default function AdminEventsPage() {
         homepageImageUrl: '',
         buttonUrl: '',
         isActive: true,
+        showOnCard: false,
       });
     }
     setIsModalOpen(true);
@@ -237,7 +261,11 @@ export default function AdminEventsPage() {
       const response = await api.get('/events-page/all');
       if (response.data.success) {
         const rawSections = response.data.data.sections ?? [];
-        setSections(rawSections.sort((a: PageSection, b: PageSection) => a.order - b.order));
+        setSections(
+          rawSections
+            .map((s: PageSection) => ({ ...s, content: normalizeCmsContent(s.content) }))
+            .sort((a: PageSection, b: PageSection) => a.order - b.order)
+        );
       } else {
         setErrorSections('Failed to load events page sections');
       }
@@ -253,7 +281,7 @@ export default function AdminEventsPage() {
       if (s.id === sectionId) {
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...normalizeCmsContent(s.content), [field]: value }
         };
       }
       return s;
@@ -268,7 +296,7 @@ export default function AdminEventsPage() {
     try {
       const response = await api.put(`/events-page/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive,
       });
@@ -318,60 +346,62 @@ export default function AdminEventsPage() {
       {activeTab === 'calendar' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center bg-zinc-950 p-4 border border-zinc-900 rounded-xl">
-            <span className="text-zinc-400 text-sm">Create and schedule individual live events on the events page timeline.</span>
+            <span className="text-zinc-400 text-sm">Events are sorted by date — latest dates appear first. Each card matches the frontend event layout.</span>
             <Button onClick={() => openModal()} className="bg-white text-black hover:bg-gray-200 rounded-lg px-5 py-2 font-semibold">
               Create Event
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {loadingEvents ? (
               <div className="col-span-full py-16 text-center text-zinc-500 flex items-center justify-center gap-2">
                 <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-8 w-8 inline-block mr-3" /> Loading events list...
               </div>
             ) : events.length > 0 ? (
               events.map((event) => (
-                <div key={event.id} className="bg-zinc-950 border border-zinc-900 p-6 rounded-2xl flex flex-col hover:border-zinc-800 transition-all shadow-md">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-1">{event.title}</h3>
-                      <p className="text-sm text-zinc-400">{new Date(event.eventDate).toLocaleDateString()} at {new Date(event.eventDate).toLocaleTimeString()}</p>
+                <div key={event.id} className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-700 transition-all shadow-md">
+                  <EventCardPreview
+                    compact
+                    event={{
+                      title: event.title,
+                      eventDate: event.eventDate,
+                      city: event.city,
+                      venue: event.venue,
+                      eventType: event.eventType,
+                      isOnline: (event.city || '').toLowerCase() === 'online' || event.eventType === 'webinar',
+                      isFree: event.isFree,
+                      ticketPrice: getEventPrice(event),
+                      thumbnailUrl: event.posterUrl || event.thumbnailUrl,
+                      isActive: event.isActive,
+                    }}
+                  />
+                  <div className="px-4 pb-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-900 text-xs">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Capacity</p>
+                        <p className="font-medium text-white">{event.capacity || 'Unlimited'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Status</p>
+                        <p className={`font-medium ${event.isActive ? 'text-green-400' : 'text-red-400'}`}>
+                          {event.isActive ? 'Active' : 'Draft'}
+                        </p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Big Ticket Card</p>
+                        <p className={`font-medium ${event.showOnCard ? 'text-[#f26522]' : 'text-zinc-500'}`}>
+                          {event.showOnCard ? 'Shown on card section' : 'Calendar / list only'}
+                        </p>
+                      </div>
                     </div>
-                    {event.isFree ? (
-                      <span className="bg-green-950/80 text-green-400 border border-green-800/60 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">Free</span>
-                    ) : (
-                      <span className="bg-[#f26522]/10 text-[#f26522] border border-[#f26522]/30 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">₹{event.ticketPrice}</span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-zinc-900">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Location</p>
-                      <p className="font-medium text-white">{event.city || 'Online'}</p>
+                    <div className="flex gap-3">
+                      <Button variant="outline" className="flex-1 rounded-lg border-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white" onClick={() => openModal(event)}>
+                        Edit
+                      </Button>
+                      <Button variant="outline" className="flex-1 rounded-lg border-zinc-800 text-red-400 hover:text-red-300 hover:bg-red-950/20" onClick={() => handleDelete(event.id)}>
+                        Delete
+                      </Button>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Capacity</p>
-                      <p className="font-medium text-white">{event.capacity || 'Unlimited'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Type</p>
-                      <p className="font-medium text-white capitalize">{event.eventType}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Status</p>
-                      <p className={`font-medium ${event.isActive ? 'text-green-400' : 'text-red-400'}`}>
-                        {event.isActive ? 'Active' : 'Draft'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 pt-4 border-t border-zinc-900 mt-auto">
-                    <Button variant="outline" className="flex-1 rounded-lg border-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white" onClick={() => openModal(event)}>
-                      Edit Event Info
-                    </Button>
-                    <Button variant="outline" className="flex-1 rounded-lg border-zinc-800 text-red-400 hover:text-red-300 hover:bg-red-950/20" onClick={() => handleDelete(event.id)}>
-                      Delete
-                    </Button>
                   </div>
                 </div>
               ))
@@ -463,16 +493,23 @@ export default function AdminEventsPage() {
                 {expandedSectionId === section.id && (
                   <div className="p-6 bg-zinc-950 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
-                        const isLongText = value?.toString().length > 60;
-                        const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value?.toString().startsWith('/') || value?.toString().startsWith('http');
+                      {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
+                        const isImage = isImageFieldKey(key);
+                        const isLongText = !isImage && value?.toString().length > 60;
 
                         return (
-                          <div key={key} className={isLongText ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
-                            {isLongText ? (
+                            {isImage ? (
+                              <ImageUploadField
+                                label=""
+                                value={value || ''}
+                                folder="events"
+                                onChange={(url) => handleSectionContentChange(section.id, key, url)}
+                              />
+                            ) : isLongText ? (
                               <textarea
                                 value={value}
                                 onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
@@ -480,19 +517,12 @@ export default function AdminEventsPage() {
                                 rows={3}
                               />
                             ) : (
-                              <div className="flex gap-4 items-center">
-                                <input
-                                  type="text"
-                                  value={value}
-                                  onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
-                                  className="flex-1 border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
-                                />
-                                {isImage && value && (
-                                  <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 bg-zinc-900 shadow-md">
-                                    <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                              </div>
+                              <input
+                                type="text"
+                                value={value}
+                                onChange={(e) => handleSectionContentChange(section.id, key, e.target.value)}
+                                className="w-full border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
+                              />
                             )}
                           </div>
                         );
@@ -509,17 +539,35 @@ export default function AdminEventsPage() {
       {/* --- Create/Edit Event Modal --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="bg-[#121212] border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl">
+          <div className="bg-[#121212] border border-zinc-800 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl">
             <div className="sticky top-0 bg-[#121212] p-6 border-b border-zinc-800 flex justify-between items-center z-10">
               <h2 className="text-xl font-bold text-white tracking-tight">{editingEvent ? 'Edit Event Details' : 'Create New Live Event'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-white transition-colors">✕</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2">
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Title</label>
                   <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">
+                    Ticket Card Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 resize-y"
+                    placeholder={'Optional: first short line = orange tagline, then blank line, then body.\n\nDiscover transformation with Sajan Shah\n\nStep into a powerful learning experience...'}
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Shown under the title on the Upcoming Events ticket card. You can use one paragraph, or put a short tagline on the first line and the body after a blank line.
+                  </p>
                 </div>
 
                 <div className="col-span-2">
@@ -529,17 +577,42 @@ export default function AdminEventsPage() {
 
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">City</label>
-                  <input type="text" value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. Mumbai" />
+                  <input
+                    type="text"
+                    value={formData.isOnline ? 'Online' : formData.city}
+                    disabled={formData.isOnline}
+                    onChange={(e) => setFormData({...formData, city: e.target.value})}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                    placeholder={formData.isOnline ? 'Auto-set for online event' : 'e.g. Mumbai'}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Venue (Tagline)</label>
-                  <input type="text" value={formData.venue} onChange={(e) => setFormData({...formData, venue: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. Grand Ballroom" />
+                  <input
+                    type="text"
+                    value={formData.isOnline ? 'Live Webinar' : formData.venue}
+                    disabled={formData.isOnline}
+                    onChange={(e) => setFormData({...formData, venue: e.target.value})}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                    placeholder={formData.isOnline ? 'Auto-set for online event' : 'e.g. Grand Ballroom'}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Type</label>
-                  <select value={formData.eventType} onChange={(e) => setFormData({...formData, eventType: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30">
+                  <select
+                    value={formData.eventType}
+                    onChange={(e) => {
+                      const nextType = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        eventType: nextType,
+                        isOnline: nextType === 'webinar' ? true : prev.isOnline,
+                      }));
+                    }}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30"
+                  >
                     <option value="workshop">Workshop</option>
                     <option value="seminar">Seminar</option>
                     <option value="webinar">Webinar</option>
@@ -549,34 +622,49 @@ export default function AdminEventsPage() {
                   </select>
                 </div>
 
+                <div className="flex items-center space-x-2 pt-8">
+                  <input
+                    type="checkbox"
+                    checked={formData.isOnline}
+                    onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
+                    className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]"
+                  />
+                  <span className="text-sm text-zinc-300">Online Event (auto uses City: Online, Venue: Live Webinar)</span>
+                </div>
+
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Page Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'thumbnailUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
                   {uploadingPoster && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
-                  {formData.thumbnailUrl && <img src={formData.thumbnailUrl} alt="Poster preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
+                  {formData.thumbnailUrl && <MediaImage src={formData.thumbnailUrl} alt="Poster preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
                 </div>
 
                 <div>
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Home Page Carousel Image</label>
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'homepageImageUrl')} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg" />
                   {uploadingHomepage && <p className="text-xs text-zinc-500 mt-1">Uploading...</p>}
-                  {formData.homepageImageUrl && <img src={formData.homepageImageUrl} alt="Homepage preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
+                  {formData.homepageImageUrl && <MediaImage src={formData.homepageImageUrl} alt="Homepage preview" className="mt-2 h-20 object-cover rounded border border-zinc-800" />}
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Registration URL (SOL / Razorpay link)</label>
-                  <input type="text" value={formData.buttonUrl} onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. https://sol.sajanshah.com" />
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Registration / View Details URL</label>
+                  <input type="text" value={formData.buttonUrl} onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="e.g. https://rzp.io/l/event-ticket or https://sol.sajanshah.com" />
                 </div>
 
-                <div className="col-span-2 flex items-center space-x-6 pt-2">
+                <div className="col-span-2 flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
                   <label className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" checked={formData.isFree} onChange={(e) => setFormData({...formData, isFree: e.target.checked})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
-                    <span className="text-sm text-zinc-300">Free Event</span>
+                    <input type="checkbox" checked={formData.isFree} onChange={(e) => setFormData({...formData, isFree: e.target.checked, ticketPrice: e.target.checked ? '' : formData.ticketPrice})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
+                    <span className="text-sm text-zinc-300">Free Event (hides price field)</span>
                   </label>
                   
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({...formData, isActive: e.target.checked})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
                     <span className="text-sm text-zinc-300">Active (Visible)</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" checked={formData.showOnCard} onChange={(e) => setFormData({...formData, showOnCard: e.target.checked})} className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-[#f26522] focus:ring-[#f26522]" />
+                    <span className="text-sm text-zinc-300">Show on big ticket card</span>
                   </label>
                 </div>
 
@@ -592,8 +680,34 @@ export default function AdminEventsPage() {
                   <input type="number" value={formData.capacity} onChange={(e) => setFormData({...formData, capacity: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" placeholder="Leave blank for unlimited" />
                 </div>
               </div>
+                </div>
 
-              <div className="pt-8 flex justify-end gap-4 border-t border-zinc-900">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-zinc-300 uppercase tracking-wider">Frontend Card Preview</h3>
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Live preview</span>
+                  </div>
+                  <p className="text-xs text-zinc-500">This is how your event will appear on the public Events page.</p>
+                  <EventCardPreview
+                    event={{
+                      title: formData.title,
+                      eventDate: formData.eventDate,
+                      city: formData.isOnline ? 'Online' : formData.city,
+                      venue: formData.isOnline ? 'Live Webinar' : formData.venue,
+                      eventType: formData.eventType,
+                      isOnline: formData.isOnline,
+                      isFree: formData.isFree,
+                      ticketPrice: formData.ticketPrice,
+                      thumbnailUrl: formData.thumbnailUrl,
+                      isActive: formData.isActive,
+                      buttonUrl: formData.buttonUrl,
+                      description: formData.description,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-8 flex justify-end gap-4 border-t border-zinc-900 mt-8">
                 <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="rounded-lg border-zinc-850 text-white hover:bg-zinc-900">Cancel</Button>
                 <Button type="submit" className="rounded-lg bg-[#f26522] text-white hover:bg-[#d95a1e]">Save Event</Button>
               </div>

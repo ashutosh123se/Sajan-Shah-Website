@@ -8,42 +8,49 @@ const homeSections = [
     title: 'Hero Slider Section',
     order: 1,
     content: {
+      backgroundVideo: '/sajan_hero.mp4',
+      posterImage: '/EVENT.png',
+      intervalMs: 6000,
       slides: [
         {
           id: 1,
+          order: 1,
+          isActive: true,
           headline: "India’s Biggest Memory & Family Transformation Experience",
           subheadline: "One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.",
           ctaText: "Join Now",
           ctaLink: "https://sol.sajanshah.com",
-          video: "https://cdn.pixabay.com/video/2020/05/25/40149-425251644_large.mp4",
-          image: "/hero-1.jpg"
+          image: "/EVENT.png"
         },
         {
           id: 2,
+          order: 2,
+          isActive: true,
           headline: "Transform From Home. No Travel Required.",
           subheadline: "Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.",
           ctaText: "Reserve Your Seat",
           ctaLink: "https://webinar.sajanshah.com",
-          video: "https://cdn.pixabay.com/video/2019/04/17/22818-330691515_large.mp4",
-          image: "/hero-2.jpg"
+          image: "/webinar.png"
         },
         {
           id: 3,
+          order: 3,
+          isActive: true,
           headline: "Upgrade Your Life With Proven Systems",
           subheadline: "Access powerful programs designed to improve thinking, performance, and personal growth - step by step.",
           ctaText: "Explore Programs",
-          ctaLink: "/programs",
-          video: "https://cdn.pixabay.com/video/2019/11/14/29038-372951939_large.mp4",
-          image: "/hero-3.jpg"
+          ctaLink: "/products",
+          image: "/You vs You.png"
         },
         {
           id: 4,
+          order: 4,
+          isActive: true,
           headline: "Live to Inspire. Lead to Serve.",
           subheadline: "Be part of a movement focused on creating real impact through education, awareness, and human transformation.",
           ctaText: "Join the Initiative",
           ctaLink: "https://unitedfirst.in",
-          video: "https://cdn.pixabay.com/video/2020/03/10/33481-396593414_large.mp4",
-          image: "/hero-4.jpg"
+          image: "/united first.png"
         }
       ]
     }
@@ -80,7 +87,7 @@ const homeSections = [
         },
         {
           title: "Speaking",
-          image: "/speaking.jpeg",
+          image: "/IMG_7631.jpg",
           desc: "High-impact keynote experiences designed to transform thinking, performance, and leadership.",
           ctaText: "Find Out More",
           ctaLink: "/speaking"
@@ -90,7 +97,7 @@ const homeSections = [
           image: "/impact.png",
           desc: "Real transformation initiatives creating meaningful social and educational impact across communities.",
           ctaText: "Find Out More",
-          ctaLink: "/impact"
+          ctaLink: "/contributions"
         }
       ]
     }
@@ -181,13 +188,15 @@ const homeSections = [
 ];
 
 async function main() {
-  console.log('Seeding Home Page sections...');
+  console.log('Seeding Home Page sections (create-only, never overwrites)...');
   for (const section of homeSections) {
-    await prisma.homePageSection.upsert({
-      where: { key: section.key },
-      update: section,
-      create: section,
-    });
+    const existing = await prisma.homePageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing: ${section.key}`);
+      continue;
+    }
+    await prisma.homePageSection.create({ data: section });
+    console.log(`  ✅ Created: ${section.key}`);
   }
   console.log('Home Page sections seeded successfully.');
 }
