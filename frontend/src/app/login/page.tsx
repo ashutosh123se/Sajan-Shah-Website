@@ -4,31 +4,26 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import api from '@/lib/api';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
       const result = await login(email, password);
       if (result?.success) {
-        // useAuth login already updates the store with user info
-        // We can access the user from the store or directly from what result might return
-        // In our current hook, result doesn't return user, but useAuth's 'user' state is updated.
-        // However, it's safer to wait for the store update or just check the role.
-        
-        // Let's get the user from localStorage as a fallback or just wait for redirect
+        toast.success('Welcome back!');
         const userData = JSON.parse(localStorage.getItem('user') || '{}');
         const role = userData.role;
         
@@ -37,116 +32,140 @@ export default function LoginPage() {
         } else if (role === 'SUBSCRIBER') {
           router.push('/member');
         } else {
-          router.push('/user');
+          router.push('/');
         }
       } else {
-        setError(result?.error || 'Failed to login');
+        toast.error(result?.error || 'Invalid credentials');
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      toast.error(err.message || 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <Link href="/">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight cursor-pointer">
-              Sajan<span className="text-gray-400">Shah</span>
-            </h1>
-          </Link>
-          <h2 className="mt-6 text-2xl font-semibold text-white tracking-wide">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Sign in to your account
-          </p>
-        </div>
+    <div className="relative min-h-screen flex flex-col items-center justify-start pt-60 pb-12 overflow-hidden bg-black selection:bg-[#f26522]/30">
+      {/* Cinematic Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/login-bg.png" 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-60 grayscale-[0.5]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-black/80 to-[#f26522]/10"></div>
+      </div>
 
-        <div className="bg-[#141414] py-8 px-6 shadow-2xl rounded-2xl border border-white/10 sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm rounded-lg p-3 text-center">
-                {error}
-              </div>
-            )}
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
-                Email address
+      {/* Decorative Light Rays */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f26522]/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/5 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2"></div>
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-md px-6"
+      >
+        <div className="py-8 md:py-0">
+          {/* Logo & Header */}
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-block mb-6">
+              <h1 className="text-3xl md:text-4xl font-light tracking-tighter text-white">
+                sajan<span className="font-bold text-[#f26522]">shah</span>
+              </h1>
+              <div className="w-12 h-1 bg-[#f26522] mx-auto mt-1"></div>
+            </Link>
+            <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>
+            <p className="text-gray-500 text-sm font-light">Access your transformation dashboard.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500 ml-1">
+                Identity (Email)
               </label>
-              <div className="mt-1">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <Mail className="w-5 h-5" />
+                </div>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all sm:text-sm"
-                  placeholder="Enter your email"
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="name@example.com"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300">
-                Password
-              </label>
-              <div className="mt-1">
+            {/* Password Field */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center ml-1">
+                <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
+                  Access Code (Password)
+                </label>
+                <Link href="/forgot-password" className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#f26522] transition-colors">
+                  Recovery?
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-[#f26522] transition-colors">
+                  <Lock className="w-5 h-5" />
+                </div>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all sm:text-sm"
-                  placeholder="Enter your password"
+                  className="w-full bg-white/5 border border-white/10 p-4 pl-12 pr-12 rounded-xl focus:outline-none focus:border-[#f26522] focus:bg-white/10 transition-all text-white placeholder:text-gray-700"
+                  placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 bg-white/5 border-white/10 rounded text-white focus:ring-white focus:ring-offset-[#141414]"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-gray-300 hover:text-white transition-colors">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <button
+            <div className="pt-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-[#141414] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-4 rounded-xl shadow-[0_10px_20px_rgba(242,101,34,0.2)] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
-              </button>
+                {isLoading ? 'Authenticating...' : (
+                  <>
+                    Sign In <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </motion.button>
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
-              Don't have an account?{' '}
-              <Link href="/signup" className="font-medium text-white hover:underline transition-all">
-                Sign up
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 text-sm font-light">
+              New to the community?{' '}
+              <Link href="/signup" className="text-white font-bold hover:text-[#f26522] transition-colors">
+                Initiate Account
               </Link>
             </p>
           </div>
         </div>
-      </div>
+
+        {/* Footer Branding */}
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 text-[10px] uppercase tracking-[0.3em] font-medium">
+            Transform Your Thinking. Transform Your Life.
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,174 +1,218 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { getTotalItems, openCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Contributions', href: '/contributions' },
-    { name: 'Programs', href: '/programs' },
-    { name: 'Products', href: '/products' },
-    { name: 'Events', href: '/events' },
-    { name: 'Members', href: '/members' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'HOME', href: '/' },
+    { name: 'ABOUT', href: '/about' },
+    { name: 'SPEAKING', href: '/speaking' },
+    { name: 'PRODUCTS', href: '/products' },
+    { name: 'EVENTS', href: '/events' },
+    { name: 'CONTRIBUTIONS', href: '/contributions' },
+    { name: 'CONTACT', href: '/contact' },
   ];
 
   const adminNavigation = [
-    { name: 'Admin Dashboard', href: '/admin' },
+    { name: 'ADMIN', href: '/admin' },
   ];
 
+  const isActive = (path: string) => pathname === path;
+
   return (
-    <nav className="bg-brand-dark shadow-md sticky top-0 z-50 border-b border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0">
-              <span className="text-2xl font-black tracking-tighter text-white uppercase">Sajan<span className="text-brand-orange">Shah</span></span>
-            </Link>
-          </div>
+    <>
+      <nav className="bg-[#0a0a0a] fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b border-gray-900 shadow-2xl">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-6 pb-6'}`}>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-300 hover:text-brand-orange px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
+          {/* Top Branding Section */}
+          <div className={`flex justify-start items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-24 md:h-28 mb-6 opacity-100'}`}>
             
-            {/* Admin Links */}
-            {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
-              <>
-                {adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-purple-600 hover:text-purple-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </>
-            )}
-
-            {/* Cart */}
-            <button
-              onClick={openCart}
-              className="relative text-gray-300 hover:text-brand-orange p-2 transition-colors"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {getTotalItems()}
+            {/* Left Brand: Sajan Shah */}
+            <Link href="/" className="flex flex-col items-start group ml-8 md:ml-12">
+              <div className="flex items-baseline text-4xl md:text-5xl tracking-tight">
+                <span className="font-light text-white uppercase">sajan</span>
+                <span className="font-light text-white uppercase"><span className="text-[#f26522]">s</span>hah</span>
+              </div>
+              <div className="flex items-center mt-1">
+                <div className="h-[2px] bg-[#f26522] w-12 md:w-20"></div>
+                <span className="ml-3 text-[10px] md:text-xs text-gray-400 font-medium lowercase tracking-tight">
+                  shift your story. shape your success.
                 </span>
-              )}
-            </button>
-
-            {/* Auth Buttons */}
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-400 font-medium">Welcome, {user?.name}</span>
-                <Button variant="outline" size="sm" onClick={logout}>
-                  Logout
-                </Button>
               </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link href="/login">
-                  <Button variant="outline" size="sm">Login</Button>
-                </Link>
-                <Link href="/signup">
-                  <Button size="sm">Register</Button>
-                </Link>
-              </div>
-            )}
-          </div>
+            </Link>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-300 hover:text-brand-orange p-2 transition-colors"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            {/* Center Brand (Shifted from Right) */}
+            <div className="hidden lg:flex flex-col items-center leading-[0.85] absolute left-[55%] transform -translate-x-1/2 -translate-y-1/2 top-1/2 opacity-90">
+               <div className="text-2xl md:text-3xl font-black text-white tracking-[0.15em] uppercase whitespace-nowrap">
+                 Neuroscience Drives
+               </div>
+               <div className="text-2xl md:text-3xl font-black text-[#f26522] tracking-[0.15em] uppercase whitespace-nowrap flex items-start">
+                 Driven Success<span className="text-[10px] ml-0.5 mt-0.5 font-bold">™</span>
+               </div>
+            </div>
+
+            {/* Absolute positioned Cart & Auth for Desktop to keep Logo perfectly centered */}
+            <div className="hidden md:flex absolute right-0 items-center space-x-6 top-1/2 transform -translate-y-1/2">
+             <Link href="/cart" className="relative text-white hover:text-[#f26522] transition-colors">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {mounted && getTotalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#f26522] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
                 )}
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-brand-dark border-t border-gray-800">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-300 hover:text-brand-orange block px-3 py-2 text-base font-bold uppercase tracking-widest"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
               </Link>
-            ))}
-            
-            {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
-              <>
-                {adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-purple-600 hover:text-purple-700 block px-3 py-2 rounded-md text-base font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
+              {!mounted ? (
+                <div className="w-16"></div>
+              ) : isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                  <Link 
+                    href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/user'}
+                    className="text-xs text-gray-400 font-medium hover:text-white transition-colors"
                   >
-                    {item.name}
+                    Welcome, {user?.name?.split(' ')[0]}
                   </Link>
-                ))}
-              </>
-            )}
-
-            <div className="border-t border-gray-200 pt-4">
-              {isAuthenticated ? (
-                <div className="px-3 py-2">
-                  <p className="text-sm text-gray-600">Welcome, {user?.name}</p>
-                  <Button variant="outline" size="sm" onClick={logout} className="mt-2 w-full">
+                  <button onClick={logout} className="text-xs text-white hover:text-[#f26522] uppercase tracking-widest font-bold transition-colors">
                     Logout
-                  </Button>
+                  </button>
                 </div>
               ) : (
-                <div className="px-3 py-2 space-y-2">
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">Login</Button>
-                  </Link>
-                  <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button size="sm" className="w-full">Register</Button>
+                <div className="flex items-center space-x-4">
+                  <Link href="/login" className="text-xs text-white hover:text-[#f26522] uppercase tracking-widest font-bold transition-colors">
+                    Login
                   </Link>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Bottom Links Section */}
+          <div className="flex justify-between items-center">
+
+            {/* Mobile menu button (Left aligned on mobile) */}
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white hover:text-[#f26522] p-2">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+
+            {/* Desktop Navigation (Centered) */}
+            <div className="hidden md:flex w-full justify-center space-x-12 lg:space-x-20">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`text-xs uppercase tracking-widest font-bold transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-white hover:text-[#f26522]'}`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+
+              {/* Admin Links */}
+              {mounted && isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+                <>
+                  {adminNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`text-xs uppercase tracking-widest font-bold transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-gray-500 hover:text-white'}`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </>
+              )}
+            </div>
+
+            {/* Mobile Cart Icon (Right aligned on mobile) */}
+            <div className="md:hidden flex items-center">
+               <Link href="/cart" className="relative text-white hover:text-[#f26522] p-2">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {mounted && getTotalItems() > 0 && (
+                  <span className="absolute top-0 right-0 bg-[#f26522] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </nav>
+
+      {/* Global Fullscreen Menu (Triggers from both main navbar mobile button and floating scroll button) */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[55] bg-black/95 backdrop-blur-xl flex items-center justify-center">
+          <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-8 text-white hover:text-[#f26522]">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          <div className="flex flex-col items-center space-y-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`text-2xl md:text-4xl font-bold tracking-widest uppercase transition-colors ${isActive(item.href) ? 'text-[#f26522]' : 'text-white hover:text-[#f26522]'}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            <div className="w-24 h-1 bg-gray-800 my-8"></div>
+
+            {isAuthenticated ? (
+              <div className="flex flex-col items-center space-y-6">
+                <Link
+                  href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/user'}
+                  className="text-xl text-[#f26522] hover:text-white uppercase tracking-widest font-bold"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Dashboard
+                </Link>
+                <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="text-xl text-gray-500 hover:text-white uppercase tracking-widest font-bold">
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex space-x-6">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white hover:text-[#f26522] uppercase tracking-widest font-bold">
+                  Login
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };

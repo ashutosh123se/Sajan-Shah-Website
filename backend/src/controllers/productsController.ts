@@ -4,24 +4,37 @@ import { db } from '../utils/database';
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const { category, page = '1', limit = '12', sort, featured } = req.query;
+    const { category, page = '1', limit = '12', sort, featured, inStock, isActive } = req.query;
     
-    let products = await db.product.findMany();
+    // Build query
+    const where: any = {};
     
-    // Apply filters
     if (category && category !== 'all') {
-      products = products.filter(p => p.category === category);
+      where.category = category;
     }
     
     if (featured === 'true') {
-      products = products.filter(p => p.isFeatured);
+      where.isFeatured = true;
     }
+
+    if (inStock === 'true') {
+      where.stock = { gt: 0 };
+      where.isActive = true;
+    }
+
+    if (isActive === 'true') {
+      where.isActive = true;
+    } else if (isActive === 'false') {
+      where.isActive = false;
+    }
+    
+    let products = await db.product.findMany({ where });
     
     // Apply sorting
     if (sort === 'price_asc') {
-      products.sort((a, b) => a.price - b.price);
+      products.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     } else if (sort === 'price_desc') {
-      products.sort((a, b) => b.price - a.price);
+      products.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
     } else if (sort === 'newest') {
       products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
@@ -67,12 +80,36 @@ export const getProductById = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const productData = req.body;
-    const product = await db.product.create({ data: productData });
+    const { title, description, price, imageUrl, category, stock, slug, currency, isActive, isFeatured } = req.body;
+    
+    console.log('Attempting to create product:', { title, category, price });
+
+    const product = await db.product.create({ 
+      data: { 
+        title, 
+        description, 
+        price: Number(price), 
+        imageUrl, 
+        category,
+        stock: stock ? Number(stock) : 0,
+        slug: slug || `${title.toLowerCase().replace(/ /g, '-')}-${Date.now()}`,
+        currency: currency || 'INR',
+        isActive: isActive !== undefined ? isActive : true,
+        isFeatured: isFeatured !== undefined ? isFeatured : false
+      } 
+    });
+
     sendSuccess(res, { product }, 'Product created successfully');
-  } catch (error) {
-    console.error('Create product error:', error);
-    sendError(res, 'Internal server error', 500);
+  } catch (error: any) {
+    console.error('Detailed Create product error:', error);
+    // Return a more descriptive error if possible
+    let errorMessage = 'Failed to create product';
+    if (error.code === 'P2002') {
+      errorMessage = 'A product with this name or slug already exists.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    sendError(res, errorMessage, 500);
   }
 };
 

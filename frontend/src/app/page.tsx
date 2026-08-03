@@ -1,33 +1,31 @@
 import { HeroSlider } from '@/components/sections/home/HeroSlider';
-import { InfluenceBanner } from '@/components/sections/home/InfluenceBanner';
-import { IntroVideo } from '@/components/sections/home/IntroVideo';
+import { SplitHero } from '@/components/sections/home/SplitHero';
 import { BrandWriteUp } from '@/components/sections/home/BrandWriteUp';
-import { StatsStrip } from '@/components/sections/home/StatsStrip';
-import { FeaturedPrograms } from '@/components/sections/home/FeaturedPrograms';
-import { UpcomingEvents } from '@/components/sections/home/UpcomingEvents';
+import { TransformationForm } from '@/components/sections/home/TransformationForm';
+import { IntroVideo } from '@/components/sections/home/IntroVideo';
+import { LogoStrip } from '@/components/sections/home/LogoStrip';
+import { BooksSection } from '@/components/sections/home/BooksSection';
 import { Testimonials } from '@/components/sections/home/Testimonials';
-import { SpeakerShowreel } from '@/components/sections/home/SpeakerShowreel';
-import { MediaPress } from '@/components/sections/home/MediaPress';
-import { FeaturedProducts } from '@/components/sections/home/FeaturedProducts';
-import { CommunityJoin } from '@/components/sections/home/CommunityJoin';
-import { FreeMasterclassFunnel } from '@/components/sections/home/FreeMasterclassFunnel';
+import { EventSchedule } from '@/components/sections/home/EventSchedule';
+import { TransformationStories } from '@/components/sections/home/TransformationStories';
+import { ImpactStatistics } from '@/components/sections/home/ImpactStatistics';
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen">
       <HeroSlider />
-      <InfluenceBanner />
-      <IntroVideo />
+      <SplitHero />
       <BrandWriteUp />
-      <StatsStrip />
-      <FeaturedPrograms />
-      <UpcomingEvents />
+      <TransformationForm />
+      <IntroVideo />
+      <LogoStrip />
+      <BooksSection />
       <Testimonials />
-      <SpeakerShowreel />
-      <MediaPress />
-      <FeaturedProducts />
-      <CommunityJoin />
-      <FreeMasterclassFunnel />
+      <EventSchedule />
+      <TransformationStories />
+      <ImpactStatistics />
     </div>
   );
 }
+
+

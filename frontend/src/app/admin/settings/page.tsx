@@ -4,22 +4,23 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
+import api from '@/lib/api';
 
 export default function AdminSettingsPage() {
   const { isSuperAdmin } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'website' | 'smtp' | 'payment' | 'social'>('website');
 
   const [websiteSettings, setWebsiteSettings] = useState({
-    siteName: 'Sajan Shah',
-    contactEmail: 'contact@sajanshah.com',
+    siteName: '',
+    contactEmail: '',
     logoUrl: '',
-    bannerUrl: '',
   });
 
   const [smtpSettings, setSmtpSettings] = useState({
-    host: 'smtp.gmail.com',
-    port: '587',
+    host: '',
+    port: '',
     username: '',
     password: '',
   });
@@ -32,11 +33,34 @@ export default function AdminSettingsPage() {
   });
 
   const [socialLinks, setSocialLinks] = useState({
-    facebook: 'https://facebook.com/sajanshah',
-    instagram: 'https://instagram.com/sajanshah',
-    linkedin: 'https://linkedin.com/in/sajanshah',
+    facebook: '',
+    instagram: '',
+    linkedin: '',
     twitter: '',
   });
+
+  useEffect(() => {
+    if (isSuperAdmin) {
+      fetchSettings();
+    }
+  }, [isSuperAdmin]);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await api.get('/settings');
+      const settings = response.data.data.settings;
+      
+      if (settings.website) setWebsiteSettings(prev => ({ ...prev, ...settings.website }));
+      if (settings.smtp) setSmtpSettings(prev => ({ ...prev, ...settings.smtp }));
+      if (settings.payment) setPaymentSettings(prev => ({ ...prev, ...settings.payment }));
+      if (settings.social) setSocialLinks(prev => ({ ...prev, ...settings.social }));
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+      toast.error('Failed to load settings');
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   if (!isSuperAdmin) {
     return (
@@ -47,14 +71,33 @@ export default function AdminSettingsPage() {
     );
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <img src="/loding.png" alt="Loading" className="animate-spin object-contain h-12 w-12 -600" />
+      </div>
+    );
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await api.patch('/settings', {
+        settings: {
+          website: websiteSettings,
+          smtp: smtpSettings,
+          payment: paymentSettings,
+          social: socialLinks,
+        }
+      });
       toast.success('Settings saved successfully');
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast.error('Failed to save settings');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -108,14 +151,6 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center space-x-4">
                   <div className="h-16 w-16 bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-xs text-gray-500">Logo</div>
                   <input type="text" placeholder="Or enter logo URL" value={websiteSettings.logoUrl} onChange={e => setWebsiteSettings({...websiteSettings, logoUrl: e.target.value})} className="flex-1 p-2 border rounded-md" />
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Banner Upload</label>
-                <div className="flex items-center space-x-4">
-                  <div className="h-20 w-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-xs text-gray-500">Banner</div>
-                  <input type="text" placeholder="Or enter banner URL" value={websiteSettings.bannerUrl} onChange={e => setWebsiteSettings({...websiteSettings, bannerUrl: e.target.value})} className="flex-1 p-2 border rounded-md" />
                 </div>
               </div>
             </div>

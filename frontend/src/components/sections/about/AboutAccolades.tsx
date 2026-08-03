@@ -1,0 +1,96 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface AboutAccoladesProps {
+  content?: {
+    heading1?: string;
+    heading2?: string;
+    awardImage?: string;
+    list?: string[];
+  };
+}
+
+export const AboutAccolades: React.FC<AboutAccoladesProps> = ({ content }) => {
+  const data = {
+    heading1: content?.heading1 || "A few noteworthy",
+    heading2: content?.heading2 || "accolades include:",
+    awardImage: content?.awardImage || "/image.png",
+    list: content?.list || [
+      "India's Youngest Motivational Speaker and Bussiness Coach",
+      "Known as the Memory Man of India for brain mastery",
+      "Speaker at the World Parliament of Religions",
+      "4 -Time TEDx Speaker delivering high-impact ideas",
+      "Suryadatta National Awardee for Best Motivational Speaker",
+      "Honored with 30 Under 30 Nationwide Award by BusinessMint",
+      "Author of 8 Transformational Books",
+      "Impacted over 16+ Million Lives globally",
+      "Founder of United First Initiative (UN SDG 2030)",
+      "Founder of Live to Inspire Charitable Trust",
+      "Delivered sessions across 5000+ educational institutions",
+      "Conducted 6800+ high-impact transformational sessions"
+    ]
+  };
+
+  return (
+    <section className="py-20 bg-[#1a1a1a] text-white px-6 md:px-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-16 items-start">
+
+          {/* Left Side: Heading + Trophy */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="lg:w-5/12 flex flex-col items-center lg:items-start text-center lg:text-left"
+          >
+            <h2 className="text-3xl md:text-4xl font-light italic leading-tight text-white mb-12">
+              {data.heading1}<br />
+              <span className="font-semibold">{data.heading2}</span>
+            </h2>
+
+            {/* Trophy Award Image - Perfectly aligned below heading */}
+            <div className="w-full flex justify-start">
+              <img
+                src={data.awardImage}
+                alt="Award Trophy"
+                className="w-64 md:w-80 object-contain"
+              />
+            </div>
+          </motion.div>
+
+          {/* Right Side: Checklist */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="lg:w-7/12"
+          >
+            <div className="space-y-5">
+              {data.list.map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.06 }}
+                  className="flex items-start gap-4 group"
+                >
+                  {/* Orange checkmark */}
+                  <span className="text-[#f26522] text-xl font-bold mt-0.5 shrink-0">✓</span>
+                  <p className="text-gray-300 text-base font-light leading-relaxed group-hover:text-white transition-colors duration-300">
+                    {item}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+    </section>
+  );
+};

@@ -69,59 +69,58 @@ export const MediaPress: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-white border-b border-gray-200">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-brand-dark mb-6 uppercase tracking-tight">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Media & Press
           </h2>
-          <div className="w-24 h-1 bg-brand-orange mx-auto mb-8"></div>
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Featured in leading publications and media outlets worldwide
           </p>
         </div>
 
         {/* Press Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {loading ? (
             // Loading Skeletons
             Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="bg-white border border-gray-200 p-4 animate-pulse">
-                <div className="h-40 bg-gray-200 mb-4"></div>
-                <div className="h-4 bg-gray-200 mb-2"></div>
-                <div className="h-3 bg-gray-200 w-3/4"></div>
+              <div key={index} className="bg-white rounded-lg shadow-lg p-4 animate-pulse">
+                <div className="h-32 bg-gray-200 rounded-lg mb-3"></div>
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
               </div>
             ))
           ) : (
             articles.map((article) => (
-              <article 
+              <article
                 key={article.id}
-                className="bg-white border border-gray-200 overflow-hidden hover:border-brand-orange transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-xl flex flex-col"
+                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group"
                 onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
               >
                 {/* Thumbnail */}
-                <div className="h-48 bg-gray-100 overflow-hidden">
+                <div className="h-32 bg-gray-100">
                   <img
                     src={article.thumbnail}
                     alt={article.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 grayscale group-hover:grayscale-0"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-grow">
+                <div className="p-4">
                   {/* Source */}
-                  <div className="text-sm text-brand-orange font-bold uppercase tracking-widest mb-3">
+                  <div className="text-sm text-[#f26522] font-semibold mb-2">
                     {article.source}
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-black text-brand-dark mb-4 leading-snug group-hover:text-brand-orange transition-colors line-clamp-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:line-clamp-none">
                     {article.title}
                   </h3>
 
                   {/* Date */}
-                  <div className="text-sm font-bold text-gray-500 uppercase tracking-wider mt-auto pt-4 border-t border-gray-100">
+                  <div className="text-sm text-gray-500">
                     {formatDate(article.date)}
                   </div>
                 </div>
@@ -131,22 +130,58 @@ export const MediaPress: React.FC = () => {
         </div>
 
         {/* Media Logos Strip */}
-        <div className="bg-brand-light py-16 border-y border-gray-200 overflow-hidden relative">
+        <div className="bg-gray-50 py-12 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-center text-xl font-black text-brand-dark mb-10 uppercase tracking-widest">
+            <h3 className="text-center text-lg font-semibold text-gray-700 mb-8">
               As Featured In
             </h3>
-            
+
             {/* Auto-scrolling Logos */}
             <div className="relative">
-              <div className="flex space-x-16 animate-scroll justify-center flex-wrap gap-y-8">
-                {/* Realistically these should be images, but simulating for now */}
-                {['The Times of India', 'Economic Times', 'Forbes India', 'Hindustan Times', 'BBC News', 'CNN', 'Reuters'].map((outlet, index) => (
-                  <div 
+              <div className="flex space-x-12 animate-scroll">
+                {/* Duplicate logos for seamless scrolling effect */}
+                {[
+                  // National
+                  'ANI',
+                  'Business Standard',
+                  'The Tribune',
+                  'LatestLY',
+                  'Google News',
+                  'Daily Hunt',
+                  'Indian News Network',
+                  'Indian Economic Observer',
+                  'National Insight',
+                  'Rising Entrepreneurs',
+
+                  // International
+                  'London Channel News',
+                  'Washington DC Dispatch',
+                  'Dubai City Reporter',
+                  'British Columbia Times',
+                  'England News Portal',
+                  'France Network Times',
+                  'Richmond Evening News',
+                  'Buffalo Dispatch',
+                  'Maldives Star Plus',
+                  'Lanka Express',
+
+                  // Regional
+                  'Lokmat Times Today',
+                  'Mumbai Live',
+                  'Gujarat Taraf',
+                  'Hyderabad News',
+                  'Bangalore Buzz',
+                  'Rajasthan Express',
+                  'Madhya Pradesh Chronicle',
+                  'Telangana Journal',
+                  'Punjab Live',
+                  'Calcutta Courier'
+                ].map((outlet, index) => (
+                  <div
                     key={`${outlet}-${index}`}
-                    className="flex-shrink-0 flex items-center justify-center filter grayscale opacity-50 hover:opacity-100 transition-opacity hover:grayscale-0"
+                    className="flex-shrink-0 h-12 w-32 md:w-40 flex items-center justify-center filter grayscale opacity-60 hover:opacity-100 transition-opacity"
                   >
-                    <span className="text-xl md:text-2xl font-black text-brand-dark uppercase tracking-widest">
+                    <span className="text-sm md:text-base font-medium text-gray-600 whitespace-nowrap">
                       {outlet}
                     </span>
                   </div>

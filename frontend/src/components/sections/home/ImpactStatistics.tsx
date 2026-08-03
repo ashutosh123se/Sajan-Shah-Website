@@ -1,17 +1,14 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 
-// CountUp Component specifically built for ImpactStatistics
 const CountUp: React.FC<{ end: number; prefix?: string; suffix?: string; isIndianFormat?: boolean; isVisible: boolean }> = ({ end, prefix = '', suffix = '', isIndianFormat = false, isVisible }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!isVisible) return;
-
-    const duration = 2500; // 2.5 seconds
-    const increment = end / (duration / 16); 
+    const duration = 2500;
+    const increment = end / (duration / 16);
     let current = 0;
-
     const timer = setInterval(() => {
       current += increment;
       if (current >= end) {
@@ -21,17 +18,15 @@ const CountUp: React.FC<{ end: number; prefix?: string; suffix?: string; isIndia
         setCount(Math.floor(current));
       }
     }, 16);
-
     return () => clearInterval(timer);
   }, [isVisible, end]);
 
-  // Format the number
-  const formattedNumber = isIndianFormat 
-    ? count.toLocaleString('en-IN') 
+  const formattedNumber = isIndianFormat
+    ? count.toLocaleString('en-IN')
     : count.toLocaleString('en-US');
 
   return (
-    <span className="font-black tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+    <span className="font-bold tracking-tighter text-white">
       {prefix}{formattedNumber}{suffix}
     </span>
   );
@@ -43,80 +38,93 @@ export const ImpactStatistics: React.FC = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
       { threshold: 0.1 }
     );
-
     if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
-    };
+    return () => { if (sectionRef.current) observer.unobserve(sectionRef.current); };
   }, []);
 
   const stats = [
-    { value: 16, suffix: "M+", isIndianFormat: false, label: "Lives Impacted" },
-    { value: 968000, suffix: "+", isIndianFormat: true, label: "Lives Impacted Through Social Work" },
-    { value: 193000, suffix: "+", isIndianFormat: true, label: "Books Read" },
-    { value: 6800, suffix: "+", isIndianFormat: true, label: "Sessions Delivered" },
-    { value: 5000, suffix: "+", isIndianFormat: true, label: "Schools & Institutions" },
-    { value: 138, suffix: "+", isIndianFormat: false, label: "Social Drives Led" }
+    { value: 16, suffix: "M+", label: "Lives Transformed", desc: "Across 50+ countries globally" },
+    { value: 968000, suffix: "+", isIndianFormat: true, label: "Social Impact", desc: "Dedicated humanitarian initiatives" },
+    { value: 193000, suffix: "+", isIndianFormat: true, label: "Knowledge Spread", desc: "Readers of 8 life-changing books" },
+    { value: 6800, suffix: "+", isIndianFormat: true, label: "Global Keynotes", desc: "High-impact stage experiences" },
+    { value: 5000, suffix: "+", isIndianFormat: true, label: "Institutions", desc: "Schools & corporate partners" },
+    { value: 138, suffix: "+", label: "Major Drives", desc: "Leading social change movements" }
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-[#0a0a0a] text-white relative overflow-hidden" ref={sectionRef}>
-      
-      {/* Immersive Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#f26522]/20 via-[#0a0a0a] to-[#0a0a0a]"></div>
-      
-      {/* Subtle Grid Lines (as requested by the user) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+    <section className="py-32 bg-black text-white relative overflow-hidden" ref={sectionRef}>
+      {/* Subtle Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#f26522]/5 rounded-full filter blur-[120px] -z-0"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-light mb-4 tracking-wide text-white">Impact That <span className="font-bold text-[#f26522]">Speaks</span></h2>
-          <div className="w-16 h-1 bg-[#f26522] mx-auto mb-6"></div>
-          <p className="text-xl text-gray-400 font-light tracking-wide uppercase text-sm">Not just numbers. Real lives. Real transformation.</p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mb-20">
-          {stats.map((stat, idx) => (
-            <div 
-              key={idx} 
-              className="group relative bg-[#111]/80 backdrop-blur-xl p-10 rounded-none border border-gray-800/50 hover:border-[#f26522]/50 transition-all duration-500 overflow-hidden"
-              style={{ transitionDelay: `${idx * 100}ms` }}
-            >
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#f26522]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative z-10 text-center">
-                <div className="text-5xl md:text-6xl mb-4 text-white">
-                  <CountUp 
-                    end={stat.value} 
-                    suffix={stat.suffix} 
-                    isIndianFormat={stat.isIndianFormat} 
-                    isVisible={isVisible} 
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+          {/* Header Section */}
+          <div className="lg:col-span-4">
+            <p className="text-[#f26522] font-bold text-xs tracking-[0.5em] uppercase mb-6">Global Footprint</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-8 leading-[1.1] tracking-tight">
+              Impact That <br /><span className="font-bold">Endures.</span>
+            </h2>
+            <div className="w-16 h-1 bg-[#f26522] mb-10"></div>
+            <p className="text-gray-400 text-lg font-light leading-relaxed mb-12">
+              Beyond the numbers lies a deeper story of human potential. For over two decades,
+              Sajan Shah has been a catalyst for change, bridging the gap between average
+              performance and extraordinary results.
+            </p>
+            <button className="group flex items-center gap-4 text-[#f26522] font-bold uppercase tracking-widest text-xs">
+              <span>View Impact Report</span>
+              <div className="w-8 h-px bg-[#f26522] transition-all duration-300 group-hover:w-12"></div>
+            </button>
+          </div>
+
+          {/* Statistics Grid */}
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-16">
+            {stats.map((stat, idx) => (
+              <div key={idx} className="relative">
+                <div className="text-4xl md:text-5xl lg:text-6xl mb-4">
+                  <CountUp
+                    end={stat.value}
+                    suffix={stat.suffix}
+                    isIndianFormat={stat.isIndianFormat}
+                    isVisible={isVisible}
                   />
                 </div>
-                <div className="text-sm md:text-base text-[#f26522] font-bold uppercase tracking-widest leading-relaxed">
+                <h3 className="text-[#f26522] font-bold text-xs uppercase tracking-[0.2em] mb-3">
                   {stat.label}
-                </div>
+                </h3>
+                <p className="text-gray-500 text-sm font-light">
+                  {stat.desc}
+                </p>
+                {/* Subtle Divider */}
+                <div className="absolute -bottom-8 left-0 w-8 h-px bg-gray-900"></div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
         </div>
 
-        <div className="text-center border-t border-gray-800 pt-16 max-w-3xl mx-auto">
-          <p className="text-3xl font-light mb-4 text-white">Every number is a story of change.</p>
-          <p className="text-lg text-gray-500 mb-10 font-light">Every effort is a step towards a better future.</p>
-          <button className="bg-[#f26522] text-white hover:bg-[#d95a1e] px-10 py-5 font-bold uppercase tracking-widest text-sm shadow-[0_10px_30px_rgba(242,101,34,0.3)] transition-all duration-300 hover:-translate-y-1">
-            Be a Part of the Impact
+        {/* Bottom Banner */}
+        <div className="mt-32 pt-16 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-xl md:text-2xl font-light text-gray-300">
+            Ready to join the <span className="text-white font-medium">16 Million+</span> transformation journey?
+          </p>
+          <p className="text-xl md:text-2xl font-light text-gray-300">
+            Every number is a <span className="text-white font-medium">Story</span> of change
+          </p>
+          <p className="text-xl md:text-2xl font-light text-gray-300">
+            Every effort is a <span className="text-white font-medium">step towards</span> a better future.
+          </p>
+          <button 
+            onClick={() => document.getElementById('newsletter-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-[#f26522] hover:bg-[#d95a1e] text-white px-12 py-5 font-bold uppercase tracking-widest text-xs transition-all shadow-2xl">
+            join the Community
           </button>
         </div>
+
       </div>
     </section>
   );

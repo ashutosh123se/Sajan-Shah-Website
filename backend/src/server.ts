@@ -9,8 +9,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth';
 import productsRoutes from './routes/products';
 import eventsRoutes from './routes/events';
-import programsRoutes from './routes/programs';
 import contactRoutes from './routes/contact';
+import homePageRoutes from './routes/homePage';
 import membersRoutes from './routes/members';
 import newsletterRoutes from './routes/newsletter';
 import ordersRoutes from './routes/orders';
@@ -21,6 +21,14 @@ import usersRoutes from './routes/users';
 import legalRoutes from './routes/legal';
 import bannersRoutes from './routes/bannersRoutes';
 import adminRoutes from './routes/admin';
+import settingsRoutes from './routes/settingsRoutes';
+import leadsRoutes from './routes/leads';
+import aboutRoutes from './routes/aboutRoutes';
+import eventsPageRoutes from './routes/eventsPage';
+import contributionsPageRoutes from './routes/contributionsPage';
+import v1ProductsRoutes from './routes/v1Products';
+import speakingRoutes from './routes/speaking';
+import pressRoutes from './routes/press';
 
 // Load environment variables
 dotenv.config();
@@ -31,7 +39,14 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'https://www.sajanshah.com', 
+    'https://sajanshah.com', 
+    'https://qa.sajanshah.com',
+    'http://localhost:3001',
+    'http://localhost:3008',
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -42,8 +57,8 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/events', eventsRoutes);
-app.use('/api/programs', programsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/home-page', homePageRoutes);
 app.use('/api/members', membersRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -54,6 +69,15 @@ app.use('/api/users', usersRoutes);
 app.use('/api/legal', legalRoutes);
 app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/leads', leadsRoutes);
+app.use('/api/about', aboutRoutes);
+app.use('/api/events-page', eventsPageRoutes);
+app.use('/api/contributions-page', contributionsPageRoutes);
+app.use('/api/v1', v1ProductsRoutes);
+app.use('/api/speaking', speakingRoutes);
+app.use('/api/press', pressRoutes);
+
 
 // Health check
 app.get('/health', (req, res) => {
@@ -70,7 +94,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // 404 handler
-app.use('*splat', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: 'Route not found'

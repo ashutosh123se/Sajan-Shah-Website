@@ -43,7 +43,7 @@ export const InfluenceBanner: React.FC = () => {
   }, [currentText, isDeleting, currentWordIndex, typingSpeed, words]);
 
   return (
-    <div className="relative z-20 -mt-16 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative z-20 mt-0 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="bg-brand-orange text-white py-10 md:py-14 px-6 md:px-12 shadow-2xl border-4 border-transparent flex justify-center items-center text-center">
         <h2 className="text-3xl md:text-5xl lg:text-5xl font-body font-light tracking-tight">
           This Is Not an Event. It’s a Transformation <span className="font-semibold inline-block min-w-[180px] md:min-w-[280px] text-left">{currentText}<span className="animate-pulse">|</span></span>

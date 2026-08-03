@@ -50,76 +50,71 @@ export const FreeMasterclassFunnel: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-brand-orange text-white">
+    <section className="py-20 bg-[#111] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Headline */}
           <div className="text-center lg:text-left">
-            <h2 className="text-5xl md:text-6xl font-black mb-6 uppercase tracking-tight text-white drop-shadow-lg">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Free Masterclass
             </h2>
-            <div className="w-24 h-2 bg-brand-dark mx-auto lg:mx-0 mb-8"></div>
-            <p className="text-2xl md:text-3xl mb-10 font-bold text-white uppercase tracking-wide leading-snug">
+            <p className="text-xl md:text-2xl mb-6 text-purple-100">
               Unlock Your Memory Potential in 90 Minutes
             </p>
-            <div className="space-y-8">
-              <div className="flex items-center space-x-6">
-                <div className="w-16 h-16 bg-brand-dark flex-shrink-0 flex items-center justify-center border-4 border-white">
-                  <svg className="w-8 h-8 text-brand-orange" fill="currentColor" viewBox="0 0 24 24">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 .895 3 2-1.343 2-3 2zm0 8c1.11 0 2.08.402 2.599-1M12 8V7l-8 5v3l8-2z"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black uppercase tracking-widest text-brand-dark drop-shadow-sm">Live Session</h3>
-                  <p className="text-white font-bold text-lg mt-1">Join Sajan Shah live online</p>
+                  <h3 className="text-lg font-semibold">Live Interactive Session</h3>
+                  <p className="text-purple-100">Join Sajan Shah live</p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-6">
-                <div className="w-16 h-16 bg-brand-dark flex-shrink-0 flex items-center justify-center border-4 border-white">
-                  <svg className="w-8 h-8 text-brand-orange" fill="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black uppercase tracking-widest text-brand-dark drop-shadow-sm">Proven Techniques</h3>
-                  <p className="text-white font-bold text-lg mt-1">Science-backed memory methods</p>
+                  <h3 className="text-lg font-semibold">Proven Techniques</h3>
+                  <p className="text-purple-100">Science-backed methods</p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-6">
-                <div className="w-16 h-16 bg-brand-dark flex-shrink-0 flex items-center justify-center border-4 border-white">
-                  <svg className="w-8 h-8 text-brand-orange" fill="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M13 10V3L4 14h7v7m0 0v7l9-11h-7z"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black uppercase tracking-widest text-brand-dark drop-shadow-sm">Immediate Results</h3>
-                  <p className="text-white font-bold text-lg mt-1">Apply strategies instantly</p>
+                  <h3 className="text-lg font-semibold">Immediate Results</h3>
+                  <p className="text-purple-100">Apply instantly</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right Side - Form */}
-          <div className="bg-brand-dark p-10 md:p-14 border-4 border-white shadow-2xl relative">
-            <div className="absolute -top-6 -right-6 bg-white text-brand-dark font-black uppercase tracking-widest px-6 py-3 border-4 border-brand-dark shadow-xl transform rotate-3">
-              Limited Seats!
-            </div>
-            
-            <div className="text-center mb-10">
-              <h3 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-tight">
-                Reserve Your Spot
+          <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                Reserve Your Free Spot
               </h3>
-              <p className="text-gray-400 font-bold text-lg uppercase tracking-wider">
-                Register now to secure your place.
+              <p className="text-gray-600 mb-6">
+                Limited seats available. Register now to secure your place in this exclusive masterclass.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name Field */}
               <div>
-                <label htmlFor="name" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name *
                 </label>
                 <input
@@ -129,14 +124,14 @@ export const FreeMasterclassFunnel: React.FC = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-6 py-4 bg-white border-none rounded-none focus:ring-4 focus:ring-brand-orange text-brand-dark font-bold placeholder-gray-400 outline-none"
-                  placeholder="ENTER YOUR FULL NAME"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  placeholder="Enter your full name"
                 />
               </div>
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address *
                 </label>
                 <input
@@ -146,14 +141,14 @@ export const FreeMasterclassFunnel: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-6 py-4 bg-white border-none rounded-none focus:ring-4 focus:ring-brand-orange text-brand-dark font-bold placeholder-gray-400 outline-none"
-                  placeholder="YOUR.EMAIL@EXAMPLE.COM"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  placeholder="your.email@example.com"
                 />
               </div>
 
               {/* Phone Field */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-bold text-brand-orange uppercase tracking-widest mb-3">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Phone Number *
                 </label>
                 <input
@@ -163,22 +158,22 @@ export const FreeMasterclassFunnel: React.FC = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-6 py-4 bg-white border-none rounded-none focus:ring-4 focus:ring-brand-orange text-brand-dark font-bold placeholder-gray-400 outline-none"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="+91 98765 43210"
                 />
               </div>
 
               {/* WhatsApp Opt-in */}
-              <div className="flex items-center pt-4">
+              <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="whatsappOptIn"
                   name="whatsappOptIn"
                   checked={formData.whatsappOptIn}
                   onChange={handleInputChange}
-                  className="w-6 h-6 text-brand-orange bg-white border-none rounded-none focus:ring-brand-orange accent-brand-orange cursor-pointer"
+                  className="w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
                 />
-                <label htmlFor="whatsappOptIn" className="ml-4 text-sm font-bold text-white uppercase tracking-wider cursor-pointer">
+                <label htmlFor="whatsappOptIn" className="ml-2 text-sm text-gray-700">
                   Send me masterclass updates on WhatsApp
                 </label>
               </div>
@@ -187,16 +182,16 @@ export const FreeMasterclassFunnel: React.FC = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full py-6 text-xl bg-brand-orange hover:bg-white hover:text-brand-dark border-4 border-transparent hover:border-brand-dark transition-all duration-300"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white disabled:bg-purple-400"
               >
-                {loading ? 'REGISTERING...' : 'GET INSTANT ACCESS'}
+                {loading ? 'Registering...' : 'Get Instant Access'}
               </Button>
             </form>
 
             {/* Trust Indicators */}
-            <div className="mt-8 pt-6 border-t border-white/20">
-              <div className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest space-y-2">
-                <p>🔒 100% Secure & Private</p>
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="text-center text-sm text-gray-500">
+                <p className="mb-2">🔒 100% Secure & Private</p>
                 <p>📧 No spam, ever. Unsubscribe anytime.</p>
               </div>
             </div>
