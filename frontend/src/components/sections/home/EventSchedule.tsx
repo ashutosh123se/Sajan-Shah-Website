@@ -221,10 +221,47 @@ function Badge({ card, idx }: { card: CardDef; idx: number }) {
   );
 }
 
+interface SocialPlatformOverride {
+  platform?: string;
+  handle?: string;
+  stat?: string;
+  label?: string;
+  url?: string;
+}
+
+interface EventScheduleProps {
+  content?: {
+    sectionLabel?: string;
+    heading?: string;
+    headingHighlight?: string;
+    backgroundImage?: string;
+    platforms?: SocialPlatformOverride[];
+  };
+}
+
 /* ─────────────────────────────────────────────
-   Main Export
+   Main Export — counts editable via CMS (Admin → Home → digital_empire)
 ───────────────────────────────────────────── */
-export const EventSchedule: React.FC = () => {
+export const EventSchedule: React.FC<EventScheduleProps> = ({ content }) => {
+  const sectionLabel = content?.sectionLabel || 'Follow The Journey';
+  const heading = content?.heading || 'Our Global';
+  const headingHighlight = content?.headingHighlight || 'Digital Empire';
+  const backgroundImage = content?.backgroundImage || '/Autographs sir.jpeg';
+
+  const cards = CARDS.map((card) => {
+    const override = (content?.platforms || []).find(
+      (p) => (p.platform || '').toLowerCase() === card.platform.toLowerCase()
+    );
+    if (!override) return card;
+    return {
+      ...card,
+      handle: override.handle || card.handle,
+      stat: override.stat || card.stat,
+      label: override.label || card.label,
+      url: override.url || card.url,
+    };
+  });
+
   return (
     <section className="relative w-full bg-[#080808] py-20 md:py-28 px-4 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -232,11 +269,11 @@ export const EventSchedule: React.FC = () => {
         {/* Section Heading */}
         <div className="text-center mb-14 md:mb-20">
           <p className="text-[#f26522] text-xs md:text-sm font-bold uppercase tracking-[0.45em] mb-3">
-            Follow The Journey
+            {sectionLabel}
           </p>
           <h2 className="text-4xl md:text-6xl font-light text-white tracking-tight leading-tight">
-            Our Global{' '}
-            <span className="font-semibold italic text-[#f26522]">Digital Empire</span>
+            {heading}{' '}
+            <span className="font-semibold italic text-[#f26522]">{headingHighlight}</span>
           </h2>
           <div className="w-14 h-[3px] bg-[#f26522] mx-auto mt-6 rounded-full" />
         </div>
@@ -254,7 +291,7 @@ export const EventSchedule: React.FC = () => {
             style={{ aspectRatio: '16/9' }}
           >
             <img
-              src="/Autographs sir.jpeg"
+              src={backgroundImage}
               alt="Sajan Shah with fans"
               className="w-full h-full object-cover pointer-events-none select-none"
               style={{ filter: 'brightness(0.82) contrast(1.08) saturate(1.05)' }}
@@ -271,7 +308,7 @@ export const EventSchedule: React.FC = () => {
 
           {/* Floating badges — fully responsive */}
           <div className="absolute inset-0 pointer-events-none" style={{ overflow: 'visible' }}>
-            {CARDS.map((card, idx) => (
+            {cards.map((card, idx) => (
               <div key={card.platform} className="pointer-events-auto">
                 <Badge card={card} idx={idx} />
               </div>

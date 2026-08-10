@@ -7,7 +7,6 @@ import EventsCalendar from './EventsCalendar';
 import EventsWebinars from './EventsWebinars';
 import EventsPast from './EventsPast';
 import EventsCTA from './EventsCTA';
-import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
 import { SajanEvent, EventFormat, EventCategory } from './eventsData';
 
@@ -122,15 +121,14 @@ export default function EventsSection() {
       <EventsWebinars events={featuredUpcoming} />
       <EventsPast events={pastEvents} />
       <EventsCTA content={getSection('cta')} />
-      <ProductsTransformation />
 
-      {/* Final Quote Section */}
-      <section className="pt-10 pb-0 bg-black text-center px-4">
+      {/* Final Quote Section — tight spacing into footer */}
+      <section className="pt-10 pb-12 bg-black text-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-6xl mx-auto px-4 pb-10"
+          className="max-w-6xl mx-auto px-4"
         >
           <h3 className="text-3xl md:text-5xl font-light text-white italic mb-8 leading-tight">
             "Change your mental patterns.<br className="hidden md:block" /> Your results will follow."

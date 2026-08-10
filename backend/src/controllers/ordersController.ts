@@ -53,12 +53,33 @@ const getOrCreateUser = async (email: string, name: string) => {
 export const createOrder = async (req: Request, res: Response) => {
   try {
     const { items, userEmail, userName, paymentMethod = 'RAZORPAY', shippingAddress, phone } = req.body;
+
+    if (!userEmail || typeof userEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+      return sendError(res, 'A valid email address is required to place an order.', 400);
+    }
+    if (!Array.isArray(items) || items.length === 0) {
+      return sendError(res, 'Your cart is empty. Add at least one product before checkout.', 400);
+    }
+    for (const item of items) {
+      if (!item?.productId) {
+        return sendError(res, 'Each cart item must include a productId.', 400);
+      }
+      if (!item?.quantity || Number(item.quantity) < 1) {
+        return sendError(res, 'Each cart item must have a quantity of at least 1.', 400);
+      }
+      if (item.price === undefined || item.price === null || Number(item.price) < 0) {
+        return sendError(res, 'Each cart item must include a valid price.', 400);
+      }
+    }
     
     // Get or Create User
     const { user, isNew, setupToken } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
 
     // Calculate total amount
-    const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+    const total = items.reduce((sum: number, item: any) => sum + (Number(item.price) * Number(item.quantity)), 0);
+    if (!Number.isFinite(total) || total <= 0) {
+      return sendError(res, 'Order total must be greater than zero.', 400);
+    }
     const amountPaise = Math.round(total * 100);
     
     let rzpOrderId = null;
@@ -70,12 +91,21 @@ export const createOrder = async (req: Request, res: Response) => {
         return sendError(res, 'Online payment is not configured. Please use Cash on Delivery or contact support.', 503);
       }
 
-      const rzpOrder = await razorpay.orders.create({
-        amount: amountPaise,
-        currency: 'INR',
-        receipt: `rcpt_${Date.now()}`
-      });
-      rzpOrderId = rzpOrder.id;
+      try {
+        const rzpOrder = await razorpay.orders.create({
+          amount: amountPaise,
+          currency: 'INR',
+          receipt: `rcpt_${Date.now()}`
+        });
+        rzpOrderId = rzpOrder.id;
+      } catch (rzpError: any) {
+        console.error('Razorpay order create failed:', rzpError);
+        const message =
+          rzpError?.error?.description ||
+          rzpError?.message ||
+          'Razorpay could not create the payment order. Check API keys and try again.';
+        return sendError(res, message, 502);
+      }
     } else if (paymentMethod === 'COD') {
       orderStatus = 'PROCESSING'; // COD orders start as processing
       
@@ -112,9 +142,10 @@ export const createOrder = async (req: Request, res: Response) => {
       currency: 'INR',
       key: paymentMethod === 'RAZORPAY' ? (await getPaymentConfig()).keyId : null
     }, 'Order created successfully');
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create order error:', error);
-    sendError(res, 'Internal server error', 500);
+    const message = error?.message || 'Internal server error';
+    sendError(res, message.includes('Unique constraint') ? 'Unable to create order. Please try again.' : message, 500);
   }
 };
 

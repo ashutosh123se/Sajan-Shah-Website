@@ -75,9 +75,9 @@ export const getEventById = async (req: Request, res: Response) => {
 export const createEvent = async (req: Request, res: Response) => {
   try {
     const {
-      title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
+      title, slug, description, posterUrl, homepageImageUrl,
       webinarUrl, eventDate, city, venue, eventType, isPast,
-      isFree, price, capacity, isActive, buttonUrl
+      isFree, price, capacity, isActive, showOnCard, buttonUrl
     } = req.body;
 
     if (!title?.trim()) {
@@ -94,7 +94,6 @@ export const createEvent = async (req: Request, res: Response) => {
         description,
         posterUrl: posterUrl || 'https://via.placeholder.com/800x600',
         homepageImageUrl,
-        cloudinaryPublicId: cloudinaryPublicId || 'default',
         webinarUrl: webinarUrl || 'https://sol.sajanshah.com',
         eventDate: new Date(eventDate),
         city,
@@ -105,6 +104,7 @@ export const createEvent = async (req: Request, res: Response) => {
         price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : null,
         capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : null,
         isActive: isActive ?? true,
+        showOnCard: showOnCard === true || showOnCard === 'true',
         buttonUrl: buttonUrl || 'https://sol.sajanshah.com'
       }
     });
@@ -122,32 +122,37 @@ export const updateEvent = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
     const {
-      title, slug, description, posterUrl, homepageImageUrl, cloudinaryPublicId,
+      title, slug, description, posterUrl, homepageImageUrl,
       webinarUrl, eventDate, city, venue, eventType, isPast,
-      isFree, price, capacity, isActive, buttonUrl
+      isFree, price, capacity, isActive, showOnCard, buttonUrl
     } = req.body;
+
+    const data: Record<string, unknown> = {
+      title,
+      slug,
+      description,
+      posterUrl,
+      homepageImageUrl,
+      webinarUrl,
+      eventDate: eventDate ? new Date(eventDate) : undefined,
+      city,
+      venue,
+      eventType,
+      isPast,
+      isFree,
+      price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
+      capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
+      isActive,
+      buttonUrl
+    };
+
+    if (showOnCard !== undefined) {
+      data.showOnCard = showOnCard === true || showOnCard === 'true';
+    }
 
     const event = await db.event.update({
       where: { id },
-      data: {
-        title,
-        slug,
-        description,
-        posterUrl,
-        homepageImageUrl,
-        cloudinaryPublicId,
-        webinarUrl,
-        eventDate: eventDate ? new Date(eventDate) : undefined,
-        city,
-        venue,
-        eventType,
-        isPast,
-        isFree,
-        price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
-        capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
-        isActive,
-        buttonUrl
-      }
+      data
     });
     sendSuccess(res, { event }, 'Event updated successfully');
   } catch (error: any) {

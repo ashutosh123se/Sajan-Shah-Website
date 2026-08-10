@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Banner {
   id: string;
@@ -154,14 +156,25 @@ export default function AdminBannerPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Image URL</label>
+                <ImageUploadField
+                  label="Banner Image"
+                  value={formData.imageUrl}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
+                  folder="banners"
+                  required
+                />
+                <p className="mt-2 text-xs text-amber-400/90 leading-relaxed">
+                  Recommended size: <strong>1200 × 675 px</strong> (16:9) or <strong>1080 × 1080 px</strong> (square).
+                  Keep file under 1.5 MB. Oversized or odd-ratio images will crop/look stretched in the popup.
+                </p>
+                <label className="block text-sm font-medium text-gray-300 mb-1 mt-4">Or paste Image URL</label>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={formData.imageUrl}
                   onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
                   className="w-full bg-[#222] border border-white/10 text-white px-4 py-2 focus:border-white focus:outline-none transition-colors"
-                  placeholder="https://..."
+                  placeholder="https://... or /uploads/..."
                 />
               </div>
 
@@ -192,7 +205,7 @@ export default function AdminBannerPage() {
               <div className="mt-4">
                 <p className="text-sm font-medium text-gray-300 mb-2">Preview</p>
                 <div className="relative aspect-video max-w-md bg-[#222] border border-white/10 overflow-hidden">
-                  <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                  <MediaImage src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                 </div>
               </div>
             )}
@@ -215,7 +228,7 @@ export default function AdminBannerPage() {
             banners.map((banner) => (
               <div key={banner.id} className="bg-[#1a1a1a] border border-white/10 overflow-hidden flex flex-col">
                 <div className="relative aspect-video bg-[#222]">
-                  <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
+                  <MediaImage src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover" />
                   {banner.isActive && (
                     <div className="absolute top-2 right-2 bg-green-500 text-black text-xs font-bold px-2 py-1 uppercase tracking-wide shadow-lg">
                       Active

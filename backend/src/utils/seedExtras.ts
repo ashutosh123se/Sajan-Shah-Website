@@ -46,7 +46,7 @@ export const defaultInitiatives = [
     title: 'Teachers Training Program',
     description: 'Upskilling educators with neuroscience.',
     imageUrl: '/Sir Speaking.jpeg',
-    linkUrl: null,
+    linkUrl: 'https://teachers.sajanshah.com',
     order: 6,
   },
   {
@@ -70,7 +70,7 @@ export const defaultInitiatives = [
     title: 'YMF (Youth Motivation Forum)',
     description: 'Empowering the next generation of leaders.',
     imageUrl: '/impact.png',
-    linkUrl: null,
+    linkUrl: '/events#book-sajan',
     order: 9,
   },
 ];

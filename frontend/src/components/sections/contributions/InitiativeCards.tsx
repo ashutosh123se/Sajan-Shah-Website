@@ -51,6 +51,8 @@ const DEFAULT_LINK_BY_SLUG: Record<string, string> = {
   'season-of-learning': 'https://sol.sajanshah.com/',
   'live-to-inspire': 'https://www.unitedfirst.in/',
   'united-first-initiative': 'https://www.unitedfirst.in/',
+  'teachers-training-program': 'https://teachers.sajanshah.com',
+  'ymf-youth-motivation-forum': '/events#book-sajan',
 };
 
 const defaultInitiatives = [
@@ -100,7 +102,7 @@ const defaultInitiatives = [
     icon: <Apple size={32} />,
     img: '/Sir Speaking.jpeg',
     slug: 'teachers-training-program',
-    linkUrl: '',
+    linkUrl: 'https://teachers.sajanshah.com',
   },
   {
     title: 'UV Glasses Drive',
@@ -124,7 +126,7 @@ const defaultInitiatives = [
     icon: <GraduationCap size={32} />,
     img: '/impact.png',
     slug: 'ymf-youth-motivation-forum',
-    linkUrl: '',
+    linkUrl: '/events#book-sajan',
   },
 ];
 
@@ -140,6 +142,8 @@ function resolveLink(slug?: string, linkUrl?: string | null, title?: string) {
   if (title === 'Live to Inspire' || title === 'United First Initiative') {
     return 'https://www.unitedfirst.in/';
   }
+  if (title === 'Teachers Training Program') return 'https://teachers.sajanshah.com';
+  if (title?.includes('YMF')) return '/events#book-sajan';
   return '';
 }
 
@@ -169,7 +173,11 @@ export const InitiativeCards: React.FC<InitiativeCardsProps> = ({
       return;
     }
     if (link) {
-      window.open(link, '_blank', 'noopener,noreferrer');
+      if (link.startsWith('/') || link.startsWith('#')) {
+        window.location.href = link;
+      } else {
+        window.open(link, '_blank', 'noopener,noreferrer');
+      }
     }
   };
 

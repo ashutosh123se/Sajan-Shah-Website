@@ -49,7 +49,7 @@ const homeSections = [
           headline: "Live to Inspire. Lead to Serve.",
           subheadline: "Be part of a movement focused on creating real impact through education, awareness, and human transformation.",
           ctaText: "Join the Initiative",
-          ctaLink: "https://unitedfirst.in",
+          ctaLink: "https://www.unitedfirst.in/",
           image: "/united first.png"
         }
       ]
@@ -183,6 +183,24 @@ const homeSections = [
       bottomBannerText3: "Every effort is a <span class=\"text-white font-medium\">step towards</span> a better future.",
       bottomCtaText: "join the Community",
       bottomCtaLink: "/contact"
+    }
+  },
+  {
+    key: 'digital_empire',
+    title: 'Digital Empire / Social Counts',
+    order: 8,
+    content: {
+      sectionLabel: 'Follow The Journey',
+      heading: 'Our Global',
+      headingHighlight: 'Digital Empire',
+      backgroundImage: '/Autographs sir.jpeg',
+      platforms: [
+        { platform: 'Instagram', handle: '@sajanshahofficial', stat: '166K', label: 'Followers', url: 'https://www.instagram.com/sajan_shahh/' },
+        { platform: 'Twitter', handle: '@sajanshah', stat: '1.3K', label: 'Followers', url: 'https://x.com/sajanofficial' },
+        { platform: 'Facebook', handle: 'Sajan Shah', stat: '21k', label: 'Followers', url: 'https://www.facebook.com/SajanShahPage' },
+        { platform: 'LinkedIn', handle: 'Sajan Shah', stat: '5K', label: 'Followers', url: 'https://www.linkedin.com/in/sajan-shah-7840244a/' },
+        { platform: 'YouTube', handle: 'Sajan Shah', stat: '98.9K', label: 'Subscribers', url: 'https://www.youtube.com/@SajanShah' }
+      ]
     }
   }
 ];

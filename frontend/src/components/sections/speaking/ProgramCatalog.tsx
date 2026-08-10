@@ -107,6 +107,7 @@ const defaults: CatalogContent = {
       pitch: 'A deep dive into personal mastery and overcoming internal barriers.',
       badges: ['Exclusive', 'Mentorship'],
       img: '/You vs You.png',
+      link: '/products',
     },
     {
       name: 'Customise Program By Sajan Shah',

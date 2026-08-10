@@ -64,7 +64,7 @@ export const DEFAULT_HOME_HERO: HomeHeroContent = {
       subheadline:
         'Be part of a movement focused on creating real impact through education, awareness, and human transformation.',
       ctaText: 'Join the Initiative',
-      ctaLink: 'https://unitedfirst.in',
+      ctaLink: 'https://www.unitedfirst.in/',
       image: '/united first.png',
     },
   ],

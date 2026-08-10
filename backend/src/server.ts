@@ -102,7 +102,14 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  try {
+    const { ensurePageContentSeeded } = await import('./utils/ensurePageContent');
+    const result = await ensurePageContentSeeded();
+    console.log(`📦 CMS ensure: ${result.message}`);
+  } catch (err) {
+    console.error('CMS ensure failed (non-fatal):', err);
+  }
 });

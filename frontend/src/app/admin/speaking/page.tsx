@@ -79,6 +79,7 @@ const FIELD_LABELS: Record<string, string> = {
   pitch: 'Program Description/Pitch',
   badges: 'Audience Tags (comma-separated, e.g., Youth, Parents)',
   img: 'Program Feature Image',
+  link: 'Program Landing Page URL (e.g. https://teachers.sajanshah.com)',
   isFeatured: 'Display as Featured Program (Larger card)',
 
   // Features Section

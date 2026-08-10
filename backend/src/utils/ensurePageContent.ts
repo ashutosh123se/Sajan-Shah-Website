@@ -58,14 +58,46 @@ export async function repairCorruptedCmsJson(): Promise<number> {
   return fixed;
 }
 
-/** Seed CMS only when empty — never overwrites admin/user content. */
+async function ensureDigitalEmpireSection() {
+  const existing = await db.homePageSection.findUnique({ where: { key: 'digital_empire' } });
+  if (existing) return;
+  await db.homePageSection.create({
+    data: {
+      key: 'digital_empire',
+      title: 'Digital Empire / Social Counts',
+      order: 8,
+      isActive: true,
+      content: {
+        sectionLabel: 'Follow The Journey',
+        heading: 'Our Global',
+        headingHighlight: 'Digital Empire',
+        backgroundImage: '/Autographs sir.jpeg',
+        platforms: [
+          { platform: 'Instagram', handle: '@sajanshahofficial', stat: '166K', label: 'Followers', url: 'https://www.instagram.com/sajan_shahh/' },
+          { platform: 'Twitter', handle: '@sajanshah', stat: '1.3K', label: 'Followers', url: 'https://x.com/sajanofficial' },
+          { platform: 'Facebook', handle: 'Sajan Shah', stat: '21k', label: 'Followers', url: 'https://www.facebook.com/SajanShahPage' },
+          { platform: 'LinkedIn', handle: 'Sajan Shah', stat: '5K', label: 'Followers', url: 'https://www.linkedin.com/in/sajan-shah-7840244a/' },
+          { platform: 'YouTube', handle: 'Sajan Shah', stat: '98.9K', label: 'Subscribers', url: 'https://www.youtube.com/@SajanShah' },
+        ],
+      },
+    },
+  });
+  console.log('  ✅ Created missing home:digital_empire');
+}
+
+/**
+ * Boot-safe: repair corruption, fill missing initiative links, create missing digital_empire.
+ * Full page seeds only when CMS is empty.
+ */
 export async function ensurePageContentSeeded(): Promise<{ seeded: boolean; message: string }> {
-  // Always attempt cheap corruption repair (no-op when data is healthy)
   await repairCorruptedCmsJson();
+  await seedInitiatives();
+  await seedLegalPages();
+  await ensureDigitalEmpireSection();
 
   const speakingCount = await db.speakingPageSection.count();
   if (speakingCount > 0) {
-    return { seeded: false, message: 'Page content already exists' };
+    return { seeded: false, message: 'CMS repair + fill-missing completed' };
   }
 
   console.log('📦 CMS tables empty — seeding default page content (create-only)...');
@@ -101,6 +133,7 @@ export async function forceSeedPageContent(): Promise<{ message: string; created
   await seedInitiatives();
   await seedTestimonials();
   await seedLegalPages();
+  await ensureDigitalEmpireSection();
 
   const aligned = await alignCmsToFrontendDefaults();
 
