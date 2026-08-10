@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { MediaImage } from '@/components/common/MediaImage';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CartPage() {
@@ -18,7 +19,6 @@ export default function CartPage() {
   
   const [mounted, setMounted] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
-  const [paymentMethod, setPaymentMethod] = useState<'RAZORPAY' | 'COD'>('RAZORPAY');
   
   const [shippingData, setShippingData] = useState({
     name: '',
@@ -60,7 +60,7 @@ export default function CartPage() {
       return;
     }
 
-    // Process Payment
+    // Process Razorpay payment
     try {
       const orderRes = await api.post('/orders/create', {
         items: items.map(item => ({
@@ -70,52 +70,56 @@ export default function CartPage() {
         })),
         userEmail: shippingData.email,
         userName: shippingData.name,
-        paymentMethod,
+        paymentMethod: 'RAZORPAY',
         shippingAddress: `${shippingData.address}, ${shippingData.city} - ${shippingData.zip}`,
         phone: shippingData.phone
       });
 
       const { razorpayOrderId, amount, currency, key, orderId } = orderRes.data.data;
 
-      if (paymentMethod === 'RAZORPAY') {
-        const options = {
-          key,
-          amount,
-          currency,
-          name: 'Sajan Shah',
-          description: 'Payment for your order',
-          order_id: razorpayOrderId,
-          handler: async (response: any) => {
-            try {
-              await api.post('/orders/verify', {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orderId
-              });
-              toast.success('Payment successful!');
-              clearAllItems();
-              router.push(`/products/order-success?orderId=${orderId}&method=RAZORPAY`);
-            } catch (err) {
-              toast.error('Payment verification failed');
-            }
-          },
-          prefill: {
-            name: shippingData.name,
-            email: shippingData.email,
-            contact: shippingData.phone
-          },
-          theme: { color: '#000000' }
-        };
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-      } else {
-        toast.success('Order placed successfully (COD)');
-        clearAllItems();
-        router.push(`/products/order-success?orderId=${orderId}&method=COD`);
+      if (!key || !razorpayOrderId) {
+        toast.error(orderRes.data?.error || 'Razorpay is not configured yet');
+        return;
       }
-    } catch (error) {
-      toast.error('Failed to create order');
+
+      if (typeof window === 'undefined' || !(window as any).Razorpay) {
+        toast.error('Razorpay checkout failed to load. Please refresh and try again.');
+        return;
+      }
+
+      const options = {
+        key,
+        amount,
+        currency,
+        name: 'Sajan Shah',
+        description: 'Payment for your order',
+        order_id: razorpayOrderId,
+        handler: async (response: any) => {
+          try {
+            await api.post('/orders/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId
+            });
+            toast.success('Payment successful!');
+            clearAllItems();
+            router.push(`/products/order-success?orderId=${orderId}&method=RAZORPAY`);
+          } catch (err) {
+            toast.error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: shippingData.name,
+          email: shippingData.email,
+          contact: shippingData.phone
+        },
+        theme: { color: '#f26522' }
+      };
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to create order');
     }
   };
 
@@ -206,7 +210,7 @@ export default function CartPage() {
                         return (
                         <div key={product.id} className="py-8 first:pt-0 flex gap-8 group">
                           <div className="w-32 h-40 bg-white/[0.03] overflow-hidden relative border border-white/5">
-                            <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <MediaImage src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                           </div>
                           <div className="flex-1 flex flex-col justify-between py-2">
@@ -307,44 +311,27 @@ export default function CartPage() {
                 >
                   <div className="border-b border-white/5 pb-6">
                     <h2 className="text-5xl font-black tracking-tighter uppercase leading-none">Settlement</h2>
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mt-2">Select your preferred method of exchange</p>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mt-2">Pay securely with Razorpay</p>
                   </div>
                   
-                  <div className="space-y-4">
-                    <button onClick={() => setPaymentMethod('RAZORPAY')} className={`w-full group relative p-10 border transition-all duration-500 overflow-hidden ${paymentMethod === 'RAZORPAY' ? 'border-white bg-white/[0.05]' : 'border-white/10 bg-white/[0.02] hover:border-white/30'}`}>
-                      <div className="relative z-10 flex justify-between items-center">
-                        <div className="text-left">
-                          <span className="block font-black uppercase tracking-[0.4em] text-lg mb-1">Instant Settlement</span>
-                          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Secure Gateway • UPI, Cards, Netbanking</span>
-                        </div>
-                        <div className={`w-6 h-6 border transition-all duration-500 flex items-center justify-center ${paymentMethod === 'RAZORPAY' ? 'bg-white border-white' : 'border-white/20'}`}>
-                          {paymentMethod === 'RAZORPAY' && <div className="w-2 h-2 bg-black"></div>}
-                        </div>
+                  <div className="w-full relative p-10 border border-white bg-white/[0.05] overflow-hidden">
+                    <div className="relative z-10 flex justify-between items-center">
+                      <div className="text-left">
+                        <span className="block font-black uppercase tracking-[0.4em] text-lg mb-1">Razorpay</span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Secure Gateway • UPI, Cards, Netbanking</span>
                       </div>
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                      <div className="w-6 h-6 border bg-white border-white flex items-center justify-center">
+                        <div className="w-2 h-2 bg-black"></div>
                       </div>
-                    </button>
-
-                    <button onClick={() => setPaymentMethod('COD')} className={`w-full group relative p-10 border transition-all duration-500 overflow-hidden ${paymentMethod === 'COD' ? 'border-white bg-white/[0.05]' : 'border-white/10 bg-white/[0.02] hover:border-white/30'}`}>
-                      <div className="relative z-10 flex justify-between items-center">
-                        <div className="text-left">
-                          <span className="block font-black uppercase tracking-[0.4em] text-lg mb-1">On Arrival</span>
-                          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Pay upon physical delivery of selection</span>
-                        </div>
-                        <div className={`w-6 h-6 border transition-all duration-500 flex items-center justify-center ${paymentMethod === 'COD' ? 'bg-white border-white' : 'border-white/20'}`}>
-                          {paymentMethod === 'COD' && <div className="w-2 h-2 bg-black"></div>}
-                        </div>
-                      </div>
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M20 7h-9m3 3h-3m3 3h-3m3 3h-3m3 3h-3M4 17a3 3 0 106 0 3 3 0 00-6 0zm10 0a3 3 0 106 0 3 3 0 00-6 0zM4 17V6a2 2 0 012-2h12a2 2 0 112 2v11m-10 0h4"/></svg>
-                      </div>
-                    </button>
+                    </div>
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">
                     <button onClick={() => setCheckoutStep('shipping')} className="px-10 py-5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/[0.05] transition-all">Back</button>
-                    <button onClick={handleCheckout} className="flex-1 py-5 bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all shadow-[0_10px_40px_rgba(255,255,255,0.15)]">Complete Selection</button>
+                    <button onClick={handleCheckout} className="flex-1 py-5 bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all shadow-[0_10px_40px_rgba(255,255,255,0.15)]">Pay with Razorpay</button>
                   </div>
                 </motion.div>
               )}

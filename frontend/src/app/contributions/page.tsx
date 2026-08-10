@@ -12,19 +12,22 @@ import { LeadershipPhilosophy } from '@/components/sections/contributions/Leader
 import { DownloadCentre } from '@/components/sections/contributions/DownloadCentre';
 import { PartnersWall } from '@/components/sections/contributions/PartnersWall';
 import { VisualGallery } from '@/components/sections/contributions/VisualGallery';
+import { ContributorsGrid } from '@/components/sections/contributions/ContributorsGrid';
 import api from '@/lib/api';
 
 export default function ContributionsPage() {
   const [sections, setSections] = useState<any[]>([]);
   const [initiatives, setInitiatives] = useState<any[]>([]);
+  const [contributors, setContributors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [sectionsRes, initiativesRes] = await Promise.all([
+        const [sectionsRes, initiativesRes, contributorsRes] = await Promise.all([
           api.get('/contributions-page'),
-          api.get('/initiatives')
+          api.get('/initiatives'),
+          api.get('/contributors')
         ]);
 
         if (sectionsRes.data.success) {
@@ -32,6 +35,9 @@ export default function ContributionsPage() {
         }
         if (initiativesRes.data.success) {
           setInitiatives(initiativesRes.data.data.initiatives || []);
+        }
+        if (contributorsRes.data.success) {
+          setContributors(contributorsRes.data.data.contributors || []);
         }
       } catch (error) {
         console.error('Failed to load contributions page data:', error);
@@ -59,6 +65,7 @@ export default function ContributionsPage() {
   return (
     <main className="min-h-screen bg-black">
       <ContributionsHero content={getSection('hero')} />
+      <ContributorsGrid contributors={contributors} />
       <InitiativeCards initiatives={initiatives} />
       <ImpactDashboard content={getSection('impact')} />
       <DonateCTA content={getSection('donate')} />

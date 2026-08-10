@@ -4,6 +4,7 @@ import React from 'react';
 import { useCart } from '@/hooks/useCart';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
+import { MediaImage } from '@/components/common/MediaImage';
 
 export default function CartItems() {
   const { items, updateItemQuantity, removeFromCart } = useCart();
@@ -40,7 +41,7 @@ export default function CartItems() {
           >
             {/* Product Image */}
             <div className="w-full md:w-40 aspect-square rounded-xl overflow-hidden bg-black/50 border border-white/10 shrink-0">
-              <img 
+              <MediaImage 
                 src={item.product.imageUrl || '/placeholder-product.jpg'} 
                 alt={item.product.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

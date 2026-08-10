@@ -1,8 +1,13 @@
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Load environment variables before other imports that may read process.env
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
 // Import routes
@@ -30,21 +35,24 @@ import v1ProductsRoutes from './routes/v1Products';
 import speakingRoutes from './routes/speaking';
 import pressRoutes from './routes/press';
 import uploadRoutes from './routes/upload';
+import { ensurePageContentSeeded } from './utils/ensurePageContent';
 
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 app.use(cors({
   origin: [
     'https://www.sajanshah.com', 
     'https://sajanshah.com', 
     'https://qa.sajanshah.com',
+    'http://localhost:3000',
     'http://localhost:3001',
+    'http://localhost:3002',
     process.env.FRONTEND_URL || 'http://localhost:3000'
   ],
   credentials: true
@@ -52,6 +60,16 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(morgan('dev'));
+
+// Local uploaded images (saved under backend/uploads)
+app.use(
+  '/uploads',
+  express.static(path.join(process.cwd(), 'uploads'), {
+    setHeaders: (res) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  })
+);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -106,7 +124,6 @@ app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   try {
-    const { ensurePageContentSeeded } = await import('./utils/ensurePageContent');
     const result = await ensurePageContentSeeded();
     console.log(`📦 CMS ensure: ${result.message}`);
   } catch (err) {

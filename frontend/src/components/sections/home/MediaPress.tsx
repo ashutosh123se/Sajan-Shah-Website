@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface PressArticle {
   id: string;
@@ -10,42 +11,12 @@ interface PressArticle {
   thumbnail: string;
   url: string;
   date: string;
+  order?: number;
 }
 
-const mockArticles: PressArticle[] = [
-  {
-    id: '1',
-    title: 'Sajan Shah Revolutionizes Memory Training in Indian Schools',
-    source: 'Times of India',
-    thumbnail: '/press-1.jpg',
-    url: 'https://example.com/article1',
-    date: '2024-01-15',
-  },
-  {
-    id: '2',
-    title: 'Memory Man of India Launches New Online Learning Platform',
-    source: 'Economic Times',
-    thumbnail: '/press-2.jpg',
-    url: 'https://example.com/article2',
-    date: '2024-01-10',
-  },
-  {
-    id: '3',
-    title: 'Neuroscience-Based Education Gets Global Recognition',
-    source: 'Forbes India',
-    thumbnail: '/press-3.jpg',
-    url: 'https://example.com/article3',
-    date: '2024-01-05',
-  },
-  {
-    id: '4',
-    title: 'Youth Speaker Sajan Shah Inspires Millions',
-    source: 'Hindustan Times',
-    thumbnail: '/press-4.jpg',
-    url: 'https://example.com/article4',
-    date: '2023-12-20',
-  },
-];
+function isStoryArticle(article: PressArticle) {
+  return !article.title.toLowerCase().startsWith('as featured in');
+}
 
 export const MediaPress: React.FC = () => {
   const [articles, setArticles] = useState<PressArticle[]>([]);
@@ -55,22 +26,22 @@ export const MediaPress: React.FC = () => {
     const fetchArticles = async () => {
       try {
         const res = await api.get('/press');
-        const dbArticles = (res.data?.data?.articles || []).map((a: any) => ({
-          id: a.id,
-          title: a.title,
-          source: a.source,
-          thumbnail: a.thumbnail || a.imageUrl,
-          url: a.url,
-          date: a.date,
-        }));
+        const dbArticles = (res.data?.data?.articles || [])
+          .map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            source: a.source,
+            thumbnail: a.thumbnail || a.imageUrl || '',
+            url: a.url,
+            date: a.date,
+            order: a.order,
+          }))
+          .filter(isStoryArticle);
 
-        if (dbArticles.length > 0) {
-          setArticles(dbArticles);
-        } else {
-          setArticles(mockArticles);
-        }
-      } catch {
-        setArticles(mockArticles);
+        setArticles(dbArticles);
+      } catch (error) {
+        console.error('Failed to fetch press articles:', error);
+        setArticles([]);
       } finally {
         setLoading(false);
       }
@@ -88,127 +59,66 @@ export const MediaPress: React.FC = () => {
     });
   };
 
+  if (!loading && articles.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#0a0a0a] border-t border-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
             Media & Press
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto font-light">
             Featured in leading publications and media outlets worldwide
           </p>
         </div>
 
-        {/* Press Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {loading ? (
-            // Loading Skeletons
-            Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-4 animate-pulse">
-                <div className="h-32 bg-gray-200 rounded-lg mb-3"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-              </div>
-            ))
-          ) : (
-            articles.map((article) => (
-              <article
-                key={article.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group"
-                onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
-              >
-                {/* Thumbnail */}
-                <div className="h-32 bg-gray-100">
-                  <img
-                    src={article.thumbnail}
-                    alt={article.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-[#141414] border border-white/10 p-4 animate-pulse">
+                  <div className="h-32 bg-white/5 mb-3" />
+                  <div className="h-4 bg-white/5 rounded mb-2" />
+                  <div className="h-3 bg-white/5 rounded w-3/4" />
                 </div>
-
-                {/* Content */}
-                <div className="p-4">
-                  {/* Source */}
-                  <div className="text-sm text-[#f26522] font-semibold mb-2">
-                    {article.source}
+              ))
+            : articles.map((article) => (
+                <article
+                  key={article.id}
+                  className="bg-[#141414] border border-white/10 overflow-hidden hover:border-[#f26522]/40 transition-colors cursor-pointer group"
+                  onClick={() => {
+                    if (article.url && article.url !== '#') {
+                      window.open(article.url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                >
+                  <div className="h-36 bg-black/40 overflow-hidden">
+                    {article.thumbnail ? (
+                      <MediaImage
+                        src={article.thumbnail}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-sm">
+                        {article.source}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:line-clamp-none">
-                    {article.title}
-                  </h3>
-
-                  {/* Date */}
-                  <div className="text-sm text-gray-500">
-                    {formatDate(article.date)}
+                  <div className="p-4">
+                    <div className="text-sm text-[#f26522] font-semibold mb-2 uppercase tracking-wide">
+                      {article.source}
+                    </div>
+                    <h3 className="text-base font-semibold text-white mb-2 line-clamp-2 group-hover:text-[#f26522] transition-colors">
+                      {article.title}
+                    </h3>
+                    <div className="text-xs text-gray-500">{formatDate(article.date)}</div>
                   </div>
-                </div>
-              </article>
-            ))
-          )}
-        </div>
-
-        {/* Media Logos Strip */}
-        <div className="bg-gray-50 py-12 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-center text-lg font-semibold text-gray-700 mb-8">
-              As Featured In
-            </h3>
-
-            {/* Auto-scrolling Logos */}
-            <div className="relative">
-              <div className="flex space-x-12 animate-scroll">
-                {/* Duplicate logos for seamless scrolling effect */}
-                {[
-                  // National
-                  'ANI',
-                  'Business Standard',
-                  'The Tribune',
-                  'LatestLY',
-                  'Google News',
-                  'Daily Hunt',
-                  'Indian News Network',
-                  'Indian Economic Observer',
-                  'National Insight',
-                  'Rising Entrepreneurs',
-
-                  // International
-                  'London Channel News',
-                  'Washington DC Dispatch',
-                  'Dubai City Reporter',
-                  'British Columbia Times',
-                  'England News Portal',
-                  'France Network Times',
-                  'Richmond Evening News',
-                  'Buffalo Dispatch',
-                  'Maldives Star Plus',
-                  'Lanka Express',
-
-                  // Regional
-                  'Lokmat Times Today',
-                  'Mumbai Live',
-                  'Gujarat Taraf',
-                  'Hyderabad News',
-                  'Bangalore Buzz',
-                  'Rajasthan Express',
-                  'Madhya Pradesh Chronicle',
-                  'Telangana Journal',
-                  'Punjab Live',
-                  'Calcutta Courier'
-                ].map((outlet, index) => (
-                  <div
-                    key={`${outlet}-${index}`}
-                    className="flex-shrink-0 h-12 w-32 md:w-40 flex items-center justify-center filter grayscale opacity-60 hover:opacity-100 transition-opacity"
-                  >
-                    <span className="text-sm md:text-base font-medium text-gray-600 whitespace-nowrap">
-                      {outlet}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                </article>
+              ))}
         </div>
       </div>
     </section>

@@ -46,7 +46,7 @@ export const subscribe = async (req: Request, res: Response) => {
         data: {
           name: name || email.split('@')[0],
           email,
-          photoUrl: 'https://res.cloudinary.com/dztxhvx1e/image/upload/v1625068285/default-avatar.png',
+          photoUrl: '/LOGO.png',
           bio: 'Subscribed to updates / newsletter from website.',
           tier: 'Community'
         }

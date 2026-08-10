@@ -68,7 +68,7 @@ async function alignCmsToFrontendDefaults() {
         subheadline:
           'Be part of a movement focused on creating real impact through education, awareness, and human transformation.',
         ctaText: 'Join the Initiative',
-        ctaLink: 'https://unitedfirst.in',
+        ctaLink: 'https://www.unitedfirst.in/',
         image: '/united first.png',
       },
     ];
@@ -76,17 +76,28 @@ async function alignCmsToFrontendDefaults() {
     if (!Array.isArray(content.slides) || content.slides.length === 0) {
       content.slides = defaultSlides;
     } else {
-      content.slides = content.slides.map((slide, i) => ({
-        id: slide.id ?? i + 1,
-        order: typeof slide.order === 'number' ? slide.order : i + 1,
-        isActive: slide.isActive !== false,
-        headline: slide.headline || '',
-        subheadline: slide.subheadline || '',
-        ctaText: slide.ctaText || '',
-        ctaLink: slide.ctaLink || '',
-        image: slide.image || '',
-        video: slide.video || '',
-      }));
+      content.slides = content.slides.map((slide, i) => {
+        const next = {
+          id: slide.id ?? i + 1,
+          order: typeof slide.order === 'number' ? slide.order : i + 1,
+          isActive: slide.isActive !== false,
+          headline: slide.headline || '',
+          subheadline: slide.subheadline || '',
+          ctaText: slide.ctaText || '',
+          ctaLink: slide.ctaLink || '',
+          image: slide.image || '',
+          video: slide.video || '',
+        };
+        if (
+          typeof next.ctaLink === 'string' &&
+          (/live.?to.?inspire/i.test(next.ctaLink) ||
+            next.ctaLink === 'https://unitedfirst.in' ||
+            next.ctaLink === 'http://unitedfirst.in')
+        ) {
+          next.ctaLink = 'https://www.unitedfirst.in/';
+        }
+        return next;
+      });
     }
 
     if (!content.backgroundVideo) content.backgroundVideo = '/sajan_hero.mp4';

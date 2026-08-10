@@ -1,5 +1,7 @@
 'use client';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import api from '@/lib/api';
 
 interface TransformationFormProps {
   content?: {
@@ -15,6 +17,7 @@ export const TransformationForm: React.FC<TransformationFormProps> = ({ content 
   const [formData, setFormData] = useState({
     name: '', org: '', email: '', phone: '', startDate: '', endDate: '', location: '', info: ''
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const tagline = content?.tagline || "Booking & Inquiries";
   const title = content?.title || "Start Your <br /><span class=\"font-bold\">Transformation Conversation.</span>";
@@ -26,23 +29,37 @@ export const TransformationForm: React.FC<TransformationFormProps> = ({ content 
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    setSubmitting(true);
+    try {
+      await api.post('/contact', {
+        name: formData.name,
+        organization: formData.org,
+        email: formData.email,
+        phone: formData.phone,
+        city: formData.location,
+        message: formData.info || 'Homepage transformation inquiry',
+        formType: 'homepage-transformation',
+      });
+      toast.success('Inquiry submitted successfully');
+      setFormData({ name: '', org: '', email: '', phone: '', startDate: '', endDate: '', location: '', info: '' });
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to submit inquiry');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <section className="bg-[#0a0a0a] py-24 lg:py-32 relative overflow-hidden">
-      {/* Background Accent */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#f26522]/5 rounded-full filter blur-[150px] -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-
-          {/* Left: Persuasive Text */}
           <div className="lg:w-2/5">
             <p className="text-[#f26522] font-bold text-sm tracking-[0.3em] uppercase mb-6">{tagline}</p>
-            <h2 
+            <h2
               className="text-4xl md:text-5xl font-light text-white mb-8 leading-[1.2] tracking-tight"
               dangerouslySetInnerHTML={{ __html: title }}
             />
@@ -73,44 +90,42 @@ export const TransformationForm: React.FC<TransformationFormProps> = ({ content 
             </div>
           </div>
 
-          {/* Right: Glassmorphism Form */}
           <div className="lg:w-3/5 w-full bg-[#111] p-8 md:p-12 border border-gray-900 rounded-sm shadow-2xl relative">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Full Name *</label>
-                  <input type="text" name="name" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                  <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Organization</label>
-                  <input type="text" name="org" onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                  <input type="text" name="org" value={formData.org} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Email Address *</label>
-                  <input type="email" name="email" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                  <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Phone Number *</label>
-                  <input type="tel" name="phone" required onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
+                  <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300" />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Event Details & Inquiry</label>
-                <textarea name="info" rows={4} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300 resize-none"></textarea>
+                <textarea name="info" rows={4} value={formData.info} onChange={handleChange} className="w-full px-0 py-3 bg-transparent border-b border-gray-800 text-white placeholder-gray-700 focus:border-[#f26522] outline-none transition-all duration-300 resize-none"></textarea>
               </div>
 
               <div className="pt-6">
-                <button type="submit" className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-5 px-12 transition-all duration-300 inline-block tracking-widest uppercase text-xs shadow-[0_10px_20px_rgba(242,101,34,0.2)]">
-                  Submit Inquiry
+                <button type="submit" disabled={submitting} className="w-full bg-[#f26522] hover:bg-[#d95a1e] text-white font-bold py-5 px-12 transition-all duration-300 inline-block tracking-widest uppercase text-xs shadow-[0_10px_20px_rgba(242,101,34,0.2)] disabled:opacity-60">
+                  {submitting ? 'Submitting...' : 'Submit Inquiry'}
                 </button>
               </div>
             </form>
           </div>
-
         </div>
       </div>
     </section>

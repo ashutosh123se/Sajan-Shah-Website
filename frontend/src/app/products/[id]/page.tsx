@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Product {
   id: string;
@@ -45,17 +46,27 @@ export default function ProductDetailPage() {
 
   const fetchProduct = async () => {
     try {
-      const response = await api.get(`/products/${id}`);
-      const rawProduct = response.data.data.product;
+      const slugOrId = String(id);
+      let rawProduct: any = null;
+
+      try {
+        const bySlug = await api.get(`/v1/products/${slugOrId}`);
+        rawProduct = bySlug.data?.data?.product;
+      } catch {
+        // Fall back to legacy id endpoint for older links
+        const byId = await api.get(`/products/${slugOrId}`);
+        rawProduct = byId.data?.data?.product;
+      }
+
       if (rawProduct) {
         setProduct({
           id: rawProduct.id,
           title: rawProduct.name || rawProduct.title || '',
           description: rawProduct.description || '',
-          price: rawProduct.price !== null ? Number(rawProduct.price) : 0,
+          price: rawProduct.price !== null && rawProduct.price !== undefined ? Number(rawProduct.price) : 0,
           imageUrl: rawProduct.image_product_page || rawProduct.image_homepage || rawProduct.imageUrl || '',
           category: rawProduct.category || '',
-          stock: 100 // virtual stock for digital products/merchandise
+          stock: 100
         });
       } else {
         toast.error('Product not found');
@@ -150,7 +161,7 @@ export default function ProductDetailPage() {
           {/* Image */}
           <div className="relative group">
             <div className="aspect-square bg-white/5 border border-white/10 overflow-hidden">
-              <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <MediaImage src={product.imageUrl} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             </div>
           </div>
 

@@ -172,11 +172,8 @@ SMTP_PASS="your-app-password"
 RAZORPAY_KEY_ID="rzp_test_xxxxxxxxxxxxxxx"
 RAZORPAY_KEY_SECRET="your-razorpay-secret"
 
-# Cloudinary
-CLOUDINARY_CLOUD_NAME="your-cloud-name"
-CLOUDINARY_API_KEY="your-api-key"
-CLOUDINARY_API_SECRET="your-api-secret"
-CLOUDINARY_UPLOAD_PRESET="your-upload-preset"
+# Local image hosting (backend serves files from /uploads)
+BACKEND_PUBLIC_URL="http://localhost:5001"
 ```
 
 ### Frontend (.env.local)
@@ -184,7 +181,6 @@ CLOUDINARY_UPLOAD_PRESET="your-upload-preset"
 NEXT_PUBLIC_API_URL="https://your-backend-url.com/api"
 NEXT_PUBLIC_RAZORPAY_KEY_ID="rzp_test_xxxxxxxxxxxxxxx"
 NEXT_PUBLIC_SITE_URL="https://your-domain.com"
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
 ```
 
 ## 🔐 Security Features

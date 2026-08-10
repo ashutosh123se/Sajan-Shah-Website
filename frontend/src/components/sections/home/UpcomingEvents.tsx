@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Event {
   id: string;
@@ -52,12 +53,13 @@ export const UpcomingEvents: React.FC = () => {
     });
   };
 
-  const formatPrice = (price?: number) => {
-    if (!price) return 'FREE';
+  const formatPrice = (event: Event) => {
+    if (event.isFree) return 'FREE';
+    if (!event.price) return 'FREE';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-    }).format(price);
+    }).format(event.price);
   };
 
   return (
@@ -91,7 +93,7 @@ export const UpcomingEvents: React.FC = () => {
               >
                 {/* Event Poster */}
                 <div className="relative h-64 bg-gray-100">
-                  <img
+                  <MediaImage
                     src={event.posterUrl}
                     alt={event.title}
                     className="w-full h-full object-cover"
@@ -157,7 +159,7 @@ export const UpcomingEvents: React.FC = () => {
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2zm0 8c1.11 0 2.08.402 2.599-1M12 8V7l-8 5v3l8-2z"/>
                       </svg>
-                      {formatPrice(event.price)}
+                      {formatPrice(event)}
                     </div>
                   </div>
 

@@ -11,7 +11,7 @@ export const getArticles = async (req: Request, res: Response) => {
   try {
     const articles = await db.pressArticle.findMany({
       where: { isActive: true },
-      orderBy: { date: 'desc' }
+      orderBy: [{ order: 'asc' }, { date: 'desc' }],
     });
 
     res.status(200).json({

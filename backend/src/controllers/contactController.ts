@@ -49,14 +49,14 @@ export const submitContact = async (req: Request, res: Response) => {
         email,
         phone,
         source: formType || 'contact-form',
-        data: JSON.stringify({
+        data: {
           organization,
           city,
           eventType,
           eventDate,
           audience,
           message
-        })
+        }
       }
     });
     

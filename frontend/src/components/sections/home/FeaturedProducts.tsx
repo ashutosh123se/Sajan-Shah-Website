@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useCart } from '@/hooks/useCart';
 import api from '@/lib/api';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface Product {
   id: string;
@@ -89,7 +90,7 @@ export const FeaturedProducts: React.FC = () => {
               >
                 {/* Product Image */}
                 <div className="h-48 bg-gray-100">
-                  <img
+                  <MediaImage
                     src={product.image_homepage || 'https://placehold.co/400x500/0a0a0a/f26522?text=Product'}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"

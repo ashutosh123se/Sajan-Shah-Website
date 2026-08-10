@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../utils/database';
 import { sendSuccess, sendError } from '../utils/apiResponse';
-import { uploadToCloudinary } from '../utils/cloudinary';
+import { uploadImage } from '../utils/imageStorage';
 
 // GET /api/v1/admin/products (Admin - includes inactive)
 export const getAllProductsAdmin = async (req: Request, res: Response) => {
@@ -87,12 +87,14 @@ export const createProduct = async (req: Request, res: Response) => {
       image_product_page,
     } = req.body;
 
+    const normalizedCategory = String(category || '').toLowerCase().trim();
+
     // 1. Validate Category-specific Fields
-    if (category === 'course' || category === 'merchandise') {
+    if (normalizedCategory === 'course' || normalizedCategory === 'merchandise') {
       if (price === undefined || price === null || price === '') {
         return sendError(res, 'Courses and merchandise require a price.', 400);
       }
-    } else if (category !== 'book') {
+    } else if (normalizedCategory !== 'book') {
       return sendError(res, "Category must be 'book', 'course', or 'merchandise'.", 400);
     }
 
@@ -104,6 +106,13 @@ export const createProduct = async (req: Request, res: Response) => {
     if (featured) {
       if (!active) {
         return sendError(res, 'A product must be active to be featured on the homepage.', 400);
+      }
+      if (!image_homepage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before featuring this product on the homepage.',
+          400
+        );
       }
       if (!slot || ![1, 2, 3].includes(slot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
@@ -138,7 +147,7 @@ export const createProduct = async (req: Request, res: Response) => {
       data: {
         name,
         slug: uniqueSlug,
-        category,
+        category: normalizedCategory,
         description,
         short_description: short_description || null,
         is_active: active,
@@ -186,7 +195,13 @@ export const updateProduct = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found', 404);
     }
 
-    const nextCategory = category || existingProduct.category;
+    const nextCategory = String(category || existingProduct.category || '')
+      .toLowerCase()
+      .trim();
+
+    if (!['book', 'course', 'merchandise'].includes(nextCategory)) {
+      return sendError(res, "Category must be 'book', 'course', or 'merchandise'.", 400);
+    }
 
     // Validate Category-specific Fields
     if (nextCategory === 'course' || nextCategory === 'merchandise') {
@@ -209,6 +224,15 @@ export const updateProduct = async (req: Request, res: Response) => {
     if (featured) {
       if (!active) {
         return sendError(res, 'A product must be active to be featured.', 400);
+      }
+      const nextHomepageImage =
+        image_homepage !== undefined ? image_homepage : existingProduct.image_homepage;
+      if (!nextHomepageImage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before featuring this product on the homepage.',
+          400
+        );
       }
       if (!slot || ![1, 2, 3].includes(slot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
@@ -306,6 +330,13 @@ export const featureProduct = async (req: Request, res: Response) => {
       if (!product.is_active) {
         return sendError(res, 'Only active products can be featured on the homepage.', 400);
       }
+      if (!product.image_homepage) {
+        return sendError(
+          res,
+          'Upload a large Homepage cover image before assigning this product to a homepage slot.',
+          400
+        );
+      }
       if (!nextSlot || ![1, 2, 3].includes(nextSlot)) {
         return sendError(res, 'Featured products must be assigned to slot 1, 2, or 3.', 400);
       }
@@ -394,14 +425,10 @@ export const uploadHomepageImage = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found.', 404);
     }
 
-    // homepage: 1000x1250px fill, webp, quality 85 for high sharpness on desktop layouts
-    const imageUrl = await uploadToCloudinary(
+    const imageUrl = await uploadImage(
       req.file.buffer,
       'products/homepage',
-      1000,
-      1250,
-      'fill',
-      85
+      req.file.originalname
     );
 
     const updatedProduct = await db.product.update({
@@ -409,7 +436,7 @@ export const uploadHomepageImage = async (req: Request, res: Response) => {
       data: { image_homepage: imageUrl },
     });
 
-    return sendSuccess(res, { imageUrl, product: updatedProduct }, 'Homepage thumbnail uploaded successfully');
+    return sendSuccess(res, { imageUrl, product: updatedProduct }, 'Homepage cover uploaded successfully');
   } catch (error) {
     console.error('Error uploading homepage image:', error);
     return sendError(res, 'Internal server error', 500);
@@ -429,14 +456,10 @@ export const uploadProductImage = async (req: Request, res: Response) => {
       return sendError(res, 'Product not found.', 404);
     }
 
-    // product page: max 900px wide limit, webp, quality 85
-    const imageUrl = await uploadToCloudinary(
+    const imageUrl = await uploadImage(
       req.file.buffer,
       'products/product_page',
-      900,
-      undefined,
-      'limit',
-      85
+      req.file.originalname
     );
 
     const updatedProduct = await db.product.update({

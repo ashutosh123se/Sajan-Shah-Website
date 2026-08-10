@@ -1,6 +1,8 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Check } from 'lucide-react';
+import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 interface VolunteerCTAProps {
   content?: {
@@ -15,11 +17,54 @@ export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
   const paragraph = content?.paragraph || "We are looking for passionate individuals, CSR partners, and ESG advocates to join us in our mission to transform education and social welfare.";
   const buttonText = content?.buttonText || "Apply Now";
 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    organization: '',
+    role: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const renderHeading = () => {
     if (heading.includes('<br') || heading.includes('\n')) {
       return <span dangerouslySetInnerHTML={{ __html: heading }} />;
     }
     return heading;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.role) {
+      toast.error('Please fill all required fields.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await api.post('/leads', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        source: 'ambassador-volunteer',
+        data: {
+          organization: formData.organization.trim() || null,
+          role: formData.role,
+        },
+      });
+
+      toast.success('Application submitted successfully!');
+      setFormData({ name: '', email: '', phone: '', organization: '', role: '' });
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to submit application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,21 +98,73 @@ export const VolunteerCTA: React.FC<VolunteerCTAProps> = ({ content }) => {
         </div>
 
         <div className="lg:w-1/2 w-full">
-          <form className="bg-[#0a0a0a] p-8 md:p-12 rounded-[2rem] border border-gray-800 space-y-4" onSubmit={e => e.preventDefault()}>
+          <form
+            className="bg-[#0a0a0a] p-8 md:p-12 rounded-[2rem] border border-gray-800 space-y-4"
+            onSubmit={handleSubmit}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" placeholder="Your Name" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
-              <input type="email" placeholder="Email Address" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your Name"
+                className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white"
+                required
+              />
             </div>
-            <input type="tel" placeholder="Phone Number" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" required />
-            <input type="text" placeholder="Organization (Optional)" className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white" />
-            <select className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none appearance-none text-gray-400" required>
-              <option value="">Select Role</option>
-              <option value="volunteer">Volunteer</option>
-              <option value="csr">CSR Partner</option>
-              <option value="esg">ESG Partner</option>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Phone Number"
+              className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white"
+              required
+            />
+            <input
+              type="text"
+              name="organization"
+              value={formData.organization}
+              onChange={handleChange}
+              placeholder="Organization (Optional)"
+              className="w-full px-6 py-4 bg-gray-900/50 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] outline-none text-white"
+            />
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-6 py-4 bg-zinc-950 border border-gray-800 rounded-xl focus:ring-1 focus:ring-[#f26522] focus:border-[#f26522] outline-none appearance-none text-white [color-scheme:dark]"
+              required
+            >
+              <option value="" className="bg-zinc-950 text-zinc-400">
+                Select Role
+              </option>
+              <option value="volunteer" className="bg-zinc-950 text-white">
+                Volunteer
+              </option>
+              <option value="csr" className="bg-zinc-950 text-white">
+                CSR Partner
+              </option>
+              <option value="esg" className="bg-zinc-950 text-white">
+                ESG Partner
+              </option>
             </select>
-            <button type="submit" className="w-full bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs">
-              {buttonText}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 rounded-xl transition-all duration-300 uppercase tracking-widest text-xs disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Submitting...' : buttonText}
             </button>
           </form>
         </div>

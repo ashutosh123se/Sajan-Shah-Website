@@ -9,6 +9,6 @@ router.get('/', getLegalPages);
 router.get('/:slug', getLegalPageBySlug);
 
 // Protected routes
-router.put('/:slug', verifyToken, requireRole('SUPER_ADMIN'), updateLegalPage);
+router.put('/:slug', verifyToken, requireRole('SUPER_ADMIN', 'ADMIN'), updateLegalPage);
 
 export default router;

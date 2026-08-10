@@ -2,15 +2,18 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { db } from '../utils/database';
 
-const enrichEvents = (events: any[]) => {
+const enrichEvents = (events: any[], sortOrder: 'asc' | 'desc' = 'asc') => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return events
-    .map(event => ({
-      ...event,
-      isPast: new Date(event.eventDate) < today
-    }))
-    .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
+  const enriched = events.map(event => ({
+    ...event,
+    isPast: new Date(event.eventDate) < today
+  }));
+
+  return enriched.sort((a, b) => {
+    const diff = new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
+    return sortOrder === 'desc' ? -diff : diff;
+  });
 };
 
 export const getEvents = async (req: Request, res: Response) => {
@@ -21,12 +24,14 @@ export const getEvents = async (req: Request, res: Response) => {
       where: { isActive: true }
     });
 
-    events = enrichEvents(events);
+    events = enrichEvents(events, 'asc');
 
     if (filter === 'upcoming') {
       events = events.filter(e => !e.isPast);
     } else if (filter === 'past') {
-      events = events.filter(e => e.isPast);
+      events = events.filter(e => e.isPast).sort(
+        (a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime()
+      );
     }
 
     if (type) {
@@ -46,7 +51,7 @@ export const getEvents = async (req: Request, res: Response) => {
 
 export const getAllEventsAdmin = async (req: Request, res: Response) => {
   try {
-    const events = enrichEvents(await db.event.findMany());
+    const events = enrichEvents(await db.event.findMany(), 'desc');
     sendSuccess(res, { events });
   } catch (error) {
     console.error('Get all events error:', error);
@@ -92,7 +97,7 @@ export const createEvent = async (req: Request, res: Response) => {
         title: title.trim(),
         slug: slug || `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
         description,
-        posterUrl: posterUrl || 'https://via.placeholder.com/800x600',
+        posterUrl: posterUrl || '/EVENT.png',
         homepageImageUrl,
         webinarUrl: webinarUrl || 'https://sol.sajanshah.com',
         eventDate: new Date(eventDate),

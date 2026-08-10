@@ -82,7 +82,7 @@ const contributionsPageSections = [
     title: 'Impact Case Stories',
     order: 4,
     isActive: true,
-    content: (() => {
+content: (() => {
       // Prefer shared defaults (full bodyHtml). Fallback keeps structure if module missing.
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -2,6 +2,18 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { db } from '../utils/database';
 
+export const getAllTestimonials = async (_req: Request, res: Response) => {
+  try {
+    const testimonials = await db.testimonial.findMany({
+      orderBy: { order: 'asc' },
+    });
+    sendSuccess(res, { testimonials });
+  } catch (error) {
+    console.error('Get all testimonials error:', error);
+    sendError(res, 'Internal server error', 500);
+  }
+};
+
 export const getTestimonials = async (req: Request, res: Response) => {
   try {
     const { limit } = req.query;
