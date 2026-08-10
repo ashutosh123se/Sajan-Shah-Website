@@ -80,10 +80,6 @@ export default function AdminBannerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.imageUrl) {
-      toast.error('Please upload a banner image');
-      return;
-    }
     try {
       if (formData.id) {
         await api.put(`/banners/${formData.id}`, formData);
@@ -163,10 +159,22 @@ export default function AdminBannerPage() {
                 <ImageUploadField
                   label="Banner Image"
                   value={formData.imageUrl}
+                  onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
                   folder="banners"
                   required
-                  previewClassName="h-28 w-44"
-                  onChange={(imageUrl) => setFormData((prev) => ({ ...prev, imageUrl }))}
+                />
+                <p className="mt-2 text-xs text-amber-400/90 leading-relaxed">
+                  Recommended size: <strong>1200 × 675 px</strong> (16:9) or <strong>1080 × 1080 px</strong> (square).
+                  Keep file under 1.5 MB. Oversized or odd-ratio images will crop/look stretched in the popup.
+                </p>
+                <label className="block text-sm font-medium text-gray-300 mb-1 mt-4">Or paste Image URL</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                  className="w-full bg-[#222] border border-white/10 text-white px-4 py-2 focus:border-white focus:outline-none transition-colors"
+                  placeholder="https://... or /uploads/..."
                 />
               </div>
 
@@ -192,6 +200,15 @@ export default function AdminBannerPage() {
                 <label htmlFor="isActive" className="ml-2 text-sm text-gray-300">Set as Active (this will deactivate other banners)</label>
               </div>
             </div>
+
+            {formData.imageUrl && (
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-300 mb-2">Preview</p>
+                <div className="relative aspect-video max-w-md bg-[#222] border border-white/10 overflow-hidden">
+                  <MediaImage src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end gap-4 pt-4 border-t border-white/10">
               <Button type="button" variant="outline" onClick={() => setIsEditing(false)} className="border-white/10 text-white hover:bg-[#222] rounded-none">

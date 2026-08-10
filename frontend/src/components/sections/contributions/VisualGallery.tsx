@@ -44,7 +44,10 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
   const heading = content?.heading || "Impact in Action";
   const subHeading = content?.subHeading || "Gallery Archive";
   const paragraph = content?.paragraph || "Capturing the raw essence of transformation on the field.";
-  const photos = content?.photos || DEFAULT_PHOTOS;
+  const photos =
+    Array.isArray(content?.photos) && content!.photos!.length > 0
+      ? content!.photos!
+      : DEFAULT_PHOTOS;
 
   // Double the array for infinite loop
   const duplicatedPhotos = [...photos, ...photos];
@@ -74,7 +77,7 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 80, // Speed of scroll
+              duration: 80,
               ease: "linear",
             },
           }}
@@ -90,7 +93,6 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
                 className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.15] group-hover:scale-[1.10] ${item.pos || 'object-center'}`}
               />
 
-              {/* Overlay inspired by reference image */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-10">
                 <div className="mb-4">
                   <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center mb-4 group-hover:bg-white group-hover:text-black transition-all">
@@ -115,7 +117,6 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
           ))}
         </motion.div>
 
-        {/* Gradient overlays for smooth fading edges */}
         <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
         <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
       </div>

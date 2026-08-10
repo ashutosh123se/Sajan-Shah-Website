@@ -5,6 +5,7 @@ import { Pencil, Save, X, ChevronDown, ChevronUp, Eye, EyeOff, RefreshCw, AlertC
 import api from '@/lib/api';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Section {
   id: string;
@@ -78,6 +79,7 @@ const FIELD_LABELS: Record<string, string> = {
   pitch: 'Program Description/Pitch',
   badges: 'Audience Tags (comma-separated, e.g., Youth, Parents)',
   img: 'Program Feature Image',
+  link: 'Program Landing Page URL (e.g. https://teachers.sajanshah.com)',
   isFeatured: 'Display as Featured Program (Larger card)',
 
   // Features Section
@@ -116,7 +118,11 @@ export default function AdminSpeakingPage() {
       const response = await api.get('/speaking/all');
       if (response.data.success) {
         const rawSections = response.data.data.sections ?? [];
-        setSections(rawSections.sort((a: Section, b: Section) => a.order - b.order));
+        setSections(
+          rawSections
+            .map((s: Section) => ({ ...s, content: normalizeCmsContent(s.content) }))
+            .sort((a: Section, b: Section) => a.order - b.order)
+        );
       } else {
         setError('Failed to load speaking sections');
       }
@@ -134,9 +140,10 @@ export default function AdminSpeakingPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -146,7 +153,8 @@ export default function AdminSpeakingPage() {
   const handleArrayContentChange = (sectionId: string, field: string, index: number, subField: string | null, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = [...(s.content[field] || [])];
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || [])];
         if (subField) {
           newArray[index] = { ...newArray[index], [subField]: value };
         } else {
@@ -154,7 +162,7 @@ export default function AdminSpeakingPage() {
         }
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -182,10 +190,11 @@ export default function AdminSpeakingPage() {
     const defaultValue = getDefaultArrayItem(firstItem);
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = [...(s.content[field] || []), defaultValue];
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || []), defaultValue];
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -195,10 +204,11 @@ export default function AdminSpeakingPage() {
   const removeArrayItem = (sectionId: string, field: string, index: number) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = (s.content[field] || []).filter((_: any, i: number) => i !== index);
+        const content = normalizeCmsContent(s.content);
+        const newArray = (content[field] || []).filter((_: any, i: number) => i !== index);
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -213,7 +223,7 @@ export default function AdminSpeakingPage() {
     try {
       const response = await api.put(`/speaking/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive,
       });
@@ -369,7 +379,7 @@ export default function AdminSpeakingPage() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+                    {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                       // 1. Array-based fields
                       if (Array.isArray(value)) {
                         const firstItem = value[0];

@@ -82,13 +82,27 @@ const contributionsPageSections = [
     title: 'Impact Case Stories',
     order: 4,
     isActive: true,
-    content: {
-      heading: 'CASE STUDIES',
-      subHeading: 'Impact Stories',
-      stories: [
-        { title: 'The Pencils of Hope', excerpt: 'How plantable pencils transformed a rural district approach to green education.', imageUrl: '/Our Core Initiatives/Plantable Pencils Drive cover.jpeg' },
-      ],
-    },
+content: (() => {
+      // Prefer shared defaults (full bodyHtml). Fallback keeps structure if module missing.
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { DEFAULT_IMPACT_STORIES } = require('../src/utils/impactStoryDefaults');
+        return DEFAULT_IMPACT_STORIES;
+      } catch {
+        return {
+          heading: 'CASE STUDIES',
+          subHeading: 'Impact Stories',
+          stories: [
+            {
+              title: '5 Million Plantable Pencils',
+              excerpt:
+                "5 Million Opportunities to Change India's Future. What if a simple pencil could become a tool for climate action?",
+              bodyHtml: '<p>See Admin → Contributions → Impact Case Stories to edit full story content.</p>',
+            },
+          ],
+        };
+      }
+    })(),
   },
   {
     key: 'partnerships',

@@ -167,13 +167,15 @@ export async function alignCmsToFrontendDefaults(): Promise<{
 }> {
   const updated: string[] = [];
 
-  // HOME — hero slides (local images + designer CTA links)
+  // HOME — hero: keep admin slides; only fill missing structure / media defaults
   const homeHero = await db.homePageSection.findUnique({ where: { key: 'hero' } });
   if (homeHero) {
     const content = parseContent(homeHero.content);
-    content.slides = [
+    const defaultSlides = [
       {
         id: 1,
+        order: 1,
+        isActive: true,
         headline: "India’s Biggest Memory & Family Transformation Experience",
         subheadline:
           'One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.',
@@ -183,6 +185,8 @@ export async function alignCmsToFrontendDefaults(): Promise<{
       },
       {
         id: 2,
+        order: 2,
+        isActive: true,
         headline: 'Transform From Home. No Travel Required.',
         subheadline:
           'Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.',
@@ -192,6 +196,8 @@ export async function alignCmsToFrontendDefaults(): Promise<{
       },
       {
         id: 3,
+        order: 3,
+        isActive: true,
         headline: 'Upgrade Your Life With Proven Systems',
         subheadline:
           'Access powerful programs designed to improve thinking, performance, and personal growth - step by step.',
@@ -201,14 +207,49 @@ export async function alignCmsToFrontendDefaults(): Promise<{
       },
       {
         id: 4,
+        order: 4,
+        isActive: true,
         headline: 'Live to Inspire. Lead to Serve.',
         subheadline:
           'Be part of a movement focused on creating real impact through education, awareness, and human transformation.',
         ctaText: 'Join the Initiative',
-        ctaLink: 'https://unitedfirst.in',
+        ctaLink: 'https://www.unitedfirst.in/',
         image: '/united first.png',
       },
     ];
+
+    if (!Array.isArray(content.slides) || content.slides.length === 0) {
+      content.slides = defaultSlides;
+    } else {
+      content.slides = content.slides.map((slide: any, i: number) => {
+        const next = {
+          id: slide.id ?? i + 1,
+          order: typeof slide.order === 'number' ? slide.order : i + 1,
+          isActive: slide.isActive !== false,
+          headline: slide.headline || '',
+          subheadline: slide.subheadline || '',
+          ctaText: slide.ctaText || '',
+          ctaLink: slide.ctaLink || '',
+          image: slide.image || '',
+          video: slide.video || '',
+        };
+        // Domain shift: live-to-inspire → unitedfirst
+        if (
+          typeof next.ctaLink === 'string' &&
+          (/live.?to.?inspire/i.test(next.ctaLink) ||
+            next.ctaLink === 'https://unitedfirst.in' ||
+            next.ctaLink === 'http://unitedfirst.in')
+        ) {
+          next.ctaLink = 'https://www.unitedfirst.in/';
+        }
+        return next;
+      });
+    }
+
+    if (!content.backgroundVideo) content.backgroundVideo = '/sajan_hero.mp4';
+    if (!content.posterImage) content.posterImage = '/EVENT.png';
+    if (!content.intervalMs) content.intervalMs = 6000;
+
     await db.homePageSection.update({ where: { id: homeHero.id }, data: { content } });
     updated.push('home:hero');
   }
@@ -284,12 +325,20 @@ export async function alignCmsToFrontendDefaults(): Promise<{
     updated.push('speaking:hero');
   }
 
-  // SPEAKING — logos empty so frontend shows /SPEAKINGlogo.png
+  // SPEAKING — logos: empty / text-only so frontend shows /SPEAKINGlogo.png strip
   const speakingLogos = await db.speakingPageSection.findUnique({ where: { key: 'logos' } });
   if (speakingLogos) {
     const content = parseContent(speakingLogos.content);
-    content.label = 'Trusted by:';
-    content.logos = [];
+    content.label = content.label || 'Trusted by:';
+    content.stripImage = content.stripImage || '/SPEAKINGlogo.png';
+    // Clear text-name logos that force the wrong server UI (TATA/TEDX/ONGC…)
+    const logos = Array.isArray(content.logos) ? content.logos : [];
+    const hasImageLogos = logos.some(
+      (logo: any) => logo && typeof logo === 'object' && logo.imageUrl
+    );
+    if (!hasImageLogos) {
+      content.logos = [];
+    }
     await db.speakingPageSection.update({ where: { id: speakingLogos.id }, data: { content } });
     updated.push('speaking:logos');
   }
@@ -298,25 +347,58 @@ export async function alignCmsToFrontendDefaults(): Promise<{
   const speakingReasons = await db.speakingPageSection.findUnique({ where: { key: 'reasons' } });
   if (speakingReasons) {
     const content = parseContent(speakingReasons.content);
-    content.reasons = REASONS;
+    content.reasons = content.reasons?.length ? content.reasons : REASONS;
+    // Always use local stage photos so production matches designer frontend
     content.marqueeImages = LIVE_STAGE;
-    content.marqueeSectionLabel = 'Live from the Stage';
-    content.marqueeSectionTitle = 'Speaker Moments';
-    content.marqueeEventName = '';
+    content.marqueeSectionLabel = content.marqueeSectionLabel || 'Live from the Stage';
+    content.marqueeSectionTitle = content.marqueeSectionTitle || 'Speaker Moments';
+    content.marqueeEventName = content.marqueeEventName ?? '';
+    content.marqueeLink =
+      content.marqueeLink || 'https://www.instagram.com/sajan_shahh/';
     content.logoImage = '/LOGO2.png';
     await db.speakingPageSection.update({ where: { id: speakingReasons.id }, data: { content } });
     updated.push('speaking:reasons');
   }
 
-  // SPEAKING — catalog local images + program links
+  // SPEAKING — catalog: keep CMS programs, always ensure designer links/images when missing
   const speakingCatalog = await db.speakingPageSection.findUnique({ where: { key: 'catalog' } });
   if (speakingCatalog) {
     const content = parseContent(speakingCatalog.content);
-    content.sectionLabel = 'The Program Catalog';
-    content.heading = 'IMPACT-DRIVEN';
-    content.headingDim = 'EXPERIENCES.';
-    content.subtext = 'Select a program to explore transformation details';
-    content.programs = SPEAKING_PROGRAMS;
+    content.sectionLabel = content.sectionLabel || 'The Program Catalog';
+    content.heading = content.heading || 'IMPACT-DRIVEN';
+    content.headingDim = content.headingDim || 'EXPERIENCES.';
+    content.subtext = content.subtext || 'Select a program to explore transformation details';
+
+    const normalizeName = (name?: string) =>
+      (name || '')
+        .toLowerCase()
+        .replace(/[–—−]/g, '-')
+        .replace(/[^a-z0-9]+/g, '')
+        .trim();
+
+    if (!Array.isArray(content.programs) || content.programs.length === 0) {
+      content.programs = SPEAKING_PROGRAMS;
+    } else {
+      content.programs = content.programs.map((program: any) => {
+        const fallback = SPEAKING_PROGRAMS.find(
+          (d) => normalizeName(d.name) === normalizeName(program?.name)
+        );
+        const cmsImg = (program?.img || '').trim();
+        const keepCmsImg =
+          (cmsImg.startsWith('/') && !cmsImg.startsWith('//')) || cmsImg.includes('/uploads/');
+        return {
+          ...fallback,
+          ...program,
+          img: keepCmsImg ? cmsImg : fallback?.img || cmsImg || '',
+          link: (program?.link && String(program.link).trim()) || fallback?.link || '',
+          badges:
+            Array.isArray(program?.badges) && program.badges.length
+              ? program.badges
+              : fallback?.badges || [],
+        };
+      });
+    }
+
     await db.speakingPageSection.update({ where: { id: speakingCatalog.id }, data: { content } });
     updated.push('speaking:catalog');
   }

@@ -14,6 +14,7 @@ export interface EventPreviewData {
   thumbnailUrl?: string;
   isActive?: boolean;
   buttonUrl?: string;
+  description?: string;
 }
 
 const getCategoryLabel = (eventType?: string) => {
@@ -98,6 +99,9 @@ export function EventCardPreview({ event, compact = false }: EventCardPreviewPro
         </span>
       </div>
       <h3 className="text-xl font-bold mb-4 line-clamp-2 text-white">{event.title || 'Event Title'}</h3>
+      {event.description?.trim() && (
+        <p className="text-sm text-gray-400 mb-4 line-clamp-3 leading-relaxed">{event.description.trim()}</p>
+      )}
       <div className="space-y-2 mb-6 text-sm text-gray-300">
         <div className="flex items-center">
           <CalendarIcon className="w-4 h-4 mr-3 text-[#f26522]" />

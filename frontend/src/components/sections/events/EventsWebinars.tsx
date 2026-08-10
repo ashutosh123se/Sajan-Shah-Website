@@ -83,12 +83,19 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
         {visible.map((event, index) => {
           const bgSrc = resolveMediaUrl(event.thumbnail) || fallbackBgs[index % fallbackBgs.length];
           const plainDesc = (event.topic || '').replace(/<[^>]*>/g, '').trim();
-          const topicLine =
-            plainDesc.slice(0, 120) ||
-            'Discover transformation with Sajan Shah.';
-          const bodyText =
-            plainDesc ||
+          const DEFAULT_CARD_BODY =
             'Step into a powerful learning experience where you discover how to guide people through breakthroughs, rewire limiting beliefs, and create lasting personal transformation.';
+          const DEFAULT_CARD_EYEBROW = 'Discover transformation with Sajan Shah';
+          // First line (if short) can act as orange eyebrow; rest/full text is the card body
+          const lines = plainDesc.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+          const firstLine = lines[0] || '';
+          const useSplitTagline = lines.length > 1 && firstLine.length > 0 && firstLine.length <= 80;
+          const topicLine = useSplitTagline
+            ? firstLine.replace(/^#\s*/, '')
+            : DEFAULT_CARD_EYEBROW;
+          const bodyText = useSplitTagline
+            ? lines.slice(1).join(' ')
+            : plainDesc || DEFAULT_CARD_BODY;
 
           return (
             <div

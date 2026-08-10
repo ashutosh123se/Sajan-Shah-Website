@@ -69,8 +69,8 @@ export default function EventPopup() {
           className="cursor-pointer group relative overflow-hidden"
           onClick={handleClick}
         >
-          <MediaImage 
-            src={banner.imageUrl} 
+          <MediaImage
+            src={banner.imageUrl}
             alt={banner.title}
             className="w-full h-auto object-cover max-h-[70vh] group-hover:scale-105 transition-transform duration-500"
           />

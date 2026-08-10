@@ -10,6 +10,7 @@ import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { EventCardPreview } from '@/components/admin/EventCardPreview';
 import { MediaImage } from '@/components/common/MediaImage';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Event {
   id: string;
@@ -260,7 +261,11 @@ export default function AdminEventsPage() {
       const response = await api.get('/events-page/all');
       if (response.data.success) {
         const rawSections = response.data.data.sections ?? [];
-        setSections(rawSections.sort((a: PageSection, b: PageSection) => a.order - b.order));
+        setSections(
+          rawSections
+            .map((s: PageSection) => ({ ...s, content: normalizeCmsContent(s.content) }))
+            .sort((a: PageSection, b: PageSection) => a.order - b.order)
+        );
       } else {
         setErrorSections('Failed to load events page sections');
       }
@@ -276,7 +281,7 @@ export default function AdminEventsPage() {
       if (s.id === sectionId) {
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...normalizeCmsContent(s.content), [field]: value }
         };
       }
       return s;
@@ -291,7 +296,7 @@ export default function AdminEventsPage() {
     try {
       const response = await api.put(`/events-page/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive,
       });
@@ -488,7 +493,7 @@ export default function AdminEventsPage() {
                 {expandedSectionId === section.id && (
                   <div className="p-6 bg-zinc-950 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+                      {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                         const isImage = isImageFieldKey(key);
                         const isLongText = !isImage && value?.toString().length > 60;
 
@@ -547,6 +552,22 @@ export default function AdminEventsPage() {
                 <div className="col-span-2">
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Title</label>
                   <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">
+                    Ticket Card Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 resize-y"
+                    placeholder={'Optional: first short line = orange tagline, then blank line, then body.\n\nDiscover transformation with Sajan Shah\n\nStep into a powerful learning experience...'}
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Shown under the title on the Upcoming Events ticket card. You can use one paragraph, or put a short tagline on the first line and the body after a blank line.
+                  </p>
                 </div>
 
                 <div className="col-span-2">
@@ -680,6 +701,7 @@ export default function AdminEventsPage() {
                       thumbnailUrl: formData.thumbnailUrl,
                       isActive: formData.isActive,
                       buttonUrl: formData.buttonUrl,
+                      description: formData.description,
                     }}
                   />
                 </div>

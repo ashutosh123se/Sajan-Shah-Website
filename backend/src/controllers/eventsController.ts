@@ -109,7 +109,7 @@ export const createEvent = async (req: Request, res: Response) => {
         price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : null,
         capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : null,
         isActive: isActive ?? true,
-        showOnCard: showOnCard ?? false,
+        showOnCard: showOnCard === true || showOnCard === 'true',
         buttonUrl: buttonUrl || 'https://sol.sajanshah.com'
       }
     });
@@ -132,27 +132,32 @@ export const updateEvent = async (req: Request, res: Response) => {
       isFree, price, capacity, isActive, showOnCard, buttonUrl
     } = req.body;
 
+    const data: Record<string, unknown> = {
+      title,
+      slug,
+      description,
+      posterUrl,
+      homepageImageUrl,
+      webinarUrl,
+      eventDate: eventDate ? new Date(eventDate) : undefined,
+      city,
+      venue,
+      eventType,
+      isPast,
+      isFree,
+      price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
+      capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
+      isActive,
+      buttonUrl
+    };
+
+    if (showOnCard !== undefined) {
+      data.showOnCard = showOnCard === true || showOnCard === 'true';
+    }
+
     const event = await db.event.update({
       where: { id },
-      data: {
-        title,
-        slug,
-        description,
-        posterUrl,
-        homepageImageUrl,
-        webinarUrl,
-        eventDate: eventDate ? new Date(eventDate) : undefined,
-        city,
-        venue,
-        eventType,
-        isPast,
-        isFree,
-        price: (price !== undefined && price !== null) ? parseFloat(price.toString()) : undefined,
-        capacity: (capacity !== undefined && capacity !== null && capacity !== '') ? parseInt(capacity.toString()) : undefined,
-        isActive,
-        showOnCard,
-        buttonUrl
-      }
+      data
     });
     sendSuccess(res, { event }, 'Event updated successfully');
   } catch (error: any) {

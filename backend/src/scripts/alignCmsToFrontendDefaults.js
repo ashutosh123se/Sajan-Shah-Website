@@ -26,9 +26,11 @@ async function alignCmsToFrontendDefaults() {
   const homeHero = await db.homePageSection.findUnique({ where: { key: 'hero' } });
   if (homeHero) {
     const content = parseContent(homeHero.content);
-    content.slides = [
+    const defaultSlides = [
       {
         id: 1,
+        order: 1,
+        isActive: true,
         headline: "India’s Biggest Memory & Family Transformation Experience",
         subheadline:
           'One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.',
@@ -38,6 +40,8 @@ async function alignCmsToFrontendDefaults() {
       },
       {
         id: 2,
+        order: 2,
+        isActive: true,
         headline: 'Transform From Home. No Travel Required.',
         subheadline:
           'Join India’s most powerful student-parent webinar and experience real breakthroughs in focus, confidence, and results.',
@@ -47,6 +51,8 @@ async function alignCmsToFrontendDefaults() {
       },
       {
         id: 3,
+        order: 3,
+        isActive: true,
         headline: 'Upgrade Your Life With Proven Systems',
         subheadline:
           'Access powerful programs designed to improve thinking, performance, and personal growth - step by step.',
@@ -56,14 +62,48 @@ async function alignCmsToFrontendDefaults() {
       },
       {
         id: 4,
+        order: 4,
+        isActive: true,
         headline: 'Live to Inspire. Lead to Serve.',
         subheadline:
           'Be part of a movement focused on creating real impact through education, awareness, and human transformation.',
         ctaText: 'Join the Initiative',
-        ctaLink: 'https://unitedfirst.in',
+        ctaLink: 'https://www.unitedfirst.in/',
         image: '/united first.png',
       },
     ];
+
+    if (!Array.isArray(content.slides) || content.slides.length === 0) {
+      content.slides = defaultSlides;
+    } else {
+      content.slides = content.slides.map((slide, i) => {
+        const next = {
+          id: slide.id ?? i + 1,
+          order: typeof slide.order === 'number' ? slide.order : i + 1,
+          isActive: slide.isActive !== false,
+          headline: slide.headline || '',
+          subheadline: slide.subheadline || '',
+          ctaText: slide.ctaText || '',
+          ctaLink: slide.ctaLink || '',
+          image: slide.image || '',
+          video: slide.video || '',
+        };
+        if (
+          typeof next.ctaLink === 'string' &&
+          (/live.?to.?inspire/i.test(next.ctaLink) ||
+            next.ctaLink === 'https://unitedfirst.in' ||
+            next.ctaLink === 'http://unitedfirst.in')
+        ) {
+          next.ctaLink = 'https://www.unitedfirst.in/';
+        }
+        return next;
+      });
+    }
+
+    if (!content.backgroundVideo) content.backgroundVideo = '/sajan_hero.mp4';
+    if (!content.posterImage) content.posterImage = '/EVENT.png';
+    if (!content.intervalMs) content.intervalMs = 6000;
+
     await db.homePageSection.update({ where: { id: homeHero.id }, data: { content } });
     updated.push('home:hero');
   }

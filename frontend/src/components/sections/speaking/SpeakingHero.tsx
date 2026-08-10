@@ -20,7 +20,13 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   const heading = content?.heading || "This Isn't Motivation.";
   const headingItalic = content?.headingItalic || 'This Is';
   const headingHighlight = content?.headingHighlight || 'Transformation.';
-  const bgImage = content?.gridImages?.[0] || '/Speking Hero.jpeg';
+  const rawBg = content?.gridImages?.[0];
+  const bgImage =
+    rawBg && rawBg.startsWith('/') && !rawBg.startsWith('//')
+      ? rawBg
+      : rawBg && rawBg.includes('/uploads/')
+        ? rawBg
+        : '/Speking Hero.jpeg';
   const primaryText = content?.primaryButtonText || 'Book Sajan to Speak →';
   const primaryTarget = content?.primaryButtonScrollTarget || '/events#book-sajan';
   const secondaryText = content?.secondaryButtonText || 'Virtual Training →';

@@ -178,6 +178,8 @@ model Initiative {
   description String  @db.Text
   imageUrl    String?
   stats       String?
+  /// External URL, or modal key: modal:app | modal:pencils | modal:uv | modal:ethos
+  linkUrl     String?
   order       Int     @default(0)
   isActive    Boolean @default(true)
 }

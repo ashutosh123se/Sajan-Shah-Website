@@ -52,41 +52,77 @@ const getOrCreateUser = async (email: string, name: string) => {
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { items, userEmail, userName, shippingAddress, phone } = req.body;
+    const { items, userEmail, userName, paymentMethod = 'RAZORPAY', shippingAddress, phone } = req.body;
 
-    if (!items?.length) {
-      return sendError(res, 'Cart is empty', 400);
+    if (!userEmail || typeof userEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+      return sendError(res, 'A valid email address is required to place an order.', 400);
     }
-    if (!userEmail) {
-      return sendError(res, 'Email is required', 400);
+    if (!Array.isArray(items) || items.length === 0) {
+      return sendError(res, 'Your cart is empty. Add at least one product before checkout.', 400);
     }
-
+    for (const item of items) {
+      if (!item?.productId) {
+        return sendError(res, 'Each cart item must include a productId.', 400);
+      }
+      if (!item?.quantity || Number(item.quantity) < 1) {
+        return sendError(res, 'Each cart item must have a quantity of at least 1.', 400);
+      }
+      if (item.price === undefined || item.price === null || Number(item.price) < 0) {
+        return sendError(res, 'Each cart item must include a valid price.', 400);
+      }
+    }
+    
     // Get or Create User
-    const { user } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
+    const { user, isNew, setupToken } = await getOrCreateUser(userEmail, userName || userEmail.split('@')[0]);
 
     // Calculate total amount
-    const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
-    const amountPaise = Math.round(total * 100);
-
-    const razorpay = await getRazorpayInstance();
-    if (!razorpay) {
-      return sendError(res, 'Razorpay is not configured. Please add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.', 503);
+    const total = items.reduce((sum: number, item: any) => sum + (Number(item.price) * Number(item.quantity)), 0);
+    if (!Number.isFinite(total) || total <= 0) {
+      return sendError(res, 'Order total must be greater than zero.', 400);
     }
+    const amountPaise = Math.round(total * 100);
+    
+    let rzpOrderId = null;
+    let orderStatus: any = 'PENDING';
 
-    const rzpOrder = await razorpay.orders.create({
-      amount: amountPaise,
-      currency: 'INR',
-      receipt: `rcpt_${Date.now()}`
-    });
+    if (paymentMethod === 'RAZORPAY') {
+      const razorpay = await getRazorpayInstance();
+      if (!razorpay) {
+        return sendError(res, 'Online payment is not configured. Please use Cash on Delivery or contact support.', 503);
+      }
 
+      try {
+        const rzpOrder = await razorpay.orders.create({
+          amount: amountPaise,
+          currency: 'INR',
+          receipt: `rcpt_${Date.now()}`
+        });
+        rzpOrderId = rzpOrder.id;
+      } catch (rzpError: any) {
+        console.error('Razorpay order create failed:', rzpError);
+        const message =
+          rzpError?.error?.description ||
+          rzpError?.message ||
+          'Razorpay could not create the payment order. Check API keys and try again.';
+        return sendError(res, message, 502);
+      }
+    } else if (paymentMethod === 'COD') {
+      orderStatus = 'PROCESSING'; // COD orders start as processing
+      
+      // For COD, if it's a new user, send setup email immediately
+      if (isNew && setupToken) {
+        await EmailService.sendPasswordSetupEmail(user.email, user.name, setupToken);
+      }
+    }
+    
     const order = await db.order.create({
       data: {
         userEmail: user.email,
         amount: total,
         amountPaise,
-        razorpayOrderId: rzpOrder.id,
-        status: 'PENDING',
-        paymentMethod: 'RAZORPAY',
+        razorpayOrderId: rzpOrderId,
+        status: orderStatus,
+        paymentMethod,
         shippingAddress,
         phone,
         items: {
@@ -101,14 +137,15 @@ export const createOrder = async (req: Request, res: Response) => {
     
     sendSuccess(res, {
       orderId: order.id,
-      razorpayOrderId: rzpOrder.id,
+      razorpayOrderId: rzpOrderId,
       amount: amountPaise,
       currency: 'INR',
-      key: (await getPaymentConfig()).keyId
+      key: paymentMethod === 'RAZORPAY' ? (await getPaymentConfig()).keyId : null
     }, 'Order created successfully');
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create order error:', error);
-    sendError(res, 'Internal server error', 500);
+    const message = error?.message || 'Internal server error';
+    sendError(res, message.includes('Unique constraint') ? 'Unable to create order. Please try again.' : message, 500);
   }
 };
 

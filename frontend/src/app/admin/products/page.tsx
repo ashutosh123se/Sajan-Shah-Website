@@ -640,15 +640,15 @@ export default function AdminProductsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Internal Buy URL</label>
+                      <label className="block text-xs uppercase tracking-widest font-bold text-gray-400 mb-2">Internal Buy URL (Optional)</label>
                       <input 
-                        type="url" 
-                        required 
+                        type="text" 
                         value={formData.buy_url_internal} 
                         onChange={(e) => setFormData({...formData, buy_url_internal: e.target.value})} 
                         className={FIELD_CLASS}
-                        placeholder="https://yoursite.com/checkout/..."
+                        placeholder="/products/pens or https://…"
                       />
+                      <p className="text-[10px] text-zinc-500 mt-1">Leave blank if not needed. Relative paths like /products/pens are allowed.</p>
                     </div>
                   </>
                 )}

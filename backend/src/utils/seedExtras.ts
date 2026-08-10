@@ -1,15 +1,78 @@
 import { db } from './database';
 
 export const defaultInitiatives = [
-  { slug: 'ethos-global-advisory', title: 'Ethos Global Advisory', description: 'Strategic consultancy for social impact.', imageUrl: '/Our Core Initiatives/Ethos Global Advisory cover.png', order: 1 },
-  { slug: 'live-to-inspire', title: 'Live to Inspire', description: 'Our core foundation for large-scale impact.', imageUrl: '/live to bg.jpeg', order: 2 },
-  { slug: 'plantable-pencils-drive', title: 'Plantable Pencils Drive', description: 'Green education through sustainable tools.', imageUrl: '/Our Core Initiatives/Plantable Pencils Drive cover.jpeg', order: 3 },
-  { slug: 'sajan-shah-app', title: 'Sajan Shah App', description: 'Digital neuroscience tools in your pocket.', imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop', order: 4 },
-  { slug: 'season-of-learning', title: 'Season of Learning', description: 'Continuous education programs for all ages.', imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2069&auto=format&fit=crop', order: 5 },
-  { slug: 'teachers-training-program', title: 'Teachers Training Program', description: 'Upskilling educators with neuroscience.', imageUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop', order: 6 },
-  { slug: 'uv-glasses-drive', title: 'UV Glasses Drive', description: 'Vision health for underprivileged communities.', imageUrl: '/Our Core Initiatives/UV Glasses Drive cover.jpeg', order: 7 },
-  { slug: 'united-first-initiative', title: 'United First Initiative', description: 'Aligning with UN SDGs to drive global change.', imageUrl: '/united first.png', order: 8 },
-  { slug: 'ymf-youth-motivation-forum', title: 'YMF (Youth Motivation Forum)', description: 'Empowering the next generation of leaders.', imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop', order: 9 },
+  {
+    slug: 'ethos-global-advisory',
+    title: 'Ethos Global Advisory',
+    description: 'Strategic consultancy for social impact.',
+    imageUrl: '/Our Core Initiatives/Ethos Global Advisory cover.png',
+    linkUrl: 'modal:ethos',
+    order: 1,
+  },
+  {
+    slug: 'live-to-inspire',
+    title: 'Live to Inspire',
+    description: 'Our core foundation for large-scale impact.',
+    imageUrl: '/live to bg.jpeg',
+    linkUrl: 'https://www.unitedfirst.in/',
+    order: 2,
+  },
+  {
+    slug: 'plantable-pencils-drive',
+    title: 'Plantable Pencils Drive',
+    description: 'Green education through sustainable tools.',
+    imageUrl: '/Our Core Initiatives/Plantable Pencils Drive cover.jpeg',
+    linkUrl: 'modal:pencils',
+    order: 3,
+  },
+  {
+    slug: 'sajan-shah-app',
+    title: 'Sajan Shah App',
+    description: 'Digital neuroscience tools in your pocket.',
+    imageUrl: '/APP/app.webp',
+    linkUrl: 'modal:app',
+    order: 4,
+  },
+  {
+    slug: 'season-of-learning',
+    title: 'Season of Learning',
+    description: 'Continuous education programs for all ages.',
+    imageUrl: '/EVENT.png',
+    linkUrl: 'https://sol.sajanshah.com/',
+    order: 5,
+  },
+  {
+    slug: 'teachers-training-program',
+    title: 'Teachers Training Program',
+    description: 'Upskilling educators with neuroscience.',
+    imageUrl: '/Sir Speaking.jpeg',
+    linkUrl: 'https://teachers.sajanshah.com',
+    order: 6,
+  },
+  {
+    slug: 'uv-glasses-drive',
+    title: 'UV Glasses Drive',
+    description: 'Vision health for underprivileged communities.',
+    imageUrl: '/Our Core Initiatives/UV Glasses Drive cover.jpeg',
+    linkUrl: 'modal:uv',
+    order: 7,
+  },
+  {
+    slug: 'united-first-initiative',
+    title: 'United First Initiative',
+    description: 'Aligning with UN SDGs to drive global change.',
+    imageUrl: '/united first.png',
+    linkUrl: 'https://www.unitedfirst.in/',
+    order: 8,
+  },
+  {
+    slug: 'ymf-youth-motivation-forum',
+    title: 'YMF (Youth Motivation Forum)',
+    description: 'Empowering the next generation of leaders.',
+    imageUrl: '/impact.png',
+    linkUrl: '/events#book-sajan',
+    order: 9,
+  },
 ];
 
 export const defaultTestimonials = [
@@ -40,12 +103,20 @@ export const defaultLegalPages = [
   },
 ];
 
-/** Create-only — never overwrites admin-edited content. */
+/** Create-only — never overwrites admin-edited content. Fills missing linkUrl only. */
 export async function seedInitiatives() {
   for (const initiative of defaultInitiatives) {
     const existing = await db.initiative.findUnique({ where: { slug: initiative.slug } });
-    if (existing) continue;
-    await db.initiative.create({ data: { ...initiative, isActive: true } });
+    if (!existing) {
+      await db.initiative.create({ data: { ...initiative, isActive: true } });
+      continue;
+    }
+    if (!existing.linkUrl && initiative.linkUrl) {
+      await db.initiative.update({
+        where: { slug: initiative.slug },
+        data: { linkUrl: initiative.linkUrl },
+      });
+    }
   }
   console.log('✅ Initiatives seeded (existing rows left untouched)');
 }

@@ -6,6 +6,9 @@ import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
+import { HeroSlidesEditor } from '@/components/admin/HeroSlidesEditor';
+import { normalizeHomeHeroContent } from '@/lib/homeHeroDefaults';
 
 interface Section {
   id: string;
@@ -29,7 +32,14 @@ export default function HomeManagementPage() {
     try {
       const response = await api.get('/home-page/all');
       if (response.data.success) {
-        setSections(response.data.data.sections);
+        const rows = (response.data.data.sections || []).map((s: Section) => {
+          const content = normalizeCmsContent(s.content);
+          return {
+            ...s,
+            content: s.key === 'hero' ? normalizeHomeHeroContent(content) : content,
+          };
+        });
+        setSections(rows);
       }
     } catch (error) {
       console.error('Error fetching sections:', error);
@@ -45,14 +55,23 @@ export default function HomeManagementPage() {
     if (!section) return;
 
     try {
+      const content =
+        section.key === 'hero'
+          ? normalizeHomeHeroContent(normalizeCmsContent(section.content))
+          : normalizeCmsContent(section.content);
       const response = await api.put(`/home-page/${id}`, {
         title: section.title,
-        content: section.content,
+        content,
         order: section.order,
         isActive: section.isActive
       });
       if (response.data.success) {
         toast.success('Section updated successfully');
+        if (section.key === 'hero') {
+          setSections((prev) =>
+            prev.map((s) => (s.id === id ? { ...s, content } : s))
+          );
+        }
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -65,9 +84,10 @@ export default function HomeManagementPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -189,12 +209,22 @@ export default function HomeManagementPage() {
             </div>
 
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+              {section.key === 'hero' ? (
+                <HeroSlidesEditor
+                  value={section.content}
+                  onChange={(next) => {
+                    setSections((prev) =>
+                      prev.map((s) => (s.id === section.id ? { ...s, content: next } : s))
+                    );
+                  }}
+                />
+              ) : (
+              cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                 if (Array.isArray(value)) {
                   // Custom defaults depending on the key name
                   let defaultNewItem: any = '';
                   if (key === 'slides') {
-                    defaultNewItem = { id: Date.now(), headline: '', subheadline: '', ctaText: '', ctaLink: '', video: '', image: '' };
+                    defaultNewItem = { id: Date.now(), headline: '', subheadline: '', ctaText: '', ctaLink: '', video: '', image: '', order: 1, isActive: true };
                   } else if (key === 'cards') {
                     defaultNewItem = { title: '', image: '', desc: '', ctaText: '', ctaLink: '' };
                   } else if (key === 'stats') {
@@ -313,7 +343,8 @@ export default function HomeManagementPage() {
                     )}
                   </div>
                 );
-              })}
+              })
+              )}
             </div>
           </div>
         ))}

@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Section {
   id: string;
@@ -29,7 +30,11 @@ export default function AboutManagementPage() {
     try {
       const response = await api.get('/about/all');
       if (response.data.success) {
-        setSections(response.data.data.sections);
+        const rows = (response.data.data.sections || []).map((s: Section) => ({
+          ...s,
+          content: normalizeCmsContent(s.content),
+        }));
+        setSections(rows);
       }
     } catch (error) {
       console.error('Error fetching sections:', error);
@@ -47,7 +52,7 @@ export default function AboutManagementPage() {
     try {
       const response = await api.put(`/about/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive
       });
@@ -65,9 +70,10 @@ export default function AboutManagementPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -181,7 +187,7 @@ export default function AboutManagementPage() {
             </div>
 
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+              {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                 if (Array.isArray(value)) {
                   return (
                     <div key={key} className="col-span-2 space-y-4">

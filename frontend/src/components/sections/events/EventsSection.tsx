@@ -7,7 +7,6 @@ import EventsCalendar from './EventsCalendar';
 import EventsWebinars from './EventsWebinars';
 import EventsPast from './EventsPast';
 import EventsCTA from './EventsCTA';
-import { ProductsTransformation } from '@/components/sections/products/ProductsTransformation';
 import api from '@/lib/api';
 import { SajanEvent, EventFormat, EventCategory } from './eventsData';
 
@@ -94,13 +93,13 @@ export default function EventsSection() {
 
   const activeEvents = eventsList;
 
-  // All upcoming admin events → calendar + list (webinars + offline)
-  const upcomingEvents = activeEvents
-    .filter((e) => !e.isPast)
+  // All active events (upcoming + past) → calendar can browse history by month
+  const calendarEvents = activeEvents
+    .slice()
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   // Big ticket cards: only events marked in admin (showOnCard), soonest first
-  const featuredUpcoming = upcomingEvents.filter((e) => e.showOnCard);
+  const featuredUpcoming = calendarEvents.filter((e) => !e.isPast && e.showOnCard);
 
   const pastEvents = activeEvents
     .filter((e) => e.isPast)
@@ -116,26 +115,25 @@ export default function EventsSection() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white pb-24">
+    <div className="min-h-screen bg-brand-dark text-white">
       <EventsHero content={getSection('hero')} />
-      <EventsCalendar events={upcomingEvents} allEvents={activeEvents} />
+      <EventsCalendar events={calendarEvents} allEvents={activeEvents} />
       <EventsWebinars events={featuredUpcoming} />
       <EventsPast events={pastEvents} />
       <EventsCTA content={getSection('cta')} />
-      <ProductsTransformation />
 
-      {/* Final Quote Section */}
-      <section className="pt-10 pb-6 bg-black text-center px-4">
+      {/* Final Quote Section — tight spacing into footer */}
+      <section className="pt-10 pb-12 bg-black text-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-6xl mx-auto px-4"
         >
-          <h3 className="text-3xl md:text-5xl font-light text-white italic mb-10 leading-tight">
+          <h3 className="text-3xl md:text-5xl font-light text-white italic mb-8 leading-tight">
             "Change your mental patterns.<br className="hidden md:block" /> Your results will follow."
           </h3>
-          <div className="w-20 h-1 bg-[#f26522] mx-auto mb-12"></div>
+          <div className="w-20 h-1 bg-[#f26522] mx-auto mb-8"></div>
           <a
             href="/contact"
             className="inline-block bg-[#f26522] hover:bg-white hover:text-black text-white font-bold uppercase tracking-[0.3em] text-xs px-12 py-5 transition-all duration-300 shadow-[0_25px_50px_-12px_rgba(242,101,34,0.4)] hover:shadow-none"

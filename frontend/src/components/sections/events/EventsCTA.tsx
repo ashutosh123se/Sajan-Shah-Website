@@ -66,7 +66,7 @@ export default function EventsCTA({ content }: EventsCTAProps) {
   };
 
   return (
-    <section id="book-sajan" className="py-32 relative overflow-hidden bg-[#ebebeb] text-black">
+    <section id="book-sajan" className="pt-20 pb-16 relative overflow-hidden bg-[#ebebeb] text-black">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-16 items-center">
         <div className="relative w-full h-full flex items-center justify-start lg:-ml-24">
           <img

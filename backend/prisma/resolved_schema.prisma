@@ -178,6 +178,7 @@ model Initiative {
   description String  @db.Text
   imageUrl    String?
   stats       String?
+  linkUrl     String?
   order       Int     @default(0)
   isActive    Boolean @default(true)
 }

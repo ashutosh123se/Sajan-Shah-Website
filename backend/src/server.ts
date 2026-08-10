@@ -120,13 +120,13 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
-
-  ensurePageContentSeeded()
-    .then(({ seeded, message }) => {
-      if (seeded) console.log(`📦 ${message}`);
-    })
-    .catch((err) => console.error('CMS auto-seed failed:', err));
+  try {
+    const result = await ensurePageContentSeeded();
+    console.log(`📦 CMS ensure: ${result.message}`);
+  } catch (err) {
+    console.error('CMS ensure failed (non-fatal):', err);
+  }
 });
