@@ -174,7 +174,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
     
     const order: any = await db.order.update({
       where: { id: orderId },
-      data: { status: 'PAID' as any, paymentId: razorpayPaymentId },
+      data: { status: 'PROCESSING', paymentId: razorpayPaymentId },
       include: { user: true }
     });
 

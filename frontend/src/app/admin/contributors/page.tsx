@@ -1216,17 +1216,21 @@ export default function AdminContributorsPage() {
                   />
                 </div>
 
-                <div className="col-span-2">
-                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Link / Action</label>
+                <div className="col-span-2 bg-zinc-900/50 border border-amber-500/20 rounded-xl p-4">
+                  <label className="block text-xs text-amber-400 uppercase tracking-wider mb-2 font-bold">🔗 Landing Page Link / Redirect URL</label>
                   <input
                     type="text"
                     value={initFormData.linkUrl}
                     onChange={(e) => setInitFormData({ ...initFormData, linkUrl: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30"
-                    placeholder="https://… or modal:app | modal:pencils | modal:uv | modal:ethos"
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                    placeholder="https://ymf.sajanshah.com or modal:app | modal:pencils | modal:uv | modal:ethos"
                   />
-                  <p className="text-[10px] text-zinc-500 mt-1">
-                    Use a full URL for external pages, or a modal key for built-in popup details.
+                  <p className="text-[10px] text-zinc-400 mt-2 leading-relaxed">
+                    <strong className="text-zinc-300">External link:</strong> Use a full URL (e.g. https://ymf.sajanshah.com) to redirect users to a landing page.
+                    <br />
+                    <strong className="text-zinc-300">Internal modal:</strong> Use <code className="text-amber-400">modal:app</code>, <code className="text-amber-400">modal:pencils</code>, <code className="text-amber-400">modal:uv</code>, or <code className="text-amber-400">modal:ethos</code> for built-in popup details.
+                    <br />
+                    <strong className="text-zinc-300">Leave blank</strong> to use the default link for this initiative.
                   </p>
                 </div>
 

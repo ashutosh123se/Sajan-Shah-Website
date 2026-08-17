@@ -7,6 +7,7 @@ interface DonateCTAProps {
     heading?: string;
     paragraph?: string;
     buttonText?: string;
+    donateUrl?: string;
   };
 }
 
@@ -14,12 +15,22 @@ export const DonateCTA: React.FC<DonateCTAProps> = ({ content }) => {
   const heading = content?.heading || "YOUR CONTRIBUTION SAVES LIVES.";
   const paragraph = content?.paragraph || "Every rupee donated goes directly towards providing neuroscience-backed education, health drives, and sustainable tools for children who need it most.";
   const buttonText = content?.buttonText || "Donate Now";
+  const donateUrl = content?.donateUrl || "/donate";
 
   const renderHeading = () => {
     if (heading.includes('<br') || heading.includes('\n')) {
       return <span dangerouslySetInnerHTML={{ __html: heading }} />;
     }
     return heading;
+  };
+
+  const handleDonate = () => {
+    // If donateUrl is an external Razorpay link, open in new tab
+    if (donateUrl.startsWith('http')) {
+      window.open(donateUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      window.location.href = donateUrl;
+    }
   };
 
   return (
@@ -43,7 +54,7 @@ export const DonateCTA: React.FC<DonateCTAProps> = ({ content }) => {
             
             <div className="flex flex-col items-center gap-6">
               <button 
-                onClick={() => window.location.href = '/donate'}
+                onClick={handleDonate}
                 className="bg-[#f26522] hover:bg-white hover:text-black text-white font-bold py-5 px-12 rounded-full transition-all duration-500 uppercase tracking-widest text-sm shadow-2xl shadow-[#f26522]/20"
               >
                 {buttonText}

@@ -29,12 +29,37 @@ export const getInitiatives = async (req: Request, res: Response) => {
 
 export const createInitiative = async (req: Request, res: Response) => {
   try {
-    const initiativeData = req.body;
-    const initiative = await db.initiative.create({ data: initiativeData });
+    const { title, slug, description, imageUrl, stats, linkUrl, order, isActive } = req.body;
+
+    if (!title || !slug || !description) {
+      return sendError(res, 'Title, slug, and description are required fields.', 400);
+    }
+
+    // Check for duplicate slug
+    const existing = await db.initiative.findUnique({ where: { slug } });
+    if (existing) {
+      return sendError(res, `An initiative with slug "${slug}" already exists. Please use a different slug.`, 400);
+    }
+
+    const initiative = await db.initiative.create({
+      data: {
+        title,
+        slug,
+        description,
+        imageUrl: imageUrl || null,
+        stats: stats || null,
+        linkUrl: linkUrl || null,
+        order: Number(order) || 0,
+        isActive: isActive !== undefined ? Boolean(isActive) : true,
+      }
+    });
     sendSuccess(res, { initiative }, 'Initiative created successfully');
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create initiative error:', error);
-    sendError(res, 'Internal server error', 500);
+    const message = error?.code === 'P2002'
+      ? 'An initiative with this slug already exists.'
+      : error?.message || 'Internal server error';
+    sendError(res, message, 500);
   }
 };
 
