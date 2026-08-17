@@ -15,6 +15,15 @@ export default function DonatePage() {
   const [isVideoActive, setIsVideoActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Donation state
+  const [donateAmount, setDonateAmount] = useState<number>(1000);
+  const [donateName, setDonateName] = useState('');
+  const [donateEmail, setDonateEmail] = useState('');
+  const [donatePhone, setDonatePhone] = useState('');
+  const [donateLoading, setDonateLoading] = useState(false);
+  const [donateError, setDonateError] = useState('');
+  const [donateSuccess, setDonateSuccess] = useState(false);
+
   const handleVideoClick = () => {
     if (!isVideoActive && videoRef.current) {
       setIsVideoActive(true);
@@ -23,6 +32,66 @@ export default function DonatePage() {
       video.muted = false;
       video.loop = false;
       video.play().catch(() => { });
+    }
+  };
+
+  const handleRazorpayDonation = async () => {
+    if (!donateAmount || donateAmount < 1) {
+      setDonateError('Please select or enter a donation amount.');
+      return;
+    }
+    if (!donateName.trim() || !donateEmail.trim()) {
+      setDonateError('Please fill in your name and email.');
+      return;
+    }
+
+    setDonateLoading(true);
+    setDonateError('');
+    setDonateSuccess(false);
+
+    try {
+      const amountPaise = Math.round(donateAmount * 100);
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: amountPaise,
+        currency: 'INR',
+        name: 'Live to Inspire Charitable Trust',
+        description: `Donation of ₹${donateAmount.toLocaleString('en-IN')}`,
+        image: '/LOGO.png',
+        handler: function () {
+          setDonateSuccess(true);
+          setDonateLoading(false);
+          setDonateAmount(0);
+          setDonateName('');
+          setDonateEmail('');
+          setDonatePhone('');
+        },
+        prefill: {
+          name: donateName,
+          email: donateEmail,
+          contact: donatePhone,
+        },
+        notes: {
+          purpose: 'donation',
+          donor_name: donateName,
+        },
+        theme: {
+          color: '#1b4b36',
+        },
+        modal: {
+          ondismiss: function () {
+            setDonateLoading(false);
+          },
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
+    } catch (err: any) {
+      console.error('Razorpay donation error:', err);
+      setDonateError(err?.message || 'Payment failed. Please try again.');
+      setDonateLoading(false);
     }
   };
 
@@ -303,12 +372,12 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* 7. Donate Section (Razorpay style) */}
+      {/* 7. Donate Section (Razorpay Checkout) */}
       <section className="py-32 bg-[#faf9f6] border-t border-gray-200">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div {...fadeIn} className="text-center mb-16">
             <div className="inline-block px-4 py-1.5 border border-[#1b4b36]/30 text-[#1b4b36] rounded-full text-xs font-bold tracking-widest uppercase mb-6 bg-[#1b4b36]/5">
-              Support The Cause
+              Donate Now
             </div>
             <h2 className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
               Make a <span className="text-[#f2b022]">Difference</span> Today
@@ -328,28 +397,71 @@ export default function DonatePage() {
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-8">Select Amount</h3>
                 <div className="grid grid-cols-2 gap-4 mb-8">
-                  {['₹ 500', '₹ 1,000', '₹ 2,000', '₹ 5,000'].map((amt, i) => (
-                    <button key={i} className={`py-5 rounded-2xl font-bold border transition-all text-lg ${i === 1 ? 'bg-[#1b4b36] text-white border-[#1b4b36] shadow-xl shadow-[#1b4b36]/20' : 'bg-[#faf9f6] text-gray-900 border-transparent hover:border-[#f2b022] hover:bg-white'}`}>
-                      {amt}
+                  {[500, 1000, 2000, 5000].map((amt, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setDonateAmount(amt)}
+                      className={`py-5 rounded-2xl font-bold border transition-all text-lg ${donateAmount === amt ? 'bg-[#1b4b36] text-white border-[#1b4b36] shadow-xl shadow-[#1b4b36]/20' : 'bg-[#faf9f6] text-gray-900 border-transparent hover:border-[#f2b022] hover:bg-white'}`}
+                    >
+                      ₹ {amt.toLocaleString('en-IN')}
                     </button>
                   ))}
                 </div>
                 <div className="relative">
                   <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xl">₹</span>
-                  <input type="number" placeholder="Custom Amount" className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl pl-12 pr-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400" />
+                  <input
+                    type="number"
+                    value={donateAmount || ''}
+                    onChange={(e) => setDonateAmount(Number(e.target.value) || 0)}
+                    placeholder="Custom Amount"
+                    className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl pl-12 pr-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400"
+                  />
                 </div>
               </div>
 
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-8">Your Details</h3>
-                <form className="space-y-5">
-                  <input type="text" placeholder="Full Name" required className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400" />
-                  <input type="email" placeholder="Email Address" required className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400" />
-                  <input type="text" placeholder="PAN Number (for 80G receipt)" required className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all uppercase font-medium text-lg placeholder-gray-400" />
+                <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); handleRazorpayDonation(); }}>
+                  <input
+                    type="text"
+                    value={donateName}
+                    onChange={(e) => setDonateName(e.target.value)}
+                    placeholder="Full Name"
+                    required
+                    className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400"
+                  />
+                  <input
+                    type="email"
+                    value={donateEmail}
+                    onChange={(e) => setDonateEmail(e.target.value)}
+                    placeholder="Email Address"
+                    required
+                    className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400"
+                  />
+                  <input
+                    type="tel"
+                    value={donatePhone}
+                    onChange={(e) => setDonatePhone(e.target.value)}
+                    placeholder="Phone Number"
+                    className="w-full bg-[#faf9f6] border border-transparent text-gray-900 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:border-[#f2b022] focus:ring-4 focus:ring-[#f2b022]/10 transition-all font-medium text-lg placeholder-gray-400"
+                  />
+
+                  {donateError && (
+                    <p className="text-red-600 text-sm font-medium">{donateError}</p>
+                  )}
+                  {donateSuccess && (
+                    <p className="text-green-700 text-sm font-bold">🎉 Thank you for your generous donation!</p>
+                  )}
 
                   {/* Razorpay checkout button */}
-                  <button type="button" className="w-full bg-[#f2b022] hover:bg-[#e0a01a] text-gray-900 font-black text-lg py-5 rounded-2xl transition-all shadow-xl shadow-[#f2b022]/30 mt-6 flex items-center justify-center gap-3">
-                    <Lock size={20} strokeWidth={2.5} /> Pay Securely via Razorpay
+                  <button
+                    type="submit"
+                    disabled={donateLoading || !donateAmount || donateAmount < 1}
+                    className="w-full bg-[#f2b022] hover:bg-[#e0a01a] text-gray-900 font-black text-lg py-5 rounded-2xl transition-all shadow-xl shadow-[#f2b022]/30 mt-6 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Lock size={20} strokeWidth={2.5} />
+                    {donateLoading ? 'Processing...' : `Pay ₹${donateAmount?.toLocaleString('en-IN') || '0'} Securely via Razorpay`}
                   </button>
                 </form>
                 <div className="flex items-center justify-center gap-8 mt-8 text-sm text-gray-500 font-semibold uppercase tracking-wider">
@@ -365,3 +477,4 @@ export default function DonatePage() {
     </div>
   );
 }
+

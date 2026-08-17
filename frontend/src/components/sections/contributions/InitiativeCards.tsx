@@ -49,8 +49,8 @@ const DEFAULT_LINK_BY_SLUG: Record<string, string> = {
   'sajan-shah-app': 'modal:app',
   'uv-glasses-drive': 'modal:uv',
   'season-of-learning': 'https://sol.sajanshah.com/',
-  'live-to-inspire': 'https://www.unitedfirst.in/',
-  'united-first-initiative': 'https://www.unitedfirst.in/',
+  'live-to-inspire': 'https://livetoinspire.in/',
+  'united-first-initiative': 'https://livetoinspire.in/',
   'teachers-training-program': 'https://teachers.sajanshah.com',
   'ymf-youth-motivation-forum': '/events#book-sajan',
 };
@@ -70,7 +70,7 @@ const defaultInitiatives = [
     icon: <Flame size={32} />,
     img: '/live to bg.jpeg',
     slug: 'live-to-inspire',
-    linkUrl: 'https://www.unitedfirst.in/',
+    linkUrl: 'https://livetoinspire.in/',
   },
   {
     title: 'Plantable Pencils Drive',
@@ -118,7 +118,7 @@ const defaultInitiatives = [
     icon: <Globe size={32} />,
     img: '/united first.png',
     slug: 'united-first-initiative',
-    linkUrl: 'https://www.unitedfirst.in/',
+    linkUrl: 'https://livetoinspire.in/',
   },
   {
     title: 'YMF (Youth Motivation Forum)',
@@ -140,7 +140,7 @@ function resolveLink(slug?: string, linkUrl?: string | null, title?: string) {
   if (title === 'UV Glasses Drive') return 'modal:uv';
   if (title === 'Season of Learning') return 'https://sol.sajanshah.com/';
   if (title === 'Live to Inspire' || title === 'United First Initiative') {
-    return 'https://www.unitedfirst.in/';
+    return 'https://livetoinspire.in/';
   }
   if (title === 'Teachers Training Program') return 'https://teachers.sajanshah.com';
   if (title?.includes('YMF')) return '/events#book-sajan';

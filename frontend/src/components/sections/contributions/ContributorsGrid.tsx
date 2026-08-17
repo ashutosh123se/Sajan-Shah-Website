@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { MediaImage } from '@/components/common/MediaImage';
 
@@ -15,7 +17,8 @@ interface ContributorsGridProps {
 }
 
 export function ContributorsGrid({ contributors }: ContributorsGridProps) {
-  if (!contributors.length) return null;
+  // Don't hide the section completely — show it if there are contributors
+  if (!contributors || contributors.length === 0) return null;
 
   return (
     <section className="w-full bg-black py-16 md:py-20 px-4 md:px-8 border-t border-zinc-900">
@@ -26,7 +29,7 @@ export function ContributorsGrid({ contributors }: ContributorsGridProps) {
             Team Contributors
           </h2>
           <p className="text-zinc-400 mt-3 max-w-2xl mx-auto text-sm md:text-base">
-            Profiles managed from the Admin Contributors page are shown here automatically.
+            The people behind the mission, making an impact every day.
           </p>
         </div>
 

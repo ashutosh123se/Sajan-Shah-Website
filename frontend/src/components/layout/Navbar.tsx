@@ -11,17 +11,11 @@ export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { getTotalItems, openCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navigation = [
@@ -43,10 +37,10 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <nav className="bg-[#0a0a0a] fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b border-gray-900 shadow-2xl">
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isScrolled ? 'py-4 md:py-6' : 'pt-6 pb-6'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-6">
 
           {/* Top Branding Section */}
-          <div className={`flex justify-start items-center w-full relative transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0 mb-0 opacity-0' : 'h-24 md:h-28 mb-6 opacity-100'}`}>
+          <div className="flex justify-start items-center w-full relative h-24 md:h-28 mb-6">
             
             {/* Left Brand: Sajan Shah */}
             <Link href="/" className="flex flex-col items-start group ml-8 md:ml-12">

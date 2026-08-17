@@ -93,7 +93,7 @@ export const Footer: React.FC = () => {
     { name: "Join Live Webinars", href: "/events#webinars" },
     { name: "Explore Programs", href: "/speaking#programs" },
     { name: "Watch Transformation Videos", href: "https://www.youtube.com/@SajanShah" },
-    { name: "Live to Inspire", href: "https://www.unitedfirst.in/" }
+    { name: "Live to Inspire", href: "https://livetoinspire.in/" }
   ];
 
   const secondaryLinks = [
