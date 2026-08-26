@@ -100,10 +100,10 @@ export const VisualGallery: React.FC<VisualGalleryProps> = ({ content }) => {
                   </div>
                 </div>
 
-                <h4 className="text-white text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight mb-2 group-hover:text-[#f26522] transition-colors break-words">
+                <h4 className="text-white text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight mb-2 group-hover:text-[#f26522] transition-colors break-words whitespace-normal">
                   {item.title}
                 </h4>
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest whitespace-normal">
                   {item.cat}
                 </p>
 

@@ -237,7 +237,17 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
                     className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522]"
                   />
                 </div>
-                <div className="space-y-1 md:col-span-2">
+                <div className="space-y-1 md:col-span-1">
+                  <label className="text-[10px] text-gray-500 uppercase">Slide Video (URL)</label>
+                  <input
+                    type="text"
+                    value={slide.video || ''}
+                    onChange={(e) => updateSlide(idx, { video: e.target.value })}
+                    placeholder="e.g. /video.mp4 or https://..."
+                    className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522]"
+                  />
+                </div>
+                <div className="space-y-1 md:col-span-1">
                   <label className="text-[10px] text-gray-500 uppercase">Slide Image (optional poster / visual)</label>
                   <ImageUploadField
                     label=""
