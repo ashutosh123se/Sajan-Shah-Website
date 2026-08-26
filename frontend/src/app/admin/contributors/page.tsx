@@ -70,7 +70,10 @@ const FIELD_LABELS: Record<string, string> = {
   models: 'Partnership Cards (JSON Array)',
   reports: 'Verification PDF Downloads (JSON Array)',
   logoUrl: 'Partner Logos Banner Image',
-  photos: 'Visual Gallery Slides (JSON Array)'
+  photos: 'Visual Gallery Slides (JSON Array)',
+  donateUrl: 'Donation URL / Link',
+  imageUrl: 'Background/Cover Image',
+  videoUrl: 'Video Link / URL'
 };
 
 const getFieldLabel = (key: string) => {
@@ -327,10 +330,26 @@ export default function AdminContributorsPage() {
     const response = await api.get('/contributions-page/all');
     if (response.data.success) {
       setSections(
-        (response.data.data.sections ?? []).map((s: PageSection) => ({
-          ...s,
-          content: normalizeCmsContent(s.content),
-        }))
+        (response.data.data.sections ?? []).map((s: PageSection) => {
+          let content = normalizeCmsContent(s.content);
+          if (s.key === 'donate' && !content.hasOwnProperty('donateUrl')) {
+            content = { ...content, donateUrl: '/donate' };
+          }
+          if (s.key === 'philosophy') {
+            if (!content.hasOwnProperty('imageUrl')) content.imageUrl = '/CONTRIBUTIONS SIR.jpeg';
+            if (!content.hasOwnProperty('videoUrl')) content.videoUrl = '';
+          }
+          if (s.key === 'download' && Array.isArray(content.reports)) {
+            content.reports = content.reports.map((report: any) => ({
+              ...report,
+              fileUrl: report.fileUrl || report.file || ''
+            }));
+          }
+          return {
+            ...s,
+            content,
+          };
+        })
       );
     } else {
       setErrorSections('Failed to load sections');
@@ -990,7 +1009,7 @@ export default function AdminContributorsPage() {
                                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">Execution PDF Reports</h4>
                                   <button
                                     type="button"
-                                    onClick={() => handleAddArrayItem(section.id, key, { title: '', size: '' })}
+                                    onClick={() => handleAddArrayItem(section.id, key, { title: '', size: '', fileUrl: '' })}
                                     className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1 rounded-lg border-none cursor-pointer"
                                   >
                                     + Add Report
@@ -1023,6 +1042,16 @@ export default function AdminContributorsPage() {
                                           onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'size', e.target.value)}
                                           className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                           placeholder="e.g. 4.2 MB"
+                                        />
+                                      </div>
+                                      <div className="col-span-full">
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Report PDF Link/URL</label>
+                                        <input
+                                          type="text"
+                                          value={item.fileUrl || ''}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'fileUrl', e.target.value)}
+                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          placeholder="e.g. /Live to Inspire.pdf or https://..."
                                         />
                                       </div>
                                     </div>

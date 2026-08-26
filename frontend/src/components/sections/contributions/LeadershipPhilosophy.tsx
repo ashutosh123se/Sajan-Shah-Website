@@ -10,6 +10,8 @@ interface LeadershipPhilosophyProps {
     quote?: string;
     boxQuote?: string;
     pillars?: string[];
+    imageUrl?: string;
+    videoUrl?: string;
   };
 }
 
@@ -25,6 +27,8 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
   const quote = content?.quote || "Social responsibility is not an option; it's a debt we owe to the future. Our contribution model, aligned with the UNSDG 2030 India vision, is built on three pillars: Neuroscience, Sustainable Education, and Global Empowerment.";
   const boxQuote = content?.boxQuote || "Real education is giving back.";
   const pillars = content?.pillars || DEFAULT_PILLARS;
+  const imageUrl = content?.imageUrl || "/CONTRIBUTIONS SIR.jpeg";
+  const videoUrl = content?.videoUrl;
 
   const renderHeading = () => {
     if (heading.includes('<br') || heading.includes('\n')) {
@@ -46,7 +50,7 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
         <div className="lg:w-1/2">
           <div className="relative group">
             <img
-              src="/CONTRIBUTIONS SIR.jpeg"
+              src={imageUrl}
               alt="Sajan Shah"
               className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl"
             />
@@ -73,17 +77,31 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
               </div>
             ))}
           </div>
-          <button className="flex items-center gap-6 group bg-transparent border-none text-left cursor-pointer">
-            <div className="w-20 h-20 rounded-full border border-gray-800 flex items-center justify-center group-hover:bg-[#f26522] group-hover:border-[#f26522] transition-all shadow-xl">
-              <div className="text-white group-hover:scale-125 transition-transform">
-                <Play size={24} fill="white" />
+          {videoUrl ? (
+            <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group bg-transparent border-none text-left cursor-pointer no-underline">
+              <div className="w-20 h-20 rounded-full border border-gray-800 flex items-center justify-center group-hover:bg-[#f26522] group-hover:border-[#f26522] transition-all shadow-xl shrink-0">
+                <div className="text-white group-hover:scale-125 transition-transform">
+                  <Play size={24} fill="white" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-white uppercase font-bold text-xs tracking-widest mb-1">Watch Leadership Message</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Sajan Shah - Founder</div>
+              </div>
+            </a>
+          ) : (
+            <div className="flex items-center gap-6 group bg-transparent border-none text-left opacity-50">
+              <div className="w-20 h-20 rounded-full border border-gray-800 flex items-center justify-center shadow-xl shrink-0">
+                <div className="text-white">
+                  <Play size={24} fill="white" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-white uppercase font-bold text-xs tracking-widest mb-1">Watch Leadership Message</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Sajan Shah - Founder</div>
               </div>
             </div>
-            <div className="text-left">
-              <div className="text-white uppercase font-bold text-xs tracking-widest mb-1">Watch Leadership Message</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Sajan Shah - Founder</div>
-            </div>
-          </button>
+          )}
         </div>
       </div>
     </section>

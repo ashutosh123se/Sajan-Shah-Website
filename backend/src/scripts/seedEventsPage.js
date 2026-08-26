@@ -24,6 +24,42 @@ const sections = [
       paragraph: "Transform your organisation, school, or corporate team with a highly customized and impactful session by Sajan Shah.",
       buttonText: "Book Sajan For Your Event"
     }
+  },
+  {
+    key: 'impactfulEvents',
+    title: 'Top Impactful Events (Reels)',
+    order: 3,
+    isActive: true,
+    content: {
+      heading: 'Top Impactful Events of This Year',
+      reels: [
+        {
+          id: 1,
+          tag: 'National',
+          embedUrl: 'https://www.instagram.com/reel/DDenOOnT5tA/embed/?hidecaption=true'
+        },
+        {
+          id: 2,
+          tag: 'National',
+          embedUrl: 'https://www.instagram.com/reel/DFVYO3aNJGg/embed/?hidecaption=true'
+        },
+        {
+          id: 3,
+          tag: 'International',
+          embedUrl: 'https://www.instagram.com/reel/DDODYmnIDm1/embed/?hidecaption=true'
+        },
+        {
+          id: 4,
+          tag: 'National',
+          embedUrl: 'https://www.instagram.com/reel/DFIPJQcTVFI/embed/?hidecaption=true'
+        },
+        {
+          id: 5,
+          tag: 'International',
+          embedUrl: 'https://www.instagram.com/reel/DC1Uuh3gbGn/embed/?hidecaption=true'
+        }
+      ]
+    }
   }
 ];
 

@@ -119,7 +119,7 @@ export default function EventsSection() {
       <EventsHero content={getSection('hero')} />
       <EventsCalendar events={calendarEvents} allEvents={activeEvents} />
       <EventsWebinars events={featuredUpcoming} />
-      <EventsPast events={pastEvents} />
+      <EventsPast events={pastEvents} content={getSection('impactfulEvents')} />
       <EventsCTA content={getSection('cta')} />
 
       {/* Final Quote Section — tight spacing into footer */}

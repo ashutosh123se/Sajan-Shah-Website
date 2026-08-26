@@ -3,10 +3,9 @@ import React from 'react';
 import { FileCheck } from 'lucide-react';
 
 interface DownloadDoc {
-  t: string;
-  s: string;
-  c: string;
-  file: string;
+  title: string;
+  size: string;
+  fileUrl: string;
 }
 
 interface DownloadCentreProps {
@@ -18,8 +17,8 @@ interface DownloadCentreProps {
 }
 
 const DEFAULT_REPORTS: DownloadDoc[] = [
-  { t: "Annual Impact Report", s: "4.2 MB", c: "bg-[#f26522]", file: "/Live to Inspire.pdf" },
-  { t: "ESG Compliance Report", s: "2.1 MB", c: "bg-gray-700", file: "#" }
+  { title: "Annual Impact Report", size: "4.2 MB", fileUrl: "/Live to Inspire.pdf" },
+  { title: "ESG Compliance Report", size: "2.1 MB", fileUrl: "#" }
 ];
 
 export const DownloadCentre: React.FC<DownloadCentreProps> = ({ content }) => {
@@ -41,11 +40,11 @@ export const DownloadCentre: React.FC<DownloadCentreProps> = ({ content }) => {
             </p>
             <div className="flex flex-wrap gap-6">
               {reports.map((doc, idx) => (
-                <a key={idx} href={doc.file} download className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-5 rounded-2xl transition-all group cursor-pointer w-full sm:w-auto">
-                  <span className={`w-10 h-10 rounded-lg ${doc.c || 'bg-[#f26522]'} flex items-center justify-center text-[10px] font-bold group-hover:scale-110 transition-transform shrink-0`}>PDF</span>
+                <a key={idx} href={doc.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-5 rounded-2xl transition-all group cursor-pointer w-full sm:w-auto no-underline">
+                  <span className={`w-10 h-10 rounded-lg bg-[#f26522] flex items-center justify-center text-[10px] font-bold group-hover:scale-110 transition-transform shrink-0`}>PDF</span>
                   <div className="text-left">
-                    <div className="text-[10px] font-bold uppercase tracking-wider mb-1">{doc.t}</div>
-                    <div className="text-[10px] text-gray-500 italic uppercase">Download ({doc.s})</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider mb-1">{doc.title}</div>
+                    <div className="text-[10px] text-gray-500 italic uppercase">Download ({doc.size})</div>
                   </div>
                 </a>
               ))}

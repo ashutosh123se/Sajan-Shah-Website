@@ -47,7 +47,8 @@ const sections = [
     content: {
       heading: "YOUR CONTRIBUTION SAVES LIVES.",
       paragraph: "Every rupee donated goes directly towards providing neuroscience-backed education, health drives, and sustainable tools for children who need it most.",
-      buttonText: "Donate Now"
+      buttonText: "Donate Now",
+      donateUrl: "/donate"
     }
   },
   {
@@ -98,7 +99,9 @@ const sections = [
         "Pillar 1: Data-Driven Cognitive Empowerment",
         "Pillar 2: Environmental Awareness through Learning",
         "Pillar 3: Grassroots Level Institutional Training"
-      ]
+      ],
+      imageUrl: "/CONTRIBUTIONS SIR.jpeg",
+      videoUrl: ""
     }
   },
   {
@@ -110,8 +113,8 @@ const sections = [
       heading: "OUR EXECUTION REPORT",
       paragraph: "We maintain absolute transparency in our social operations. Access our audit-ready impact reports and ESG compliance documents below. All data is verified by third-party auditors.",
       reports: [
-        { "title": "Annual Impact Report", "size": "4.2 MB" },
-        { "title": "ESG Compliance Report", "size": "2.1 MB" }
+        { "title": "Annual Impact Report", "size": "4.2 MB", "fileUrl": "/Live to Inspire.pdf" },
+        { "title": "ESG Compliance Report", "size": "2.1 MB", "fileUrl": "#" }
       ]
     }
   },

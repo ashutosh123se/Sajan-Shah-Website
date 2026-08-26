@@ -33,26 +33,49 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
   }, [slides.length, hero.intervalMs]);
 
   const slide = slides[currentSlide] || DEFAULT_HOME_HERO.slides[0];
-  const videoSrc = resolveMediaUrl(hero.backgroundVideo) || hero.backgroundVideo;
-  const posterSrc =
-    resolveMediaUrl(slide.image) ||
-    resolveMediaUrl(hero.posterImage) ||
-    hero.posterImage ||
-    '/EVENT.png';
+  
+  const slideVideo = slide.video ? (resolveMediaUrl(slide.video) || slide.video) : null;
+  const slideImage = slide.image ? (resolveMediaUrl(slide.image) || slide.image) : null;
+  
+  const globalVideo = hero.backgroundVideo ? (resolveMediaUrl(hero.backgroundVideo) || hero.backgroundVideo) : null;
+  const globalPoster = hero.posterImage ? (resolveMediaUrl(hero.posterImage) || hero.posterImage) : null;
+
+  const currentVideoSrc = slideVideo || globalVideo;
+  const currentPosterSrc = slideImage || globalPoster || '/EVENT.png';
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
-      <div className="absolute inset-0 z-0 bg-black">
-        <video
-          className="w-full h-full object-cover opacity-85"
-          src={videoSrc}
-          poster={posterSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        />
+      <div className="absolute inset-0 z-0 bg-black transition-opacity duration-1000">
+        <AnimatePresence mode="popLayout">
+          {currentVideoSrc ? (
+            <motion.video
+              key={`video-${currentVideoSrc}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.85 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={currentVideoSrc}
+              poster={currentPosterSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+          ) : (
+            <motion.img
+              key={`img-${currentPosterSrc}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.85 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={currentPosterSrc}
+              alt="Hero Background"
+            />
+          )}
+        </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
       </div>
 

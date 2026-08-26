@@ -288,6 +288,49 @@ export default function AdminEventsPage() {
     }));
   };
 
+  const handleArrayContentChange = (sectionId: string, field: string, index: number, subField: string | null, value: any) => {
+    setSections(prev => prev.map(s => {
+      if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || [])];
+        if (subField) {
+          let parsedValue = value;
+          if (subField === 'id') {
+            const num = parseFloat(value);
+            if (!isNaN(num)) parsedValue = num;
+          }
+          newArray[index] = { ...newArray[index], [subField]: parsedValue };
+        } else {
+          newArray[index] = value;
+        }
+        return { ...s, content: { ...content, [field]: newArray } };
+      }
+      return s;
+    }));
+  };
+
+  const addArrayItem = (sectionId: string, field: string, defaultValue: any) => {
+    setSections(prev => prev.map(s => {
+      if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || []), defaultValue];
+        return { ...s, content: { ...content, [field]: newArray } };
+      }
+      return s;
+    }));
+  };
+
+  const removeArrayItem = (sectionId: string, field: string, index: number) => {
+    setSections(prev => prev.map(s => {
+      if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
+        const newArray = (content[field] || []).filter((_: any, i: number) => i !== index);
+        return { ...s, content: { ...content, [field]: newArray } };
+      }
+      return s;
+    }));
+  };
+
   const saveSection = async (id: string) => {
     setSavingSectionId(id);
     const section = sections.find(s => s.id === id);
@@ -494,11 +537,87 @@ export default function AdminEventsPage() {
                   <div className="p-6 bg-zinc-950 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
+                        if (Array.isArray(value)) {
+                          let defaultNewItem: any = '';
+                          if (key === 'reels') {
+                            defaultNewItem = { id: Date.now(), tag: 'National', embedUrl: '' };
+                          } else if (typeof value[0] === 'object') {
+                            defaultNewItem = {};
+                          }
+
+                          return (
+                            <div key={key} className="col-span-1 md:col-span-2 space-y-4">
+                              <div className="flex justify-between items-center border-b border-zinc-800 pb-2">
+                                <label className="text-sm font-bold text-[#f26522] uppercase tracking-widest">{getFieldLabel(key)}</label>
+                                <Button 
+                                  onClick={() => addArrayItem(section.id, key, defaultNewItem)}
+                                  className="h-7 px-3 text-[10px] bg-white/5 hover:bg-white/10 rounded-none border border-white/10 text-white"
+                                >
+                                  + Add Item
+                                </Button>
+                              </div>
+                              <div className="space-y-4">
+                                {value.map((item, idx) => (
+                                  <div key={idx} className="flex gap-4 items-start bg-zinc-900/40 p-4 border border-zinc-800 rounded-xl">
+                                    <div className="flex-1 space-y-3">
+                                      {typeof item === 'object' ? (
+                                        Object.keys(item).map(subKey => {
+                                          const isImage = isImageFieldKey(subKey);
+                                          return (
+                                            <div key={subKey} className="space-y-1">
+                                              <label className="text-[10px] text-zinc-500 uppercase">{subKey}</label>
+                                              {isImage ? (
+                                                <ImageUploadField
+                                                  label=""
+                                                  value={item[subKey] || ''}
+                                                  folder="events"
+                                                  onChange={(url) => handleArrayContentChange(section.id, key, idx, subKey, url)}
+                                                />
+                                              ) : (
+                                                <textarea 
+                                                  value={item[subKey] !== undefined ? item[subKey].toString() : ''}
+                                                  onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
+                                                  className="w-full bg-zinc-950 border border-zinc-800 p-3 text-sm focus:border-[#f26522] transition-colors resize-none rounded-lg text-white"
+                                                  rows={2}
+                                                />
+                                              )}
+                                            </div>
+                                          );
+                                        })
+                                      ) : isImageFieldKey(key) ? (
+                                        <ImageUploadField
+                                          label=""
+                                          value={item !== undefined ? item.toString() : ''}
+                                          folder="events"
+                                          onChange={(url) => handleArrayContentChange(section.id, key, idx, null, url)}
+                                        />
+                                      ) : (
+                                        <textarea 
+                                          value={item !== undefined ? item.toString() : ''}
+                                          onChange={(e) => handleArrayContentChange(section.id, key, idx, null, e.target.value)}
+                                          className="w-full bg-zinc-950 border border-zinc-800 p-3 text-sm focus:border-[#f26522] transition-colors resize-none rounded-lg text-white"
+                                          rows={2}
+                                        />
+                                      )}
+                                    </div>
+                                    <Button 
+                                      onClick={() => removeArrayItem(section.id, key, idx)}
+                                      className="h-8 w-8 p-0 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center border border-red-500/20 shrink-0"
+                                    >
+                                      &times;
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+
                         const isImage = isImageFieldKey(key);
                         const isLongText = !isImage && value?.toString().length > 60;
 
                         return (
-                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage ? 'col-span-1 md:col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
