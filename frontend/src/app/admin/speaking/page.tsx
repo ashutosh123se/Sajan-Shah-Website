@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Pencil, Save, X, ChevronDown, ChevronUp, Eye, EyeOff, RefreshCw, AlertCircle, Plus, Trash2 } from 'lucide-react';
 import api from '@/lib/api';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { VideoUploadField } from '@/components/admin/VideoUploadField';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
 import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
@@ -31,6 +32,7 @@ const FIELD_LABELS: Record<string, string> = {
   heading: 'Main Heading Part 1 (Regular)',
   headingItalic: 'Main Heading Part 2 (Italic)',
   headingHighlight: 'Main Heading Part 3 (Highlighted in Orange)',
+  videoUrl: 'Background Video (Optional)',
   gridImages: 'Background Image Grid',
   primaryButtonText: 'Primary Button Label',
   primaryButtonScrollTarget: 'Primary Button Link (e.g. /events#book-sajan)',
@@ -524,14 +526,22 @@ export default function AdminSpeakingPage() {
 
                       // 3. String-based top-level fields
                       const isImage = isImageFieldKey(key);
-                      const isLongText = !isImage && value?.toString().length > 60;
+                      const isVideo = key.toLowerCase().includes('video');
+                      const isLongText = !isImage && !isVideo && value?.toString().length > 60;
 
                       return (
-                        <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                        <div key={key} className={isLongText || isImage || isVideo ? 'col-span-2 space-y-1' : 'space-y-1'}>
                           <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                             {getFieldLabel(key)}
                           </label>
-                          {isImage ? (
+                          {isVideo ? (
+                            <VideoUploadField
+                              label=""
+                              value={value || ''}
+                              folder="speaking"
+                              onChange={(url) => handleContentChange(section.id, key, url)}
+                            />
+                          ) : isImage ? (
                             <ImageUploadField
                               label=""
                               value={value || ''}

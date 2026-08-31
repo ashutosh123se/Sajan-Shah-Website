@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { VideoUploadField } from '@/components/admin/VideoUploadField';
 import {
   DEFAULT_HOME_HERO,
   HomeHeroContent,
@@ -82,14 +83,13 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
             Background Video URL
           </label>
-          <input
-            type="text"
-            value={content.backgroundVideo}
-            onChange={(e) => patch({ backgroundVideo: e.target.value })}
-            placeholder="/sajan_hero.mp4"
-            className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522] transition-colors"
+          <VideoUploadField
+            label=""
+            value={content.backgroundVideo || ''}
+            folder="home"
+            onChange={(url) => patch({ backgroundVideo: url })}
           />
-          <p className="text-[11px] text-gray-500">Public path or full URL. Shown behind all slides.</p>
+          <p className="text-[11px] text-gray-500 mt-2">Shown behind all slides.</p>
         </div>
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
@@ -239,12 +239,11 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
                 </div>
                 <div className="space-y-1 md:col-span-1">
                   <label className="text-[10px] text-gray-500 uppercase">Slide Video (URL)</label>
-                  <input
-                    type="text"
+                  <VideoUploadField
+                    label=""
                     value={slide.video || ''}
-                    onChange={(e) => updateSlide(idx, { video: e.target.value })}
-                    placeholder="e.g. /video.mp4 or https://..."
-                    className="w-full bg-black border border-white/10 p-3 text-sm focus:border-[#f26522]"
+                    folder="home"
+                    onChange={(url) => updateSlide(idx, { video: url })}
                   />
                 </div>
                 <div className="space-y-1 md:col-span-1">
