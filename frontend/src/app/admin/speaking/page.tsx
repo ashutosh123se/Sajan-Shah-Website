@@ -3,6 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { Pencil, Save, X, ChevronDown, ChevronUp, Eye, EyeOff, RefreshCw, AlertCircle, Plus, Trash2 } from 'lucide-react';
 import api from '@/lib/api';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { VideoUploadField } from '@/components/admin/VideoUploadField';
+import { isImageFieldKey } from '@/lib/adminImageUpload';
+import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
 
 interface Section {
   id: string;
@@ -28,11 +32,12 @@ const FIELD_LABELS: Record<string, string> = {
   heading: 'Main Heading Part 1 (Regular)',
   headingItalic: 'Main Heading Part 2 (Italic)',
   headingHighlight: 'Main Heading Part 3 (Highlighted in Orange)',
-  gridImages: 'Background Image Grid URLs',
+  videoUrl: 'Background Video (Optional)',
+  gridImages: 'Background Image Grid',
   primaryButtonText: 'Primary Button Label',
-  primaryButtonScrollTarget: 'Primary Button Scroll Target ID (e.g., #message)',
+  primaryButtonScrollTarget: 'Primary Button Link (e.g. /events#book-sajan)',
   secondaryButtonText: 'Secondary Button Label',
-  secondaryButtonUrl: 'Secondary Button Link URL',
+  secondaryButtonUrl: 'Secondary Button Link URL (e.g. https://webinar.sajanshah.com)',
 
   // Logos Section
   label: 'Section Label Text',
@@ -47,8 +52,8 @@ const FIELD_LABELS: Record<string, string> = {
   // Personal Message Section
   sectionLabel: 'Small Section Tagline',
   speakerName: 'Speaker Full Name',
-  speakerImage: 'Speaker Portrait Image URL',
-  signatureImage: 'Signature Image URL',
+  speakerImage: 'Speaker Portrait Image',
+  signatureImage: 'Signature Image',
   signOffText: 'Sign Off Greeting',
   paragraphs: 'Body Text Paragraphs',
   pillars: 'Key Impact Words (Pillars)',
@@ -65,9 +70,9 @@ const FIELD_LABELS: Record<string, string> = {
   description: 'Item Description',
   marqueeSectionLabel: 'Marquee Header Tagline',
   marqueeSectionTitle: 'Marquee Title',
-  marqueeImages: 'Live Stage Image URLs',
+  marqueeImages: 'Live Stage Images',
   marqueeEventName: 'Marquee Event Title Label',
-  logoImage: 'Small Avatar Logo URL',
+  logoImage: 'Small Avatar Logo',
 
   // Catalog Section
   headingDim: 'Main Title Second Part (Dimmed)',
@@ -75,7 +80,8 @@ const FIELD_LABELS: Record<string, string> = {
   programs: 'Speaking Programs List',
   pitch: 'Program Description/Pitch',
   badges: 'Audience Tags (comma-separated, e.g., Youth, Parents)',
-  img: 'Program Feature Image URL',
+  img: 'Program Feature Image',
+  link: 'Program Landing Page URL (e.g. https://teachers.sajanshah.com)',
   isFeatured: 'Display as Featured Program (Larger card)',
 
   // Features Section
@@ -114,7 +120,11 @@ export default function AdminSpeakingPage() {
       const response = await api.get('/speaking/all');
       if (response.data.success) {
         const rawSections = response.data.data.sections ?? [];
-        setSections(rawSections.sort((a: Section, b: Section) => a.order - b.order));
+        setSections(
+          rawSections
+            .map((s: Section) => ({ ...s, content: normalizeCmsContent(s.content) }))
+            .sort((a: Section, b: Section) => a.order - b.order)
+        );
       } else {
         setError('Failed to load speaking sections');
       }
@@ -132,9 +142,10 @@ export default function AdminSpeakingPage() {
   const handleContentChange = (sectionId: string, field: string, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
+        const content = normalizeCmsContent(s.content);
         return {
           ...s,
-          content: { ...s.content, [field]: value }
+          content: { ...content, [field]: value }
         };
       }
       return s;
@@ -144,7 +155,8 @@ export default function AdminSpeakingPage() {
   const handleArrayContentChange = (sectionId: string, field: string, index: number, subField: string | null, value: any) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = [...(s.content[field] || [])];
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || [])];
         if (subField) {
           newArray[index] = { ...newArray[index], [subField]: value };
         } else {
@@ -152,7 +164,7 @@ export default function AdminSpeakingPage() {
         }
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -180,10 +192,11 @@ export default function AdminSpeakingPage() {
     const defaultValue = getDefaultArrayItem(firstItem);
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = [...(s.content[field] || []), defaultValue];
+        const content = normalizeCmsContent(s.content);
+        const newArray = [...(content[field] || []), defaultValue];
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -193,10 +206,11 @@ export default function AdminSpeakingPage() {
   const removeArrayItem = (sectionId: string, field: string, index: number) => {
     setSections(prev => prev.map(s => {
       if (s.id === sectionId) {
-        const newArray = (s.content[field] || []).filter((_: any, i: number) => i !== index);
+        const content = normalizeCmsContent(s.content);
+        const newArray = (content[field] || []).filter((_: any, i: number) => i !== index);
         return {
           ...s,
-          content: { ...s.content, [field]: newArray }
+          content: { ...content, [field]: newArray }
         };
       }
       return s;
@@ -211,7 +225,7 @@ export default function AdminSpeakingPage() {
     try {
       const response = await api.put(`/speaking/${id}`, {
         title: section.title,
-        content: section.content,
+        content: normalizeCmsContent(section.content),
         order: section.order,
         isActive: section.isActive,
       });
@@ -367,7 +381,7 @@ export default function AdminSpeakingPage() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {Object.entries(section.content || {}).map(([key, value]: [string, any]) => {
+                    {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                       // 1. Array-based fields
                       if (Array.isArray(value)) {
                         const firstItem = value[0];
@@ -428,11 +442,19 @@ export default function AdminSpeakingPage() {
                                           }
 
                                           // Normal field in array item
-                                          const isSubLongText = subValue?.toString().length > 80;
+                                          const isSubImage = isImageFieldKey(subKey);
+                                          const isSubLongText = !isSubImage && subValue?.toString().length > 80;
                                           return (
-                                            <div key={subKey} className={isSubLongText ? 'space-y-1 col-span-2' : 'space-y-1 col-span-1'}>
+                                            <div key={subKey} className={isSubLongText || isSubImage ? 'space-y-1 col-span-2' : 'space-y-1 col-span-1'}>
                                               <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{getFieldLabel(subKey)}</label>
-                                              {isSubLongText ? (
+                                              {isSubImage ? (
+                                                <ImageUploadField
+                                                  label=""
+                                                  value={subValue || ''}
+                                                  folder="speaking"
+                                                  onChange={(url) => handleArrayContentChange(section.id, key, idx, subKey, url)}
+                                                />
+                                              ) : isSubLongText ? (
                                                 <textarea
                                                   value={subValue}
                                                   onChange={(e) => handleArrayContentChange(section.id, key, idx, subKey, e.target.value)}
@@ -451,6 +473,13 @@ export default function AdminSpeakingPage() {
                                           );
                                         })}
                                       </div>
+                                    ) : isImageFieldKey(key) ? (
+                                      <ImageUploadField
+                                        label="Image"
+                                        value={item || ''}
+                                        folder="speaking"
+                                        onChange={(url) => handleArrayContentChange(section.id, key, idx, null, url)}
+                                      />
                                     ) : (
                                       // Primitive value in array (e.g. list of strings)
                                       <div className="w-full space-y-1">
@@ -496,15 +525,30 @@ export default function AdminSpeakingPage() {
                       }
 
                       // 3. String-based top-level fields
-                      const isImage = key.toLowerCase().includes('image') || key.toLowerCase().includes('url') || value?.toString().startsWith('/') || value?.toString().startsWith('http');
-                      const isLongText = value?.toString().length > 60;
+                      const isImage = isImageFieldKey(key);
+                      const isVideo = key.toLowerCase().includes('video');
+                      const isLongText = !isImage && !isVideo && value?.toString().length > 60;
 
                       return (
-                        <div key={key} className={isLongText ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                        <div key={key} className={isLongText || isImage || isVideo ? 'col-span-2 space-y-1' : 'space-y-1'}>
                           <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                             {getFieldLabel(key)}
                           </label>
-                          {isLongText ? (
+                          {isVideo ? (
+                            <VideoUploadField
+                              label=""
+                              value={value || ''}
+                              folder="speaking"
+                              onChange={(url) => handleContentChange(section.id, key, url)}
+                            />
+                          ) : isImage ? (
+                            <ImageUploadField
+                              label=""
+                              value={value || ''}
+                              folder="speaking"
+                              onChange={(url) => handleContentChange(section.id, key, url)}
+                            />
+                          ) : isLongText ? (
                             <textarea
                               value={value}
                               onChange={(e) => handleContentChange(section.id, key, e.target.value)}
@@ -512,19 +556,12 @@ export default function AdminSpeakingPage() {
                               rows={3}
                             />
                           ) : (
-                            <div className="flex gap-4 items-center">
-                              <input
-                                type="text"
-                                value={value}
-                                onChange={(e) => handleContentChange(section.id, key, e.target.value)}
-                                className="flex-1 border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
-                              />
-                              {isImage && value && (
-                                <div className="w-12 h-12 border border-zinc-800 rounded-lg overflow-hidden shrink-0 bg-zinc-900 shadow-md">
-                                  <img src={value} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                              )}
-                            </div>
+                            <input
+                              type="text"
+                              value={value}
+                              onChange={(e) => handleContentChange(section.id, key, e.target.value)}
+                              className="w-full border border-zinc-800 bg-zinc-950 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 text-white"
+                            />
                           )}
                         </div>
                       );
