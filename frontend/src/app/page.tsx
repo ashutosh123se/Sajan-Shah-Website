@@ -47,6 +47,7 @@ export default function Home() {
 
   const heroContent = normalizeHomeHeroContent(getSection('hero'));
   const digitalEmpire = getSection('digital_empire');
+  const transformationStories = getSection('transformation_stories');
 
   return (
     <div className="min-h-screen">
@@ -59,7 +60,7 @@ export default function Home() {
       <BooksSection />
       <Testimonials />
       <EventSchedule content={digitalEmpire} />
-      <TransformationStories />
+      <TransformationStories content={transformationStories} />
       <ImpactStatistics />
     </div>
   );

@@ -13,9 +13,20 @@ const IMAGE_KEY_HINTS = [
   'banner',
 ];
 
+const NOT_IMAGE_HINTS = ['text', 'words', 'link', 'heading', 'title', 'desc', 'label'];
+
 /** True when a CMS/form field key represents an image (not a link/CTA URL). */
 export function isImageFieldKey(key: string): boolean {
   const k = key.toLowerCase();
+  
+  // Explicitly handle URLs
+  if (k === 'imageurl') return true;
+  if (k.includes('url')) return false;
+  
+  // Explicitly handle logos array which contains text strings
+  if (k === 'logos') return false;
+  
+  if (NOT_IMAGE_HINTS.some((h) => k.includes(h))) return false;
   return IMAGE_KEY_HINTS.some((h) => k.includes(h));
 }
 

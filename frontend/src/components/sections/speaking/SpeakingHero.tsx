@@ -9,6 +9,7 @@ interface SpeakingHeroProps {
     headingItalic?: string;
     headingHighlight?: string;
     gridImages?: string[];
+    videoUrl?: string;
     primaryButtonText?: string;
     primaryButtonScrollTarget?: string;
     secondaryButtonText?: string;
@@ -21,6 +22,7 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   const headingItalic = content?.headingItalic || 'This Is';
   const headingHighlight = content?.headingHighlight || 'Transformation.';
   const rawBg = content?.gridImages?.[0];
+  const videoUrl = content?.videoUrl;
   const bgImage =
     rawBg && rawBg.startsWith('/') && !rawBg.startsWith('//')
       ? rawBg
@@ -46,12 +48,23 @@ export const SpeakingHero: React.FC<SpeakingHeroProps> = ({ content }) => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black pt-36">
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={bgImage}
-          alt="Sajan Shah Speaking Background"
-          className="w-full h-full object-cover object-top filter brightness-90"
-        />
+        {videoUrl ? (
+          <video
+            src={videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover object-top filter brightness-90"
+          />
+        ) : (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={bgImage}
+            alt="Sajan Shah Speaking Background"
+            className="w-full h-full object-cover object-top filter brightness-90"
+          />
+        )}
         <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
       </div>
