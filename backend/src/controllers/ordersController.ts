@@ -104,7 +104,7 @@ export const createOrder = async (req: Request, res: Response) => {
           rzpError?.error?.description ||
           rzpError?.message ||
           'Razorpay could not create the payment order. Check API keys and try again.';
-        return sendError(res, message, 502);
+        return sendError(res, message, 400);
       }
     } else if (paymentMethod === 'COD') {
       orderStatus = 'PROCESSING'; // COD orders start as processing
