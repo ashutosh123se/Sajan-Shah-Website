@@ -88,8 +88,8 @@ export function normalizeHomeHeroContent(raw?: Partial<HomeHeroContent> | null):
       : DEFAULT_HOME_HERO.slides.map((s) => ({ ...s }));
 
   return {
-    backgroundVideo: raw?.backgroundVideo || DEFAULT_HOME_HERO.backgroundVideo,
-    posterImage: raw?.posterImage || DEFAULT_HOME_HERO.posterImage,
+    backgroundVideo: raw?.backgroundVideo !== undefined ? raw.backgroundVideo : DEFAULT_HOME_HERO.backgroundVideo,
+    posterImage: raw?.posterImage !== undefined ? raw.posterImage : DEFAULT_HOME_HERO.posterImage,
     intervalMs:
       typeof raw?.intervalMs === 'number' && raw.intervalMs > 0
         ? raw.intervalMs
