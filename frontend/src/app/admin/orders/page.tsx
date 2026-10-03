@@ -19,7 +19,16 @@ interface Order {
   trackingId?: string;
   shippingNotes?: string;
   shippingAddress?: string;
+  shippingName?: string;
   phone?: string;
+  items?: {
+    id: string;
+    quantity: number;
+    price: number;
+    product: {
+      name: string;
+    }
+  }[];
 }
 
 export default function AdminOrdersPage() {
@@ -117,10 +126,10 @@ export default function AdminOrdersPage() {
               </thead>
               <tbody className="divide-y divide-white/10 bg-transparent">
                 {orders.map(order => (
-                  <tr key={order.id} className="hover:bg-white/5 transition-colors duration-200">
+                  <tr key={order.id} onClick={() => openUpdateModal(order)} className="hover:bg-white/5 transition-colors duration-200 cursor-pointer">
                     <td className="px-6 py-4 font-medium text-white tracking-wider">#{order.id.slice(-6)}</td>
                     <td className="px-6 py-4">
-                      <div className="text-white font-medium">{order.user?.name || 'Guest'}</div>
+                      <div className="text-white font-medium">{order.shippingName || order.user?.name || 'Guest'}</div>
                       <div className="text-sm text-gray-400">{order.user?.email || order.userEmail}</div>
                     </td>
                     <td className="px-6 py-4 text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</td>
@@ -131,8 +140,8 @@ export default function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <button onClick={() => openUpdateModal(order)} className="text-gray-400 hover:text-white transition-colors text-sm font-medium tracking-wide">
-                        Update Status
+                      <button onClick={(e) => { e.stopPropagation(); openUpdateModal(order); }} className="text-gray-400 hover:text-white transition-colors text-sm font-medium tracking-wide">
+                        View Details
                       </button>
                     </td>
                   </tr>
@@ -152,10 +161,36 @@ export default function AdminOrdersPage() {
 
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[#141414] border border-white/10 p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold mb-6 text-white tracking-tight">Update Order #{selectedOrder.id.slice(-6)}</h2>
+          <div className="bg-[#141414] border border-white/10 p-8 w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl font-bold mb-6 text-white tracking-tight">Order Details #{selectedOrder.id.slice(-6)}</h2>
             
             <div className="space-y-5">
+              <div className="bg-white/5 p-4 border border-white/10 text-sm">
+                <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Customer Info</p>
+                <p className="text-white font-medium">{selectedOrder.shippingName || selectedOrder.user?.name || 'Guest'}</p>
+                <p className="text-gray-400">{selectedOrder.user?.email || selectedOrder.userEmail}</p>
+                {selectedOrder.phone && (
+                  <p className="text-blue-400 font-mono mt-1">📞 {selectedOrder.phone}</p>
+                )}
+              </div>
+              {selectedOrder.items && selectedOrder.items.length > 0 && (
+                <div className="bg-white/5 p-4 border border-white/10 text-sm">
+                  <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Order Items</p>
+                  <ul className="space-y-2">
+                    {selectedOrder.items.map(item => (
+                      <li key={item.id} className="flex justify-between text-gray-300">
+                        <span>{item.quantity}x {item.product?.name || 'Unknown Product'}</span>
+                        <span className="text-white">₹{item.price * item.quantity}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 pt-3 border-t border-white/10 flex justify-between font-bold text-white">
+                    <span>Total</span>
+                    <span>₹{selectedOrder.amount}</span>
+                  </div>
+                </div>
+              )}
+
               {selectedOrder.shippingAddress && (
                 <div className="bg-white/5 p-4 border border-white/10 text-sm">
                   <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Shipping Details</p>

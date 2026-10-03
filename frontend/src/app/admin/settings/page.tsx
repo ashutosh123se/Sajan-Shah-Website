@@ -205,14 +205,10 @@ export default function AdminSettingsPage() {
                 </select>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700">API Key / Client ID</label>
-                <input type="text" value={paymentSettings.apiKey} onChange={e => setPaymentSettings({...paymentSettings, apiKey: e.target.value})} className="mt-1 w-full p-2 border rounded-md" />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">API Secret</label>
-                <input type="password" value={paymentSettings.apiSecret} onChange={e => setPaymentSettings({...paymentSettings, apiSecret: e.target.value})} className="mt-1 w-full p-2 border rounded-md" />
+              <div className="p-4 bg-blue-50/10 border border-blue-500/20 rounded-md">
+                <p className="text-sm text-blue-400">
+                  For security reasons, API Keys and Secrets are securely managed via the server's environment configuration (.env file) and cannot be viewed or edited from the admin dashboard.
+                </p>
               </div>
             </div>
           )}

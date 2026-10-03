@@ -2,10 +2,25 @@
 import React from 'react';
 import { FileCheck } from 'lucide-react';
 
-interface DownloadDoc {
-  t: string;
-  s: string;
-  c: string;
+/* Accept both the original shorthand keys (t, s, c, file) AND the
+   CMS admin keys (title, size, color, fileUrl) so downloads work
+   regardless of which format is stored in the database. */
+interface DownloadDocRaw {
+  t?: string;
+  s?: string;
+  c?: string;
+  file?: string;
+  title?: string;
+  size?: string;
+  color?: string;
+  fileUrl?: string;
+  url?: string;
+}
+
+interface NormalizedDoc {
+  title: string;
+  size: string;
+  color: string;
   file: string;
 }
 
@@ -13,22 +28,61 @@ interface DownloadCentreProps {
   content?: {
     heading?: string;
     paragraph?: string;
-    reports?: DownloadDoc[];
+    reports?: DownloadDocRaw[];
   };
 }
 
-const DEFAULT_REPORTS: DownloadDoc[] = [
-  { t: "Annual Impact Report", s: "4.2 MB", c: "bg-[#f26522]", file: "/Live to Inspire.pdf" },
-  { t: "ESG Compliance Report", s: "2.1 MB", c: "bg-gray-700", file: "#" }
+const DEFAULT_REPORTS: NormalizedDoc[] = [
+  { title: "Annual Impact Report", size: "4.2 MB", color: "bg-[#f26522]", file: "/Live to Inspire.pdf" },
+  { title: "ESG Compliance Report", size: "2.1 MB", color: "bg-gray-700", file: "#" }
 ];
+
+/** Normalize CMS/default report data to a consistent shape */
+function normalizeReport(raw: DownloadDocRaw): NormalizedDoc {
+  return {
+    title: raw.title || raw.t || 'Report',
+    size:  raw.size  || raw.s || '',
+    color: raw.color || raw.c || 'bg-[#f26522]',
+    file:  raw.fileUrl || raw.file || raw.url || '#',
+  };
+}
 
 export const DownloadCentre: React.FC<DownloadCentreProps> = ({ content }) => {
   const heading = content?.heading || "OUR EXECUTION REPORT";
   const paragraph = content?.paragraph || "We maintain absolute transparency in our social operations. Access our audit-ready impact reports and ESG compliance documents below. All data is verified by third-party auditors.";
-  const reports: DownloadDoc[] =
-    Array.isArray(content?.reports) && content!.reports!.length > 0
-      ? content!.reports!
-      : DEFAULT_REPORTS;
+
+  const rawReports = Array.isArray(content?.reports) && content!.reports!.length > 0
+    ? content!.reports!
+    : null;
+
+  const reports: NormalizedDoc[] = rawReports
+    ? rawReports.map(normalizeReport)
+    : DEFAULT_REPORTS;
+
+  /** Programmatic download that works for both same-origin and cross-origin files */
+  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>, doc: NormalizedDoc) => {
+    const fileUrl = doc.file;
+    if (!fileUrl || fileUrl === '#') return;
+
+    e.preventDefault();
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      // Extract filename from URL path
+      const fileName = decodeURIComponent(fileUrl.split('/').pop() || `${doc.title}.pdf`);
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // Fallback: open in a new tab so user can save manually
+      window.open(fileUrl, '_blank');
+    }
+  };
 
   return (
     <section className="py-24 bg-black">
@@ -41,11 +95,16 @@ export const DownloadCentre: React.FC<DownloadCentreProps> = ({ content }) => {
             </p>
             <div className="flex flex-wrap gap-6">
               {reports.map((doc, idx) => (
-                <a key={idx} href={doc.file} download className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-5 rounded-2xl transition-all group cursor-pointer w-full sm:w-auto">
-                  <span className={`w-10 h-10 rounded-lg ${doc.c || 'bg-[#f26522]'} flex items-center justify-center text-[10px] font-bold group-hover:scale-110 transition-transform shrink-0`}>PDF</span>
+                <a
+                  key={idx}
+                  href={doc.file}
+                  onClick={(e) => handleDownload(e, doc)}
+                  className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-5 rounded-2xl transition-all group cursor-pointer w-full sm:w-auto"
+                >
+                  <span className={`w-10 h-10 rounded-lg ${doc.color} flex items-center justify-center text-[10px] font-bold group-hover:scale-110 transition-transform shrink-0`}>PDF</span>
                   <div className="text-left">
-                    <div className="text-[10px] font-bold uppercase tracking-wider mb-1">{doc.t}</div>
-                    <div className="text-[10px] text-gray-500 italic uppercase">Download ({doc.s})</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider mb-1">{doc.title}</div>
+                    <div className="text-[10px] text-gray-500 italic uppercase">Download{doc.size ? ` (${doc.size})` : ''}</div>
                   </div>
                 </a>
               ))}

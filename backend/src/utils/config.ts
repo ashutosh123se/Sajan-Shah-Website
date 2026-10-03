@@ -6,11 +6,10 @@ export const getConfig = async (group: string, key: string, envVar?: string, def
 };
 
 export const getPaymentConfig = async () => {
-  const payment = await getSettingsGroup('payment');
   return {
-    keyId: payment.apiKey || process.env.RAZORPAY_KEY_ID,
-    keySecret: payment.apiSecret || process.env.RAZORPAY_KEY_SECRET,
-    currency: payment.currency || process.env.RAZORPAY_CURRENCY || 'INR'
+    keyId: process.env.RAZORPAY_KEY_ID,
+    keySecret: process.env.RAZORPAY_KEY_SECRET,
+    currency: process.env.RAZORPAY_CURRENCY || 'INR'
   };
 };
 

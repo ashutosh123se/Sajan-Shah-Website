@@ -22,6 +22,8 @@ export interface SajanEvent {
   isFree?: boolean;
   price?: number;
   showOnCard?: boolean;
+  description?: string;
+  gallery?: string[];
 }
 
 export const currentDate = new Date();

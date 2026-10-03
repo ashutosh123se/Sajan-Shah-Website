@@ -139,6 +139,8 @@ content: (() => {
       heading: 'CONTRIBUTION PHILOSOPHY',
       quote: 'True leadership is measured by the lives you uplift, not the titles you hold.',
       boxQuote: 'Impact is not an event. It is a daily discipline.',
+      videoUrl: '/sajan_intro.mp4',
+      imageUrl: '/CONTRIBUTIONS SIR.jpeg',
     },
   },
   {
@@ -150,7 +152,7 @@ content: (() => {
       heading: 'IMPACT REPORTS',
       subHeading: 'Verification Centre',
       reports: [
-        { title: 'Annual Impact Report 2024', url: '#' },
+        { title: 'Annual Impact Report 2024', fileUrl: '/Live to Inspire.pdf' },
       ],
     },
   },

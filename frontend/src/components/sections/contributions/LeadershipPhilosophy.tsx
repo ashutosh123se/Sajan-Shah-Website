@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, X } from 'lucide-react';
 
 interface LeadershipPhilosophyProps {
   content?: {
@@ -10,6 +10,8 @@ interface LeadershipPhilosophyProps {
     quote?: string;
     boxQuote?: string;
     pillars?: string[];
+    videoUrl?: string;
+    imageUrl?: string;
   };
 }
 
@@ -25,6 +27,10 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
   const quote = content?.quote || "Social responsibility is not an option; it's a debt we owe to the future. Our contribution model, aligned with the UNSDG 2030 India vision, is built on three pillars: Neuroscience, Sustainable Education, and Global Empowerment.";
   const boxQuote = content?.boxQuote || "Real education is giving back.";
   const pillars = content?.pillars || DEFAULT_PILLARS;
+  const videoUrl = content?.videoUrl || '';
+  const imageUrl = content?.imageUrl || '/CONTRIBUTIONS SIR.jpeg';
+
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   const renderHeading = () => {
     if (heading.includes('<br') || heading.includes('\n')) {
@@ -40,52 +46,92 @@ export const LeadershipPhilosophy: React.FC<LeadershipPhilosophyProps> = ({ cont
     return boxQuote;
   };
 
+  const handlePlayClick = () => {
+    if (videoUrl) {
+      setIsVideoOpen(true);
+    }
+  };
+
   return (
-    <section className="py-32 bg-black">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-20 items-center">
-        <div className="lg:w-1/2">
-          <div className="relative group">
-            <img
-              src="/CONTRIBUTIONS SIR.jpeg"
-              alt="Sajan Shah"
-              className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl"
-            />
-            <div className="absolute -bottom-10 -right-10 bg-[#f26522] p-10 rounded-[3rem] hidden md:block shadow-2xl">
-              <div className="text-white text-2xl font-bold tracking-tighter leading-none italic">
-                "{renderBoxQuote()}"
+    <>
+      <section className="py-32 bg-black">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-20 items-center">
+          <div className="lg:w-1/2">
+            <div className="relative group">
+              <img
+                src={imageUrl}
+                alt="Sajan Shah"
+                className="rounded-[3rem] grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-2xl"
+              />
+              <div className="absolute -bottom-10 -right-10 bg-[#f26522] p-10 rounded-[3rem] hidden md:block shadow-2xl">
+                <div className="text-white text-2xl font-bold tracking-tighter leading-none italic">
+                  "{renderBoxQuote()}"
+                </div>
               </div>
             </div>
+          </div>
+          <div className="lg:w-1/2">
+            <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-sm mb-4">{subHeading}</h2>
+            <h3 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase leading-none">
+              {renderHeading()}
+            </h3>
+            <p className="text-gray-300 text-lg font-light leading-relaxed mb-8 italic border-l-2 border-[#f26522] pl-8">
+              "{quote}"
+            </p>
+            <div className="space-y-4 text-gray-500 font-light mb-12">
+              {pillars.map((p, i) => (
+                <div key={i} className="flex items-center gap-4 group">
+                  <span className="w-2 h-2 rounded-full bg-gray-800 group-hover:bg-[#f26522] transition-colors"></span>
+                  <span className="group-hover:text-white transition-colors">{p}</span>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handlePlayClick}
+              className={`flex items-center gap-6 group bg-transparent border-none text-left ${videoUrl ? 'cursor-pointer' : 'cursor-default opacity-50'}`}
+              disabled={!videoUrl}
+            >
+              <div className="w-20 h-20 rounded-full border border-gray-800 flex items-center justify-center group-hover:bg-[#f26522] group-hover:border-[#f26522] transition-all shadow-xl">
+                <div className="text-white group-hover:scale-125 transition-transform">
+                  <Play size={24} fill="white" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-white uppercase font-bold text-xs tracking-widest mb-1">Watch Leadership Message</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Sajan Shah - Founder</div>
+              </div>
+            </button>
           </div>
         </div>
-        <div className="lg:w-1/2">
-          <h2 className="text-[#f26522] font-bold uppercase tracking-[0.3em] text-sm mb-4">{subHeading}</h2>
-          <h3 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase leading-none">
-            {renderHeading()}
-          </h3>
-          <p className="text-gray-300 text-lg font-light leading-relaxed mb-8 italic border-l-2 border-[#f26522] pl-8">
-            "{quote}"
-          </p>
-          <div className="space-y-4 text-gray-500 font-light mb-12">
-            {pillars.map((p, i) => (
-              <div key={i} className="flex items-center gap-4 group">
-                <span className="w-2 h-2 rounded-full bg-gray-800 group-hover:bg-[#f26522] transition-colors"></span>
-                <span className="group-hover:text-white transition-colors">{p}</span>
-              </div>
-            ))}
-          </div>
-          <button className="flex items-center gap-6 group bg-transparent border-none text-left cursor-pointer">
-            <div className="w-20 h-20 rounded-full border border-gray-800 flex items-center justify-center group-hover:bg-[#f26522] group-hover:border-[#f26522] transition-all shadow-xl">
-              <div className="text-white group-hover:scale-125 transition-transform">
-                <Play size={24} fill="white" />
-              </div>
-            </div>
-            <div className="text-left">
-              <div className="text-white uppercase font-bold text-xs tracking-widest mb-1">Watch Leadership Message</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Sajan Shah - Founder</div>
-            </div>
+      </section>
+
+      {/* Video Modal */}
+      {isVideoOpen && videoUrl && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setIsVideoOpen(false)}
+        >
+          <button
+            onClick={() => setIsVideoOpen(false)}
+            className="absolute top-6 right-6 text-white/70 hover:text-white bg-transparent border-none cursor-pointer z-10"
+          >
+            <X size={32} />
           </button>
+          <div
+            className="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <video
+              src={videoUrl}
+              className="w-full h-full object-contain bg-black"
+              controls
+              autoPlay
+              playsInline
+            />
+          </div>
         </div>
-      </div>
-    </section>
+      )}
+    </>
   );
 };
+

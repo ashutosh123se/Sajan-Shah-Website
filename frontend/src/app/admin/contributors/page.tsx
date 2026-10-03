@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Save, ChevronDown, ChevronUp, RefreshCw, AlertCircle, Plus, Trash2, Users, Layers, Layout } from 'lucide-react';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { VideoUploadField } from '@/components/admin/VideoUploadField';
 import { MediaImage } from '@/components/common/MediaImage';
 import { isImageFieldKey } from '@/lib/adminImageUpload';
 import { normalizeCmsContent, cmsContentEntries } from '@/lib/normalizeCmsContent';
@@ -70,8 +71,16 @@ const FIELD_LABELS: Record<string, string> = {
   models: 'Partnership Cards (JSON Array)',
   reports: 'Verification PDF Downloads (JSON Array)',
   logoUrl: 'Partner Logos Banner Image',
-  photos: 'Visual Gallery Slides (JSON Array)'
+  photos: 'Visual Gallery Slides (JSON Array)',
+  videoUrl: '🎬 Leadership Video (Upload MP4)',
+  imageUrl: '📸 Section Feature Image',
 };
+
+/** True when a CMS field key represents a video upload. */
+function isVideoFieldKey(key: string): boolean {
+  const k = key.toLowerCase();
+  return k === 'videourl' || k === 'videosrc' || (k.includes('video') && k.includes('url'));
+}
 
 const getFieldLabel = (key: string) => {
   return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase());
@@ -621,8 +630,9 @@ export default function AdminContributorsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {cmsContentEntries(section.content).map(([key, value]: [string, any]) => {
                         const isArrayOrObject = typeof value === 'object';
-                        const isImage = !isArrayOrObject && isImageFieldKey(key);
-                        const isLongText = value && !isArrayOrObject && !isImage && value.toString().length > 60;
+                        const isVideo = !isArrayOrObject && isVideoFieldKey(key);
+                        const isImage = !isArrayOrObject && !isVideo && isImageFieldKey(key);
+                        const isLongText = value && !isArrayOrObject && !isImage && !isVideo && value.toString().length > 60;
 
                         if (isArrayOrObject) {
                           if (key === 'stats') {
@@ -940,6 +950,16 @@ export default function AdminContributorsPage() {
                                           rows={2}
                                         />
                                       </div>
+                                      <div>
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Link URL (Optional)</label>
+                                        <input
+                                          type="text"
+                                          value={item.linkUrl || ''}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'linkUrl', e.target.value)}
+                                          placeholder="https://example.com"
+                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                        />
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
@@ -990,7 +1010,7 @@ export default function AdminContributorsPage() {
                                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">Execution PDF Reports</h4>
                                   <button
                                     type="button"
-                                    onClick={() => handleAddArrayItem(section.id, key, { title: '', size: '' })}
+                                    onClick={() => handleAddArrayItem(section.id, key, { title: '', size: '', fileUrl: '/Live to Inspire.pdf', color: 'bg-[#f26522]' })}
                                     className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1 rounded-lg border-none cursor-pointer"
                                   >
                                     + Add Report
@@ -1010,16 +1030,27 @@ export default function AdminContributorsPage() {
                                         <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Report Title</label>
                                         <input
                                           type="text"
-                                          value={item.title || ''}
+                                          value={item.title || item.t || ''}
                                           onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'title', e.target.value)}
                                           className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                         />
                                       </div>
                                       <div>
+                                        <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">PDF File URL</label>
+                                        <input
+                                          type="text"
+                                          value={item.fileUrl || item.file || ''}
+                                          onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'fileUrl', e.target.value)}
+                                          className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
+                                          placeholder="/Live to Inspire.pdf or full URL"
+                                        />
+                                        <p className="text-[9px] text-zinc-600 mt-1">Path to the PDF file (e.g. /Live to Inspire.pdf)</p>
+                                      </div>
+                                      <div>
                                         <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">File Size Tag</label>
                                         <input
                                           type="text"
-                                          value={item.size || ''}
+                                          value={item.size || item.s || ''}
                                           onChange={(e) => handleArrayFieldChange(section.id, key, idx, 'size', e.target.value)}
                                           className="w-full bg-zinc-950 border border-zinc-800 text-white rounded p-2 text-xs focus:ring-1 focus:ring-[#f26522] outline-none"
                                           placeholder="e.g. 4.2 MB"
@@ -1091,11 +1122,18 @@ export default function AdminContributorsPage() {
                         }
 
                         return (
-                          <div key={key} className={isLongText || isImage ? 'col-span-2 space-y-1' : 'space-y-1'}>
+                          <div key={key} className={isLongText || isImage || isVideo ? 'col-span-2 space-y-1' : 'space-y-1'}>
                             <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
                               {getFieldLabel(key)}
                             </label>
-                            {isImage ? (
+                            {isVideo ? (
+                              <VideoUploadField
+                                label=""
+                                value={value || ''}
+                                folder="contributions"
+                                onChange={(url) => handleSectionContentChange(section.id, key, url)}
+                              />
+                            ) : isImage ? (
                               <ImageUploadField
                                 label=""
                                 value={value || ''}

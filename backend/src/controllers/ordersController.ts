@@ -115,6 +115,24 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
     
+    // Validate that all products exist before creating the order
+    const productIds = items.map((item: any) => item.productId);
+    const existingProducts = await db.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, name: true, price: true }
+    });
+    const existingProductIds = new Set(existingProducts.map(p => p.id));
+    const missingIds = productIds.filter((pid: string) => !existingProductIds.has(pid));
+
+    if (missingIds.length > 0) {
+      console.error('Order contains invalid productIds:', missingIds);
+      return sendError(
+        res,
+        `One or more products in your cart are no longer available. Please refresh the page and try again.`,
+        400
+      );
+    }
+
     const order = await db.order.create({
       data: {
         userEmail: user.email,
@@ -123,6 +141,7 @@ export const createOrder = async (req: Request, res: Response) => {
         razorpayOrderId: rzpOrderId,
         status: orderStatus,
         paymentMethod,
+        shippingName: userName || user.name,
         shippingAddress,
         phone,
         items: {
@@ -192,7 +211,15 @@ export const verifyPayment = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await db.order.findMany({ include: { items: true, user: true } });
+    const orders = await db.order.findMany({
+      include: {
+        items: {
+          include: { product: true }
+        },
+        user: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
     sendSuccess(res, { orders });
   } catch (error) {
     console.error('Get orders error:', error);

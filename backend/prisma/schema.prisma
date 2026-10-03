@@ -154,6 +154,7 @@ model Order {
   status          OrderStatus @default(PENDING)
   paymentMethod   String      @default("RAZORPAY")
   trackingId      String?
+  shippingName    String?
   shippingNotes   String?   @db.Text
   shippingAddress String?   @db.Text
   phone           String?

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { SajanEvent, currentDate } from './eventsData';
 import { MediaImage } from '@/components/common/MediaImage';
@@ -20,6 +20,7 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
   const [categoryFilter, setCategoryFilter] = useState('');
   const [formatFilter, setFormatFilter] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('');
+  const [selectedPastEvent, setSelectedPastEvent] = useState<SajanEvent | null>(null);
 
   // Calendar source: upcoming + past (so months can show history)
   const calendarEvents = useMemo(() => {
@@ -405,10 +406,10 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                     </div>
                     {event.isPast ? (
                       <Button
-                        onClick={() => document.getElementById('past-events')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => setSelectedPastEvent(event)}
                         className="w-full bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10"
                       >
-                        View in Past Events
+                        View Event Details
                       </Button>
                     ) : (
                       <Button
@@ -431,6 +432,101 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
           </div>
         )}
       </section>
+
+      {/* Past Event Details Modal */}
+      {selectedPastEvent && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[100] p-4 md:p-8">
+          <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button 
+              onClick={() => setSelectedPastEvent(null)}
+              className="absolute top-6 right-6 p-2 bg-black/50 hover:bg-white/10 rounded-full transition-colors z-10 border border-white/10"
+            >
+              <X size={24} className="text-white" />
+            </button>
+
+            <div className="flex flex-col md:flex-row">
+              {/* Image Section */}
+              <div className="md:w-5/12 h-64 md:h-auto relative bg-zinc-900 border-r border-white/10 shrink-0">
+                {selectedPastEvent.thumbnail ? (
+                  <MediaImage src={selectedPastEvent.thumbnail} alt={selectedPastEvent.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-zinc-700 font-bold uppercase tracking-widest bg-zinc-950">
+                    No Image
+                  </div>
+                )}
+                <div className="absolute top-6 left-6 flex flex-col gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-black/80 text-white border border-white/20 backdrop-blur-md">
+                    Past Event
+                  </span>
+                  {selectedPastEvent.tag && (
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full text-white border border-white/20 backdrop-blur-md ${selectedPastEvent.colorCode.split(' ')[0]}`}>
+                      {selectedPastEvent.tag}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Details Section */}
+              <div className="md:w-7/12 p-8 md:p-12 flex flex-col">
+                <div className="flex items-center mb-6">
+                  <div className={`w-3 h-3 rounded-full mr-3 ${selectedPastEvent.colorCode.split(' ')[0]}`}></div>
+                  <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                    {selectedPastEvent.format} - {selectedPastEvent.category}
+                  </span>
+                </div>
+
+                <h2 className="text-3xl md:text-5xl font-black mb-6 uppercase tracking-tighter leading-none">{selectedPastEvent.title}</h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 py-6 border-y border-white/10 text-sm">
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Date & Time</span>
+                    <div className="flex items-start text-white">
+                      <CalendarIcon className="w-4 h-4 mr-3 mt-0.5 text-brand-orange" />
+                      <div>
+                        <div>{format(selectedPastEvent.date, 'dd MMMM yyyy')}</div>
+                        <div className="text-gray-400">{format(selectedPastEvent.date, 'HH:mm')} {selectedPastEvent.endDate ? `- ${format(selectedPastEvent.endDate, 'HH:mm')}` : ''}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Location</span>
+                    <div className="flex items-start text-white">
+                      <MapPin className="w-4 h-4 mr-3 mt-0.5 text-brand-orange" />
+                      <div>{selectedPastEvent.city}</div>
+                    </div>
+                  </div>
+                  {selectedPastEvent.topic && (
+                    <div>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Topic</span>
+                      <div className="text-white">{selectedPastEvent.topic}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-grow">
+                  <span className="text-[10px] text-brand-orange uppercase tracking-widest font-bold block mb-3">Event Overview</span>
+                  <p className="text-gray-300 font-light leading-relaxed text-lg">
+                    {selectedPastEvent.description || "Thank you for making this event a grand success! Stay tuned to our calendar for upcoming events similar to this one, and be sure to register early."}
+                  </p>
+                </div>
+
+                {selectedPastEvent.gallery && selectedPastEvent.gallery.length > 0 && (
+                  <div className="mt-8 pt-8 border-t border-white/10">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-4">Event Gallery</span>
+                    <div className="flex gap-3 overflow-x-auto pb-4 snap-x">
+                      {selectedPastEvent.gallery.map((img, i) => (
+                        <div key={i} className="w-32 h-24 shrink-0 rounded-lg overflow-hidden border border-white/10 snap-start">
+                          <MediaImage src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
