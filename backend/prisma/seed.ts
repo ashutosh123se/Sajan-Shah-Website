@@ -188,29 +188,23 @@ function runPageSeedScript(scriptName: string) {
 
 async function seedPageSections() {
   for (const section of eventsPageSections) {
-    await prisma.eventsPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
+    const existing = await prisma.eventsPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing eventsPageSection: ${section.key}`);
+      continue;
+    }
+    await prisma.eventsPageSection.create({ data: section });
+    console.log(`  ✅ Created eventsPageSection: ${section.key}`);
   }
 
   for (const section of contributionsPageSections) {
-    await prisma.contributionsPageSection.upsert({
-      where: { key: section.key },
-      update: {
-        title: section.title,
-        content: section.content,
-        order: section.order,
-        isActive: section.isActive,
-      },
-      create: section,
-    });
+    const existing = await prisma.contributionsPageSection.findUnique({ where: { key: section.key } });
+    if (existing) {
+      console.log(`  ⏭️ Skip existing contributionsPageSection: ${section.key}`);
+      continue;
+    }
+    await prisma.contributionsPageSection.create({ data: section });
+    console.log(`  ✅ Created contributionsPageSection: ${section.key}`);
   }
 
   const scripts = [

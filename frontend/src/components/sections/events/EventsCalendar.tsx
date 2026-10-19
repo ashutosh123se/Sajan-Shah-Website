@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, CheckCircle2, IndianRupee, ChevronLeft, ChevronRight, X, ExternalLink } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { SajanEvent, currentDate } from './eventsData';
 import { MediaImage } from '@/components/common/MediaImage';
+import { resolveMediaUrl } from '@/lib/resolveMediaUrl';
 
 interface EventsCalendarProps {
   events: SajanEvent[];
@@ -22,9 +23,9 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
   const [availabilityFilter, setAvailabilityFilter] = useState('');
   const [selectedPastEvent, setSelectedPastEvent] = useState<SajanEvent | null>(null);
 
-  // Calendar source: upcoming + past (so months can show history)
+  // Calendar source: upcoming + past (latest on top)
   const calendarEvents = useMemo(() => {
-    return [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
+    return [...events].sort((a, b) => b.date.getTime() - a.date.getTime());
   }, [events]);
 
   const filteredEvents = useMemo(() => {
@@ -354,10 +355,20 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                   className={`bg-[#111] border border-white/10 rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 ${event.isPast ? 'opacity-90' : ''}`}
                 >
                   {event.thumbnail && (
-                    <div className="h-44 overflow-hidden relative">
-                      <MediaImage src={event.thumbnail} alt={event.title} className="w-full h-full object-cover" />
+                    <div className="h-48 overflow-hidden relative bg-zinc-950 flex items-center justify-center">
+                      <MediaImage
+                        src={event.thumbnail}
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-110 pointer-events-none"
+                      />
+                      <MediaImage
+                        src={event.thumbnail}
+                        alt={event.title}
+                        className="relative z-10 w-full h-full object-contain p-2"
+                      />
                       {event.isPast && (
-                        <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/80 text-zinc-300 border border-white/20">
+                        <span className="absolute top-3 right-3 z-20 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/80 text-zinc-300 border border-white/20 backdrop-blur-md">
                           Past event
                         </span>
                       )}
@@ -390,8 +401,18 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
                         {format(event.date, 'dd MMM yyyy, HH:mm')}{' '}
                         {event.endDate && `- ${format(event.endDate, 'dd MMM yyyy, HH:mm')}`}
                       </div>
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-3 text-brand-orange" /> {event.city}
+                      <div className="flex items-start">
+                        <MapPin className="w-4 h-4 mr-3 mt-0.5 text-brand-orange shrink-0" />
+                        <div>
+                          <div className="font-medium text-white">
+                            {event.city}{event.venue ? ` · ${event.venue}` : ''}
+                          </div>
+                          {event.venueAddress && (
+                            <div className="text-xs text-gray-400 mt-1 leading-relaxed">
+                              {event.venueAddress}
+                            </div>
+                          )}
+                        </div>
                       </div>
                       {!event.isPast && (
                         <>
@@ -435,87 +456,135 @@ export default function EventsCalendar({ events, allEvents }: EventsCalendarProp
 
       {/* Past Event Details Modal */}
       {selectedPastEvent && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[100] p-4 md:p-8">
-          <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
+        <div 
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[100] p-4 md:p-8"
+          onClick={() => setSelectedPastEvent(null)}
+        >
+          <div 
+            className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button 
               onClick={() => setSelectedPastEvent(null)}
-              className="absolute top-6 right-6 p-2 bg-black/50 hover:bg-white/10 rounded-full transition-colors z-10 border border-white/10"
+              className="absolute top-6 right-6 p-2 bg-black/60 hover:bg-white/10 rounded-full transition-colors z-20 border border-white/10"
+              aria-label="Close modal"
             >
               <X size={24} className="text-white" />
             </button>
 
             <div className="flex flex-col md:flex-row">
               {/* Image Section */}
-              <div className="md:w-5/12 h-64 md:h-auto relative bg-zinc-900 border-r border-white/10 shrink-0">
+              <div className="md:w-1/2 min-h-[320px] md:min-h-[500px] relative bg-zinc-950 flex items-center justify-center p-4 sm:p-6 md:p-8 border-b md:border-b-0 md:border-r border-white/10 shrink-0 overflow-hidden">
                 {selectedPastEvent.thumbnail ? (
-                  <MediaImage src={selectedPastEvent.thumbnail} alt={selectedPastEvent.title} className="w-full h-full object-cover" />
+                  <>
+                    {/* Ambient backdrop glow so no ugly borders */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      <MediaImage
+                        src={selectedPastEvent.thumbnail}
+                        alt=""
+                        aria-hidden="true"
+                        className="w-full h-full object-cover blur-3xl opacity-35 scale-125"
+                      />
+                      <div className="absolute inset-0 bg-black/50" />
+                    </div>
+
+                    {/* Contained image - complete poster visible without any cut-off */}
+                    <MediaImage
+                      src={selectedPastEvent.thumbnail}
+                      alt={selectedPastEvent.title}
+                      className="relative z-10 w-auto h-auto max-w-full max-h-[520px] object-contain rounded-2xl shadow-2xl border border-white/10"
+                    />
+
+                    {/* Quick link to view full size poster in new tab */}
+                    <a
+                      href={resolveMediaUrl(selectedPastEvent.thumbnail) || selectedPastEvent.thumbnail}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black text-white/80 hover:text-white text-xs border border-white/15 backdrop-blur-md transition-all shadow-lg hover:scale-105"
+                      title="View full size poster"
+                    >
+                      <ExternalLink size={13} />
+                      <span>Full Size</span>
+                    </a>
+                  </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-700 font-bold uppercase tracking-widest bg-zinc-950">
+                  <div className="w-full h-full min-h-[300px] flex items-center justify-center text-zinc-700 font-bold uppercase tracking-widest bg-zinc-950">
                     No Image
                   </div>
                 )}
-                <div className="absolute top-6 left-6 flex flex-col gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-black/80 text-white border border-white/20 backdrop-blur-md">
-                    Past Event
-                  </span>
-                  {selectedPastEvent.tag && (
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full text-white border border-white/20 backdrop-blur-md ${selectedPastEvent.colorCode.split(' ')[0]}`}>
-                      {selectedPastEvent.tag}
-                    </span>
-                  )}
-                </div>
               </div>
 
               {/* Details Section */}
-              <div className="md:w-7/12 p-8 md:p-12 flex flex-col">
-                <div className="flex items-center mb-6">
-                  <div className={`w-3 h-3 rounded-full mr-3 ${selectedPastEvent.colorCode.split(' ')[0]}`}></div>
-                  <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                    {selectedPastEvent.format} - {selectedPastEvent.category}
-                  </span>
-                </div>
+              <div className="md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-black/80 text-white border border-white/20 backdrop-blur-md">
+                      Past Event
+                    </span>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full text-white border border-white/20 backdrop-blur-md ${selectedPastEvent.colorCode.split(' ')[0]}`}>
+                      {selectedPastEvent.format} • {selectedPastEvent.category}
+                    </span>
+                    {selectedPastEvent.tag && selectedPastEvent.tag.length <= 30 && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/10 text-white border border-white/10">
+                        {selectedPastEvent.tag}
+                      </span>
+                    )}
+                  </div>
 
-                <h2 className="text-3xl md:text-5xl font-black mb-6 uppercase tracking-tighter leading-none">{selectedPastEvent.title}</h2>
+                  <h2 className="text-2xl md:text-4xl font-black mb-6 uppercase tracking-tight leading-tight text-white">
+                    {selectedPastEvent.title}
+                  </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 py-6 border-y border-white/10 text-sm">
-                  <div>
-                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Date & Time</span>
-                    <div className="flex items-start text-white">
-                      <CalendarIcon className="w-4 h-4 mr-3 mt-0.5 text-brand-orange" />
-                      <div>
-                        <div>{format(selectedPastEvent.date, 'dd MMMM yyyy')}</div>
-                        <div className="text-gray-400">{format(selectedPastEvent.date, 'HH:mm')} {selectedPastEvent.endDate ? `- ${format(selectedPastEvent.endDate, 'HH:mm')}` : ''}</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 py-6 border-y border-white/10 text-sm">
+                    <div>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Date & Time</span>
+                      <div className="flex items-start text-white">
+                        <CalendarIcon className="w-4 h-4 mr-3 mt-0.5 text-brand-orange shrink-0" />
+                        <div>
+                          <div className="font-medium">{format(selectedPastEvent.date, 'dd MMMM yyyy')}</div>
+                          <div className="text-gray-400 text-xs mt-0.5">
+                            {format(selectedPastEvent.date, 'HH:mm')} {selectedPastEvent.endDate ? `- ${format(selectedPastEvent.endDate, 'HH:mm')}` : ''}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Location</span>
-                    <div className="flex items-start text-white">
-                      <MapPin className="w-4 h-4 mr-3 mt-0.5 text-brand-orange" />
-                      <div>{selectedPastEvent.city}</div>
-                    </div>
-                  </div>
-                  {selectedPastEvent.topic && (
                     <div>
-                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Topic</span>
-                      <div className="text-white">{selectedPastEvent.topic}</div>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-2">Location</span>
+                      <div className="flex items-start text-white">
+                        <MapPin className="w-4 h-4 mr-3 mt-0.5 text-brand-orange shrink-0" />
+                        <div>
+                          <div className="font-medium">{selectedPastEvent.city}</div>
+                          {selectedPastEvent.venue && (
+                            <div className="text-xs text-gray-400 mt-1 leading-snug">{selectedPastEvent.venue}</div>
+                          )}
+                          {selectedPastEvent.venueAddress && (
+                            <div className="text-xs text-gray-400 mt-1 leading-relaxed">{selectedPastEvent.venueAddress}</div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
+                    {selectedPastEvent.topic && (
+                      <div className="sm:col-span-2">
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-1">Topic</span>
+                        <div className="text-gray-300 text-sm">{selectedPastEvent.topic}</div>
+                      </div>
+                    )}
+                  </div>
 
-                <div className="flex-grow">
-                  <span className="text-[10px] text-brand-orange uppercase tracking-widest font-bold block mb-3">Event Overview</span>
-                  <p className="text-gray-300 font-light leading-relaxed text-lg">
-                    {selectedPastEvent.description || "Thank you for making this event a grand success! Stay tuned to our calendar for upcoming events similar to this one, and be sure to register early."}
-                  </p>
+                  <div className="flex-grow">
+                    <span className="text-[10px] text-brand-orange uppercase tracking-widest font-bold block mb-3">Event Overview</span>
+                    <p className="text-gray-300 font-light leading-relaxed text-sm md:text-base">
+                      {selectedPastEvent.description || "Thank you for making this event a grand success! Stay tuned to our calendar for upcoming events similar to this one, and be sure to register early."}
+                    </p>
+                  </div>
                 </div>
 
                 {selectedPastEvent.gallery && selectedPastEvent.gallery.length > 0 && (
-                  <div className="mt-8 pt-8 border-t border-white/10">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-4">Event Gallery</span>
-                    <div className="flex gap-3 overflow-x-auto pb-4 snap-x">
+                  <div className="mt-6 pt-6 border-t border-white/10">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold block mb-3">Event Gallery</span>
+                    <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
                       {selectedPastEvent.gallery.map((img, i) => (
-                        <div key={i} className="w-32 h-24 shrink-0 rounded-lg overflow-hidden border border-white/10 snap-start">
+                        <div key={i} className="w-28 h-20 shrink-0 rounded-lg overflow-hidden border border-white/10 snap-start bg-zinc-900">
                           <MediaImage src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
                         </div>
                       ))}

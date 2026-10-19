@@ -151,8 +151,13 @@ export default function EventsWebinars({ events }: EventsWebinarsProps) {
                       <div className="font-bold text-sm text-gray-200">{format(event.date, 'HH:mm')}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Place</div>
-                      <div className="font-bold text-sm text-gray-200">{formatPlace(event)}</div>
+                      <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Place / Venue</div>
+                      <div className="font-bold text-sm text-gray-200">
+                        {event.venue ? `${event.city ? `${event.city} · ` : ''}${event.venue}` : formatPlace(event)}
+                      </div>
+                      {event.venueAddress && (
+                        <div className="text-[11px] text-gray-400 mt-0.5 leading-snug max-w-xs">{event.venueAddress}</div>
+                      )}
                     </div>
                   </div>
                 </div>

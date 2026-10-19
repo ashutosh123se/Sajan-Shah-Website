@@ -61,7 +61,7 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
   }, [words.length]);
 
   const bannerText = content?.bannerText || "This Is Not an Event.<br />It's a Transformation";
-  const mainImage = DESIGNER_MAIN_IMAGE;
+  const mainImage = content?.mainImage || DESIGNER_MAIN_IMAGE;
   const mainHeading =
     content?.mainHeading ||
     'In today’s ever-changing world, most people are trying harder… but <span class="font-bold">thinking the same.</span>';
@@ -87,11 +87,13 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
       ? content.cards.map((card, idx) => ({
           ...DESIGNER_CARDS[idx],
           ...card,
-          image: DESIGNER_CARDS[idx].image,
+          image: card.image || DESIGNER_CARDS[idx].image,
           ctaLink: card.ctaLink || DESIGNER_CARDS[idx].ctaLink,
           ctaText: card.ctaText || DESIGNER_CARDS[idx].ctaText,
         }))
-      : DESIGNER_CARDS;
+      : (content?.cards && content.cards.length > 0)
+        ? content.cards
+        : DESIGNER_CARDS;
 
   return (
     <section className="bg-white relative pb-32 pt-1">
@@ -109,8 +111,7 @@ export const SplitHero: React.FC<SplitHeroProps> = ({ content }) => {
           <div className="lg:w-5/12 lg:sticky lg:top-32 relative group w-full self-start">
             <div className="aspect-[3/4] bg-[#0a0a0a] w-full overflow-hidden relative border border-gray-100 shadow-[20px_20px_60px_rgba(0,0,0,0.1)]">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <MediaImage
                 src={mainImage}
                 alt="Sajan Shah"
                 className="absolute inset-0 w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-105"

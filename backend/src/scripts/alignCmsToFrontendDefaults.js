@@ -100,8 +100,8 @@ async function alignCmsToFrontendDefaults() {
       });
     }
 
-    if (!content.backgroundVideo) content.backgroundVideo = '/sajan_hero.mp4';
-    if (!content.posterImage) content.posterImage = '/EVENT.png';
+    if (content.backgroundVideo === undefined) content.backgroundVideo = '/sajan_hero.mp4';
+    if (content.posterImage === undefined) content.posterImage = '';
     if (!content.intervalMs) content.intervalMs = 6000;
 
     await db.homePageSection.update({ where: { id: homeHero.id }, data: { content } });
@@ -111,8 +111,10 @@ async function alignCmsToFrontendDefaults() {
   const splitHero = await db.homePageSection.findUnique({ where: { key: 'split_hero' } });
   if (splitHero) {
     const content = parseContent(splitHero.content);
-    content.mainImage = MENTOR_PORTRAIT;
-    content.cards = [
+    if (!content.mainImage) {
+      content.mainImage = MENTOR_PORTRAIT;
+    }
+    const defaultCards = [
       {
         title: 'Webinar',
         image: '/webinar.png',
@@ -135,6 +137,18 @@ async function alignCmsToFrontendDefaults() {
         ctaLink: '/contributions',
       },
     ];
+    if (!Array.isArray(content.cards) || content.cards.length === 0) {
+      content.cards = defaultCards;
+    } else {
+      content.cards = content.cards.map((card, idx) => {
+        const def = defaultCards[idx] || {};
+        return {
+          ...def,
+          ...card,
+          image: card.image || def.image || '',
+        };
+      });
+    }
     await db.homePageSection.update({ where: { id: splitHero.id }, data: { content } });
     updated.push('home:split_hero');
   }
@@ -142,40 +156,45 @@ async function alignCmsToFrontendDefaults() {
   const brand = await db.homePageSection.findUnique({ where: { key: 'brand_writeup' } });
   if (brand) {
     const content = parseContent(brand.content);
-    content.backgroundImage = '/sajan sir.png';
-    await db.homePageSection.update({ where: { id: brand.id }, data: { content } });
-    updated.push('home:brand_writeup');
+    if (!content.backgroundImage) {
+      content.backgroundImage = '/sajan sir.png';
+      await db.homePageSection.update({ where: { id: brand.id }, data: { content } });
+      updated.push('home:brand_writeup');
+    }
   }
 
   const aboutBio = await db.aboutPageSection.findUnique({ where: { key: 'bio' } });
   if (aboutBio) {
     const content = parseContent(aboutBio.content);
-    content.image = MENTOR_PORTRAIT;
-    await db.aboutPageSection.update({ where: { id: aboutBio.id }, data: { content } });
-    updated.push('about:bio');
+    if (!content.image) {
+      content.image = MENTOR_PORTRAIT;
+      await db.aboutPageSection.update({ where: { id: aboutBio.id }, data: { content } });
+      updated.push('about:bio');
+    }
   }
 
   const movement = await db.aboutPageSection.findUnique({ where: { key: 'movement' } });
   if (movement) {
     const content = parseContent(movement.content);
-    content.row1Image1 = '/about 2.jpeg';
-    content.row1Image2 = '/about 3.jpeg';
-    content.row2Image3 = '/about 1.jpeg';
-    await db.aboutPageSection.update({ where: { id: movement.id }, data: { content } });
-    updated.push('about:movement');
+    let changed = false;
+    if (!content.row1Image1) { content.row1Image1 = '/about 2.jpeg'; changed = true; }
+    if (!content.row1Image2) { content.row1Image2 = '/about 3.jpeg'; changed = true; }
+    if (!content.row2Image3) { content.row2Image3 = '/about 1.jpeg'; changed = true; }
+    if (changed) {
+      await db.aboutPageSection.update({ where: { id: movement.id }, data: { content } });
+      updated.push('about:movement');
+    }
   }
 
   const speakingHero = await db.speakingPageSection.findUnique({ where: { key: 'hero' } });
   if (speakingHero) {
     const content = parseContent(speakingHero.content);
     content.primaryButtonText = content.primaryButtonText || 'Book Sajan to Speak →';
-    content.primaryButtonScrollTarget = '/events#book-sajan';
+    content.primaryButtonScrollTarget = content.primaryButtonScrollTarget || '/events#book-sajan';
     content.secondaryButtonText = content.secondaryButtonText || 'Virtual Training →';
-    content.secondaryButtonUrl = 'https://webinar.sajanshah.com';
+    content.secondaryButtonUrl = content.secondaryButtonUrl || 'https://webinar.sajanshah.com';
     if (!Array.isArray(content.gridImages) || content.gridImages.length === 0) {
       content.gridImages = ['/Speking Hero.jpeg'];
-    } else {
-      content.gridImages[0] = '/Speking Hero.jpeg';
     }
     await db.speakingPageSection.update({ where: { id: speakingHero.id }, data: { content } });
     updated.push('speaking:hero');

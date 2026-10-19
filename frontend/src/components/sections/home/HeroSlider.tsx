@@ -10,6 +10,7 @@ import {
   normalizeHomeHeroContent,
 } from '@/lib/homeHeroDefaults';
 import { resolveMediaUrl } from '@/lib/resolveMediaUrl';
+import { MediaImage } from '@/components/common/MediaImage';
 
 interface HeroSliderProps {
   content?: Partial<HomeHeroContent>;
@@ -33,27 +34,41 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ content }) => {
   }, [slides.length, hero.intervalMs]);
 
   const slide = slides[currentSlide] || DEFAULT_HOME_HERO.slides[0];
-  const videoSrc = resolveMediaUrl(hero.backgroundVideo) || hero.backgroundVideo;
-  const posterSrc =
-    resolveMediaUrl(slide.image) ||
-    resolveMediaUrl(hero.posterImage) ||
-    hero.posterImage ||
-    '/EVENT.png';
+
+  const slideVideo = slide.video?.trim() ? (resolveMediaUrl(slide.video) || slide.video) : '';
+  const heroVideo = hero.backgroundVideo?.trim() ? (resolveMediaUrl(hero.backgroundVideo) || hero.backgroundVideo) : '';
+
+  const slideImage = slide.image?.trim() ? (resolveMediaUrl(slide.image) || slide.image) : '';
+  const heroImage = hero.posterImage?.trim() ? (resolveMediaUrl(hero.posterImage) || hero.posterImage) : '';
+  const activeImage = slideImage || heroImage || '';
+
+  const isImageMode = hero.backgroundType === 'image' || (!slideVideo && !heroVideo);
+  const activeVideo = !isImageMode ? (slideVideo || heroVideo) : '';
 
   return (
     <section className="relative h-screen min-h-[700px] overflow-hidden bg-black flex items-center justify-center">
-      <div className="absolute inset-0 z-0 bg-black">
-        <video
-          className="w-full h-full object-cover opacity-85"
-          src={videoSrc}
-          poster={posterSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-black overflow-hidden">
+        {activeVideo ? (
+          <video
+            key={activeVideo}
+            className="w-full h-full object-cover opacity-85 transition-opacity duration-1000"
+            src={activeVideo}
+            poster={activeImage || undefined}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+          />
+        ) : activeImage ? (
+          <MediaImage
+            key={activeImage}
+            src={activeImage}
+            alt={slide.headline || 'Hero background'}
+            className="w-full h-full object-cover opacity-85 transition-all duration-1000"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-black/20 z-10 pointer-events-none" />
       </div>
 
       <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto pt-32 sm:pt-48 md:pt-64 pb-12">

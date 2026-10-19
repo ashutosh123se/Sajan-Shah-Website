@@ -89,17 +89,63 @@ export const defaultLegalPages = [
   {
     slug: 'privacy-policy',
     title: 'Privacy Policy',
-    content: '<p>Privacy Policy content. Edit this page from Admin → Legal Pages.</p>',
+    content: `<h2>1. Introduction</h2>
+<p>Sajan Shah Foundation ("we", "our", or "us") is committed to protecting the privacy and personal data of our users, students, attendees, and website visitors. This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our website, mobile application, or use any of our services.</p>
+<h2>2. Scope of Policy</h2>
+<p>This policy applies to all platforms and services operated by Sajan Shah Foundation, including Sajan Shah Official Website, Mobile Application, AI Sajan Shah Platform, Live to Inspire Charitable Trust, United First Initiative, and our events and training programs.</p>
+<h2>3. Information We Collect</h2>
+<h3>3.1 Information You Provide</h3>
+<p>We may collect personal information voluntarily provided by you, including Full Name, Email Address, Phone Number, Residential Address, and Payment-related details.</p>
+<h3>3.2 Information Collected Automatically</h3>
+<p>We may automatically collect technical and usage data including IP Address, Device and Browser Information, and Website/App Interaction Data.</p>
+<h3>3.3 AI Interaction Data</h3>
+<p>When using AI Sajan Shah, conversations may be stored and analyzed to improve AI performance. Users are advised not to share confidential or sensitive data.</p>
+<h2>4. Purpose of Data Collection</h2>
+<p>We use information to provide and manage services, process transactions securely, personalize experiences, and communicate updates.</p>
+<h2>5. Sharing of Information</h2>
+<p>We do not sell personal information. We may share data with payment gateways, webinar platforms, and technical service providers strictly for service delivery.</p>
+<h2>6. Data Security & Retention</h2>
+<p>We implement industry-standard security protocols to safeguard user data. Information is retained only as long as necessary for service fulfillment and legal compliance.</p>
+<h2>7. Contact Information</h2>
+<p><strong>Sajan Shah Foundation</strong><br />8 Deepawali Complex, Near Income Tax Cross Road, Ashram Road, Ahmedabad, Gujarat – 380009, India<br />Email: support.ind@sajanshah.com</p>`,
   },
   {
     slug: 'terms-of-service',
     title: 'Terms of Service',
-    content: '<p>Terms of Service content. Edit this page from Admin → Legal Pages.</p>',
+    content: `<h2>1. Acceptance of Terms</h2>
+<p>By accessing this Website (https://sajanshah.com/ and associated platforms), you agree to be bound by these Terms and Conditions of Use and all applicable laws.</p>
+<h2>2. Scope of Services</h2>
+<p>These Terms apply to all offerings by Sajan Shah Foundation, including the Website, Mobile Application, AI Sajan Shah Platform, Events, Webinars, Programs, and Digital Products.</p>
+<h2>3. Use License</h2>
+<p>Permission is granted to temporarily access and download materials for personal, non-commercial use only. You may not modify, distribute, or reverse engineer any content or software.</p>
+<h2>4. AI Sajan Shah Platform Disclaimer</h2>
+<p>The AI Sajan Shah platform provides educational guidance only. It does not provide medical, legal, financial, or psychological services. Decisions based on AI outputs are at the user's sole discretion.</p>
+<h2>5. Payments & Purchases</h2>
+<p>All payments for programs and products are subject to terms communicated at checkout. Please refer to our Refund Policy for comprehensive details.</p>
+<h2>6. Intellectual Property</h2>
+<p>All content, branding, and proprietary assets are owned exclusively by Sajan Shah Foundation.</p>
+<h2>7. Governing Law & Jurisdiction</h2>
+<p>These Terms are governed by the laws of Ahmedabad, Gujarat, India. All disputes are subject to the exclusive jurisdiction of courts in Ahmedabad.</p>
+<h2>8. Contact Information</h2>
+<p><strong>Sajan Shah Foundation</strong><br />Email: support.ind@sajanshah.com</p>`,
   },
   {
     slug: 'terms-and-conditions',
     title: 'Terms and Conditions',
-    content: '<p>Terms and Conditions content. Edit this page from Admin → Legal Pages.</p>',
+    content: `<h2>1. Acceptance of Terms</h2>
+<p>By accessing this Website (https://sajanshah.com/ and associated platforms), you agree to be bound by these Terms and Conditions of Use and all applicable laws and regulations.</p>
+<h2>2. Scope of Services</h2>
+<p>These Terms apply to all offerings by Sajan Shah Foundation, including Website, Mobile Application, AI Sajan Shah, Events, and Programs.</p>
+<h2>3. Use License & Restrictions</h2>
+<p>Permission is granted to access materials for personal, non-commercial viewing only. Reverse engineering, unauthorized copying, and commercial exploitation are strictly prohibited.</p>
+<h2>4. AI Platform Disclaimer</h2>
+<p>AI features provide educational and informational guidance only and do not replace professional medical, legal, or financial counsel.</p>
+<h2>5. Intellectual Property Rights</h2>
+<p>All materials and branding remain the intellectual property of Sajan Shah Foundation.</p>
+<h2>6. Governing Law</h2>
+<p>Governed by the laws of Ahmedabad, Gujarat, India. All disputes fall under Ahmedabad jurisdiction.</p>
+<h2>7. Contact Information</h2>
+<p><strong>Sajan Shah Foundation</strong><br />8 Deepawali Complex, Near Income Tax Cross Road, Ashram Road, Ahmedabad, Gujarat – 380009<br />Email: support.ind@sajanshah.com</p>`,
   },
   {
     slug: 'refund-policy',
@@ -348,12 +394,20 @@ export async function seedTestimonials() {
   console.log('✅ Testimonials seeded');
 }
 
-/** Create-only — never overwrites legal page body. */
+/** Seed legal pages — creates missing rows and updates placeholder rows with rich legal text. */
 export async function seedLegalPages() {
   for (const page of defaultLegalPages) {
     const existing = await db.legalPage.findUnique({ where: { slug: page.slug } });
-    if (existing) continue;
-    await db.legalPage.create({ data: page });
+    if (!existing) {
+      await db.legalPage.create({ data: page });
+    } else if (existing.content.includes('Edit this page from Admin') || existing.content.length < 150) {
+      await db.legalPage.update({
+        where: { slug: page.slug },
+        data: { title: page.title, content: page.content },
+      });
+      console.log(`  Updated placeholder for legal page: ${page.slug}`);
+    }
   }
-  console.log('✅ Legal pages seeded (existing rows left untouched)');
+  console.log('✅ Legal pages seeded and up-to-date');
 }
+

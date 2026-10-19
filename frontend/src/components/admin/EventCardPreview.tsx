@@ -7,6 +7,7 @@ export interface EventPreviewData {
   eventDate: string;
   city?: string;
   venue?: string;
+  venueAddress?: string;
   eventType?: string;
   isOnline?: boolean;
   isFree: boolean;
@@ -107,9 +108,14 @@ export function EventCardPreview({ event, compact = false }: EventCardPreviewPro
           <CalendarIcon className="w-4 h-4 mr-3 text-[#f26522]" />
           {date ? format(date, 'dd MMM yyyy, HH:mm') : 'Select date & time'}
         </div>
-        <div className="flex items-center">
-          <MapPin className="w-4 h-4 mr-3 text-[#f26522]" />
-          {city}{event.venue ? ` · ${event.venue}` : ''}
+        <div className="flex items-start">
+          <MapPin className="w-4 h-4 mr-3 mt-0.5 text-[#f26522] shrink-0" />
+          <div>
+            <div>{city}{event.venue ? ` · ${event.venue}` : ''}</div>
+            {event.venueAddress && (
+              <div className="text-xs text-gray-400 mt-0.5 leading-snug">{event.venueAddress}</div>
+            )}
+          </div>
         </div>
         <div className="flex items-center">
           <CheckCircle2 className="w-4 h-4 mr-3 text-[#f26522]" />

@@ -12,6 +12,7 @@ export type HomeHeroSlide = {
 };
 
 export type HomeHeroContent = {
+  backgroundType?: 'video' | 'image';
   backgroundVideo: string;
   posterImage: string;
   intervalMs: number;
@@ -19,8 +20,9 @@ export type HomeHeroContent = {
 };
 
 export const DEFAULT_HOME_HERO: HomeHeroContent = {
+  backgroundType: 'video',
   backgroundVideo: '/sajan_hero.mp4',
-  posterImage: '/EVENT.png',
+  posterImage: '',
   intervalMs: 6000,
   slides: [
     {
@@ -32,7 +34,7 @@ export const DEFAULT_HOME_HERO: HomeHeroContent = {
         'One stage. Thousands of lives. A system designed to transform how families think, learn, and grow together.',
       ctaText: 'Join Now',
       ctaLink: 'https://sol.sajanshah.com',
-      image: '/EVENT.png',
+      image: '',
     },
     {
       id: 2,
@@ -88,8 +90,16 @@ export function normalizeHomeHeroContent(raw?: Partial<HomeHeroContent> | null):
       : DEFAULT_HOME_HERO.slides.map((s) => ({ ...s }));
 
   return {
-    backgroundVideo: raw?.backgroundVideo !== undefined ? raw.backgroundVideo : DEFAULT_HOME_HERO.backgroundVideo,
-    posterImage: raw?.posterImage !== undefined ? raw.posterImage : DEFAULT_HOME_HERO.posterImage,
+    backgroundType:
+      raw?.backgroundType === 'image' || raw?.backgroundType === 'video'
+        ? raw.backgroundType
+        : raw?.backgroundVideo?.trim()
+          ? 'video'
+          : raw?.posterImage?.trim()
+            ? 'image'
+            : DEFAULT_HOME_HERO.backgroundType,
+    backgroundVideo: raw?.backgroundVideo !== undefined ? (raw.backgroundVideo ?? '') : DEFAULT_HOME_HERO.backgroundVideo,
+    posterImage: raw?.posterImage !== undefined ? (raw.posterImage ?? '') : DEFAULT_HOME_HERO.posterImage,
     intervalMs:
       typeof raw?.intervalMs === 'number' && raw.intervalMs > 0
         ? raw.intervalMs

@@ -24,6 +24,8 @@ export interface SajanEvent {
   showOnCard?: boolean;
   description?: string;
   gallery?: string[];
+  venue?: string;
+  venueAddress?: string;
 }
 
 export const currentDate = new Date();

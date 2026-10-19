@@ -14,6 +14,8 @@ interface Event {
   eventDate: string;
   city?: string;
   eventType?: string;
+  venue?: string;
+  venueAddress?: string;
   isPast: boolean;
   isFree: boolean;
   price?: number;
@@ -146,12 +148,21 @@ export const UpcomingEvents: React.FC = () => {
                       {formatDate(event.eventDate)}
                     </div>
                     
-                    {event.city && (
-                      <div className="flex items-center text-sm text-gray-500">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-1.414 0l-5.586-5.586a1 1 0 01-.707-.293l-3.75-3.75a1 1 0 00-1.414 1.414l2.336 2.336V8a2 2 0 012-2h8a2 2 0 012 2v8.828l2.336-2.336a1 1 0 001.414 1.414l-3.75 3.75a1 1 0 01-.707.293l-5.586 5.586a1 1 0 01-1.414 0l-5.586-5.586a1 1 0 01-.293-.707z"/>
+                    {(event.city || event.venue) && (
+                      <div className="flex items-start text-sm text-gray-500">
+                        <svg className="w-4 h-4 mr-2 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                         </svg>
-                        {event.city}
+                        <div>
+                          <div className="font-medium text-gray-800">
+                            {event.city}{event.venue ? ` · ${event.venue}` : ''}
+                          </div>
+                          {event.venueAddress && (
+                            <div className="text-xs text-gray-500 mt-0.5 leading-snug">
+                              {event.venueAddress}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
 

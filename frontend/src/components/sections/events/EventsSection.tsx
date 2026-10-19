@@ -42,7 +42,10 @@ const mapDbEventToSajanEvent = (e: any): SajanEvent => {
     topic: e.description || '',
     isPast: e.isPast || new Date(e.eventDate).getTime() < new Date().setHours(0,0,0,0),
     isTop5: e.isTop5 || false,
-    tag: e.venue || 'Corporate',
+    tag: e.tag || (catVal !== 'Public' ? catVal : undefined),
+    venue: e.venue || undefined,
+    venueAddress: e.venueAddress || undefined,
+    description: e.description || undefined,
     buttonUrl: e.buttonUrl,
     isFree:
       typeof e.isFree === 'boolean'
@@ -61,25 +64,25 @@ export default function EventsSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [eventsRes, sectionsRes] = await Promise.all([
+        const [eventsRes, sectionsRes] = await Promise.allSettled([
           api.get('/events'),
           api.get('/events-page')
         ]);
         
-        // Public page must only show active DB events.
-        // Do NOT merge MOCK_EVENTS here — that kept inactive/hidden events visible.
-        const dbEvents = (eventsRes.data.data.events || [])
-          .filter((e: any) => e.isActive === true || e.isActive === undefined)
-          .map(mapDbEventToSajanEvent);
+        if (eventsRes.status === 'fulfilled' && eventsRes.value.data?.data?.events) {
+          const dbEvents = (eventsRes.value.data.data.events || [])
+            .filter((e: any) => e.isActive === true || e.isActive === undefined)
+            .map(mapDbEventToSajanEvent);
+          setEventsList(dbEvents);
+        } else {
+          console.warn('Events fetch failed or returned invalid data');
+        }
 
-        setEventsList(dbEvents);
-
-        if (sectionsRes.data.success) {
-          setSections(sectionsRes.data.data.sections || []);
+        if (sectionsRes.status === 'fulfilled' && sectionsRes.value.data?.success) {
+          setSections(sectionsRes.value.data.data.sections || []);
         }
       } catch (error) {
         console.error('Failed to fetch events page data:', error);
-        setEventsList([]);
       } finally {
         setLoading(false);
       }
@@ -93,13 +96,14 @@ export default function EventsSection() {
 
   const activeEvents = eventsList;
 
-  // All active events (upcoming + past) → calendar can browse history by month
+  // All active events (upcoming + past) → latest event on top
   const calendarEvents = activeEvents
     .slice()
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  // Big ticket cards: only events marked in admin (showOnCard), soonest first
-  const featuredUpcoming = calendarEvents.filter((e) => !e.isPast && e.showOnCard);
+  // Big ticket cards: only events marked in admin (showOnCard), or fallback to upcoming events if none marked
+  const markedCards = calendarEvents.filter((e) => !e.isPast && e.showOnCard);
+  const featuredUpcoming = markedCards.length > 0 ? markedCards : calendarEvents.filter((e) => !e.isPast);
 
   const pastEvents = activeEvents
     .filter((e) => e.isPast)

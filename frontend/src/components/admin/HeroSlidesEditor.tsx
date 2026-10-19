@@ -79,6 +79,41 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
   return (
     <div className="col-span-2 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-black/40 border border-white/10">
+        <div className="space-y-2 md:col-span-3 pb-2 border-b border-white/10">
+          <label className="text-xs font-bold text-gray-300 uppercase tracking-widest block">
+            Background Media Mode
+          </label>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => patch({ backgroundType: 'video' })}
+              className={`px-5 py-2 text-xs font-bold uppercase tracking-wider border transition-all ${
+                content.backgroundType !== 'image'
+                  ? 'bg-[#f26522] text-white border-[#f26522]'
+                  : 'bg-black text-gray-400 border-white/10 hover:border-white/30'
+              }`}
+            >
+              Video Background
+            </button>
+            <button
+              type="button"
+              onClick={() => patch({ backgroundType: 'image' })}
+              className={`px-5 py-2 text-xs font-bold uppercase tracking-wider border transition-all ${
+                content.backgroundType === 'image'
+                  ? 'bg-[#f26522] text-white border-[#f26522]'
+                  : 'bg-black text-gray-400 border-white/10 hover:border-white/30'
+              }`}
+            >
+              Image Background (Poster / Slide Images)
+            </button>
+          </div>
+          <p className="text-[11px] text-gray-500 mt-1">
+            {content.backgroundType === 'image'
+              ? 'Showing image background: The Hero Section will display your uploaded Poster Image or each slide’s individual image.'
+              : 'Showing video background: The Hero Section will play your background video with the poster image as fallback.'}
+          </p>
+        </div>
+
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
             Background Video URL
@@ -89,11 +124,11 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
             folder="home"
             onChange={(url) => patch({ backgroundVideo: url })}
           />
-          <p className="text-[11px] text-gray-500 mt-2">Shown behind all slides.</p>
+          <p className="text-[11px] text-gray-500 mt-2">Used when Video Background mode is active.</p>
         </div>
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
-            Poster Image
+            Poster Image / Hero Background Image
           </label>
           <ImageUploadField
             label=""
@@ -101,6 +136,7 @@ export function HeroSlidesEditor({ value, onChange }: Props) {
             folder="home"
             onChange={(url) => patch({ posterImage: url })}
           />
+          <p className="text-[11px] text-gray-500 mt-2">Main hero image or video fallback.</p>
         </div>
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block">

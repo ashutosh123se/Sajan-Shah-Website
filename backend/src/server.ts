@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 // Load environment variables before other imports that may read process.env
@@ -46,25 +47,41 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 app.use(cors({
-  origin: [
-    'https://www.sajanshah.com', 
-    'https://sajanshah.com', 
-    'https://qa.sajanshah.com',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    process.env.FRONTEND_URL || 'http://localhost:3000'
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+    const allowed = [
+      'https://www.sajanshah.com',
+      'https://sajanshah.com',
+      'https://qa.sajanshah.com',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+    ];
+    if (process.env.FRONTEND_URL) {
+      allowed.push(process.env.FRONTEND_URL);
+    }
+    if (allowed.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// Local uploaded images (saved under backend/uploads)
+// Local uploaded images (saved under backend/uploads or UPLOADS_DIR)
+const uploadsDir = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 app.use(
   '/uploads',
-  express.static(path.join(process.cwd(), 'uploads'), {
+  express.static(uploadsDir, {
     setHeaders: (res) => {
       res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     },

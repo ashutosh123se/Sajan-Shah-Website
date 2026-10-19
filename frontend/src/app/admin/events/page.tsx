@@ -21,6 +21,7 @@ interface Event {
   eventType: string;
   city?: string;
   venue?: string;
+  venueAddress?: string;
   price?: number;
   ticketPrice?: number;
   currency: string;
@@ -60,6 +61,18 @@ const getFieldLabel = (key: string) => {
   return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase());
 };
 
+const formatForDateTimeLocal = (dateInput?: string | Date | null): string => {
+  if (!dateInput) return '';
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return '';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 export default function AdminEventsPage() {
   const { isSuperAdmin, isAdmin, isEditor } = useAuth();
   const [activeTab, setActiveTab] = useState<'calendar' | 'sections'>('calendar');
@@ -78,6 +91,7 @@ export default function AdminEventsPage() {
     isOnline: false,
     city: '',
     venue: '',
+    venueAddress: '',
     ticketPrice: '',
     currency: 'INR',
     isFree: false,
@@ -169,14 +183,16 @@ export default function AdminEventsPage() {
     try {
       const normalizedCity = formData.isOnline ? 'Online' : formData.city;
       const normalizedVenue = formData.isOnline ? 'Live Webinar' : formData.venue;
+      const normalizedAddress = formData.isOnline ? '' : formData.venueAddress;
       const payload = {
         title: formData.title,
-        slug: formData.slug || `${formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
+        slug: editingEvent ? formData.slug : undefined,
         description: formData.description,
         eventDate: new Date(formData.eventDate).toISOString(),
         eventType: formData.eventType,
         city: normalizedCity,
         venue: normalizedVenue,
+        venueAddress: normalizedAddress || null,
         price: formData.isFree ? 0 : Number(formData.ticketPrice),
         isFree: formData.isFree,
         capacity: formData.capacity ? Number(formData.capacity) : null,
@@ -209,7 +225,7 @@ export default function AdminEventsPage() {
         title: event.title,
         slug: event.slug,
         description: event.description || '',
-        eventDate: new Date(event.eventDate).toISOString().slice(0, 16),
+        eventDate: formatForDateTimeLocal(event.eventDate),
         eventType: event.eventType || 'workshop',
         isOnline:
           (event.eventType || '').toLowerCase() === 'webinar' ||
@@ -218,6 +234,7 @@ export default function AdminEventsPage() {
           (event.venue || '').toLowerCase().includes('webinar'),
         city: event.city || '',
         venue: event.venue || '',
+        venueAddress: event.venueAddress || '',
         ticketPrice: getEventPrice(event)?.toString() || '',
         currency: event.currency || 'INR',
         isFree: event.isFree,
@@ -234,11 +251,12 @@ export default function AdminEventsPage() {
         title: '',
         slug: '',
         description: '',
-        eventDate: new Date().toISOString().slice(0, 16),
+        eventDate: formatForDateTimeLocal(new Date()),
         eventType: 'workshop',
         isOnline: false,
         city: '',
         venue: '',
+        venueAddress: '',
         ticketPrice: '',
         currency: 'INR',
         isFree: false,
@@ -551,7 +569,7 @@ export default function AdminEventsPage() {
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2">
                   <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Event Title</label>
-                  <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" />
+                  <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30" />
                 </div>
 
                 <div className="col-span-2">
@@ -597,6 +615,21 @@ export default function AdminEventsPage() {
                     className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 disabled:opacity-60 disabled:cursor-not-allowed"
                     placeholder={formData.isOnline ? 'Auto-set for online event' : 'e.g. Grand Ballroom'}
                   />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs text-zinc-400 uppercase tracking-wider mb-2">Full Venue Address</label>
+                  <textarea
+                    rows={2}
+                    value={formData.isOnline ? 'Online / Zoom Webinar' : formData.venueAddress}
+                    disabled={formData.isOnline}
+                    onChange={(e) => setFormData({...formData, venueAddress: e.target.value})}
+                    className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+                    placeholder={formData.isOnline ? 'Auto-set for online event' : 'e.g. NESCO Center, Western Express Highway, Goregaon East, Mumbai, Maharashtra 400063'}
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Complete physical address shown on the event section so attendees can navigate to the location.
+                  </p>
                 </div>
 
                 <div>
@@ -694,6 +727,7 @@ export default function AdminEventsPage() {
                       eventDate: formData.eventDate,
                       city: formData.isOnline ? 'Online' : formData.city,
                       venue: formData.isOnline ? 'Live Webinar' : formData.venue,
+                      venueAddress: formData.isOnline ? '' : formData.venueAddress,
                       eventType: formData.eventType,
                       isOnline: formData.isOnline,
                       isFree: formData.isFree,

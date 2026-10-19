@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { db } from '../utils/database';
 
-const enrichEvents = (events: any[], sortOrder: 'asc' | 'desc' = 'asc') => {
+const enrichEvents = (events: any[], sortOrder: 'asc' | 'desc' = 'desc') => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const enriched = events.map(event => ({
@@ -11,20 +11,21 @@ const enrichEvents = (events: any[], sortOrder: 'asc' | 'desc' = 'asc') => {
   }));
 
   return enriched.sort((a, b) => {
-    const diff = new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
-    return sortOrder === 'desc' ? -diff : diff;
+    const diff = new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();
+    return sortOrder === 'asc' ? -diff : diff;
   });
 };
 
 export const getEvents = async (req: Request, res: Response) => {
   try {
-    const { filter, type, city } = req.query;
+    const { filter, type, city, sort } = req.query;
 
     let events = await db.event.findMany({
       where: { isActive: true }
     });
 
-    events = enrichEvents(events, 'asc');
+    const sortOrder = (sort === 'asc' ? 'asc' : 'desc');
+    events = enrichEvents(events, sortOrder);
 
     if (filter === 'upcoming') {
       events = events.filter(e => !e.isPast);
@@ -77,11 +78,31 @@ export const getEventById = async (req: Request, res: Response) => {
   }
 };
 
+const ensureUniqueEventSlug = async (rawSlugOrTitle: string, excludeId?: string): Promise<string> => {
+  const base = (rawSlugOrTitle || 'event')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '') || 'event';
+
+  const existing = await db.event.findFirst({
+    where: {
+      slug: base,
+      ...(excludeId ? { id: { not: excludeId } } : {})
+    }
+  });
+
+  if (!existing) {
+    return base;
+  }
+
+  return `${base}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+};
+
 export const createEvent = async (req: Request, res: Response) => {
   try {
     const {
       title, slug, description, posterUrl, homepageImageUrl,
-      webinarUrl, eventDate, city, venue, eventType, isPast,
+      webinarUrl, eventDate, city, venue, venueAddress, eventType, isPast,
       isFree, price, capacity, isActive, showOnCard, buttonUrl
     } = req.body;
 
@@ -92,10 +113,12 @@ export const createEvent = async (req: Request, res: Response) => {
       return sendError(res, 'Event date and time are required.', 400);
     }
 
+    const finalSlug = await ensureUniqueEventSlug(slug || title.trim());
+
     const event = await db.event.create({
       data: {
         title: title.trim(),
-        slug: slug || `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
+        slug: finalSlug,
         description,
         posterUrl: posterUrl || '/EVENT.png',
         homepageImageUrl,
@@ -103,6 +126,7 @@ export const createEvent = async (req: Request, res: Response) => {
         eventDate: new Date(eventDate),
         city,
         venue,
+        venueAddress: venueAddress || null,
         eventType,
         isPast: isPast || false,
         isFree: isFree ?? true,
@@ -117,24 +141,57 @@ export const createEvent = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Create event error:', error);
     if (error?.code === 'P2002') {
-      return sendError(res, 'An event with this slug already exists. Please use a different title.', 400);
+      try {
+        // Fallback retry with guaranteed unique slug
+        const fallbackSlug = `${(req.body.title || 'event').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+        const event = await db.event.create({
+          data: {
+            title: req.body.title.trim(),
+            slug: fallbackSlug,
+            description: req.body.description,
+            posterUrl: req.body.posterUrl || '/EVENT.png',
+            homepageImageUrl: req.body.homepageImageUrl,
+            webinarUrl: req.body.webinarUrl || 'https://sol.sajanshah.com',
+            eventDate: new Date(req.body.eventDate),
+            city: req.body.city,
+            venue: req.body.venue,
+            venueAddress: req.body.venueAddress || null,
+            eventType: req.body.eventType,
+            isPast: req.body.isPast || false,
+            isFree: req.body.isFree ?? true,
+            price: (req.body.price !== undefined && req.body.price !== null) ? parseFloat(req.body.price.toString()) : null,
+            capacity: (req.body.capacity !== undefined && req.body.capacity !== null && req.body.capacity !== '') ? parseInt(req.body.capacity.toString()) : null,
+            isActive: req.body.isActive ?? true,
+            showOnCard: req.body.showOnCard === true || req.body.showOnCard === 'true',
+            buttonUrl: req.body.buttonUrl || 'https://sol.sajanshah.com'
+          }
+        });
+        return sendSuccess(res, { event }, 'Event created successfully');
+      } catch (retryErr) {
+        return sendError(res, 'Failed to save event.', 500);
+      }
     }
     sendError(res, 'Failed to save event. Please check all required fields.', 500);
   }
 };
 
 export const updateEvent = async (req: Request, res: Response) => {
+  const id = req.params.id as string;
   try {
-    const id = req.params.id as string;
     const {
       title, slug, description, posterUrl, homepageImageUrl,
-      webinarUrl, eventDate, city, venue, eventType, isPast,
+      webinarUrl, eventDate, city, venue, venueAddress, eventType, isPast,
       isFree, price, capacity, isActive, showOnCard, buttonUrl
     } = req.body;
 
+    let finalSlug: string | undefined = undefined;
+    if (slug || title) {
+      finalSlug = await ensureUniqueEventSlug(slug || title, id);
+    }
+
     const data: Record<string, unknown> = {
       title,
-      slug,
+      ...(finalSlug ? { slug: finalSlug } : {}),
       description,
       posterUrl,
       homepageImageUrl,
@@ -142,6 +199,7 @@ export const updateEvent = async (req: Request, res: Response) => {
       eventDate: eventDate ? new Date(eventDate) : undefined,
       city,
       venue,
+      venueAddress: venueAddress !== undefined ? (venueAddress || null) : undefined,
       eventType,
       isPast,
       isFree,
@@ -163,7 +221,16 @@ export const updateEvent = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Update event error:', error);
     if (error?.code === 'P2002') {
-      return sendError(res, 'An event with this slug already exists.', 400);
+      try {
+        const fallbackSlug = `${(req.body.title || 'event').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+        const event = await db.event.update({
+          where: { id },
+          data: { slug: fallbackSlug }
+        });
+        return sendSuccess(res, { event }, 'Event updated successfully');
+      } catch (retryErr) {
+        return sendError(res, 'Failed to update event.', 500);
+      }
     }
     sendError(res, 'Failed to update event.', 500);
   }

@@ -46,13 +46,14 @@ export default function Home() {
   const getSection = (key: string) => sections.find((s) => s.key === key)?.content;
 
   const heroContent = normalizeHomeHeroContent(getSection('hero'));
+  const splitHeroContent = getSection('split_hero');
   const digitalEmpire = getSection('digital_empire');
   const transformationStories = getSection('transformation_stories');
 
   return (
     <div className="min-h-screen">
       <HeroSlider content={heroContent} />
-      <SplitHero />
+      <SplitHero content={splitHeroContent} />
       <BrandWriteUp />
       <TransformationForm />
       <IntroVideo />

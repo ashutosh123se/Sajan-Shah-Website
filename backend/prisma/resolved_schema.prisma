@@ -68,6 +68,7 @@ model Event {
   eventDate          DateTime
   city               String?
   venue              String?
+  venueAddress       String?  @db.Text
   eventType          String?  // school | corporate | public | online
   isPast             Boolean  @default(false)
   isFree             Boolean  @default(true)

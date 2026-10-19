@@ -12,10 +12,20 @@ export const Navbar: React.FC = () => {
   const { getTotalItems, openCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navigation = [
@@ -36,40 +46,82 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-[#0a0a0a] fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b border-gray-900 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-6">
+      <nav 
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ease-in-out border-b shadow-2xl ${
+          isScrolled 
+            ? 'bg-[#0a0a0a]/95 backdrop-blur-md border-white/10' 
+            : 'bg-[#0a0a0a] border-gray-900'
+        }`}
+      >
+        <div 
+          className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out ${
+            isScrolled ? 'pt-2 pb-2.5' : 'pt-6 pb-6'
+          }`}
+        >
 
           {/* Top Branding Section */}
-          <div className="flex justify-start items-center w-full relative h-24 md:h-28 mb-6">
+          <div 
+            className={`flex justify-start items-center w-full relative transition-all duration-300 ease-in-out ${
+              isScrolled ? 'h-9 md:h-10 mb-1.5' : 'h-24 md:h-28 mb-6'
+            }`}
+          >
             
             {/* Left Brand: Sajan Shah */}
-            <Link href="/" className="flex flex-col items-start group ml-8 md:ml-12">
-              <div className="flex items-baseline text-4xl md:text-5xl tracking-tight">
+            <Link 
+              href="/" 
+              className={`flex flex-col items-start group transition-all duration-300 ease-in-out ${
+                isScrolled ? 'ml-2 md:ml-4' : 'ml-8 md:ml-12'
+              }`}
+            >
+              <div 
+                className={`flex items-baseline tracking-tight transition-all duration-300 ease-in-out ${
+                  isScrolled ? 'text-2xl md:text-3xl' : 'text-4xl md:text-5xl'
+                }`}
+              >
                 <span className="font-light text-white uppercase">sajan</span>
                 <span className="font-light text-white uppercase"><span className="text-[#f26522]">s</span>hah</span>
               </div>
-              <div className="flex items-center mt-1">
-                <div className="h-[2px] bg-[#f26522] w-12 md:w-20"></div>
-                <span className="ml-3 text-[10px] md:text-xs text-gray-400 font-medium lowercase tracking-tight">
+              <div 
+                className={`flex items-center transition-all duration-300 overflow-hidden ${
+                  isScrolled 
+                    ? 'max-h-0 opacity-0 mt-0 pointer-events-none' 
+                    : 'max-h-6 opacity-100 mt-1'
+                }`}
+              >
+                <div className="h-[2px] bg-[#f26522] w-12 md:w-20 transition-all duration-300"></div>
+                <span className="ml-3 text-[10px] md:text-xs text-gray-400 font-medium lowercase tracking-tight whitespace-nowrap">
                   shift your story. shape your success.
                 </span>
               </div>
             </Link>
 
-            {/* Center Brand (Shifted from Right) */}
-            <div className="hidden lg:flex flex-col items-center leading-[0.85] absolute left-[55%] transform -translate-x-1/2 -translate-y-1/2 top-1/2 opacity-90">
-               <div className="text-2xl md:text-3xl font-black text-white tracking-[0.15em] uppercase whitespace-nowrap">
-                 Neuroscience Drives
-               </div>
-               <div className="text-2xl md:text-3xl font-black text-[#f26522] tracking-[0.15em] uppercase whitespace-nowrap flex items-start">
-                 Driven Success<span className="text-[10px] ml-0.5 mt-0.5 font-bold">™</span>
-               </div>
+            {/* Center Brand */}
+            <div 
+              className={`hidden lg:flex flex-col items-center leading-[0.85] absolute left-[55%] transform -translate-x-1/2 -translate-y-1/2 top-1/2 transition-all duration-300 ${
+                isScrolled ? 'opacity-85' : 'opacity-90'
+              }`}
+            >
+              {isScrolled ? (
+                <div className="text-xs md:text-sm font-black tracking-[0.15em] uppercase whitespace-nowrap flex items-center gap-1.5">
+                  <span className="text-white">Neuroscience Drives</span>
+                  <span className="text-[#f26522]">Driven Success™</span>
+                </div>
+              ) : (
+                <>
+                  <div className="text-2xl md:text-3xl font-black text-white tracking-[0.15em] uppercase whitespace-nowrap">
+                    Neuroscience Drives
+                  </div>
+                  <div className="text-2xl md:text-3xl font-black text-[#f26522] tracking-[0.15em] uppercase whitespace-nowrap flex items-start">
+                    Driven Success<span className="text-[10px] ml-0.5 mt-0.5 font-bold">™</span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Absolute positioned Cart & Auth for Desktop to keep Logo perfectly centered */}
             <div className="hidden md:flex absolute right-0 items-center space-x-6 top-1/2 transform -translate-y-1/2">
-             <Link href="/cart" className="relative text-white hover:text-[#f26522] transition-colors">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <Link href="/cart" className="relative text-white hover:text-[#f26522] transition-colors">
+                <svg className={`${isScrolled ? 'h-5 w-5' : 'h-6 w-6'} transition-all duration-300`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 {mounted && getTotalItems() > 0 && (
@@ -119,7 +171,11 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Desktop Navigation (Centered) */}
-            <div className="hidden md:flex w-full justify-center space-x-12 lg:space-x-20">
+            <div 
+              className={`hidden md:flex w-full justify-center transition-all duration-300 ease-in-out ${
+                isScrolled ? 'space-x-8 lg:space-x-14 pt-0.5' : 'space-x-12 lg:space-x-20 pt-1'
+              }`}
+            >
               {navigation.map((item) => (
                 <Link
                   key={item.name}

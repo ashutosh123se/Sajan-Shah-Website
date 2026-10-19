@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
+import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 
@@ -160,89 +161,130 @@ export default function AdminOrdersPage() {
       </div>
 
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[#141414] border border-white/10 p-8 w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl font-bold mb-6 text-white tracking-tight">Order Details #{selectedOrder.id.slice(-6)}</h2>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#141414] border border-white/10 p-6 md:p-8 w-full max-w-4xl shadow-2xl rounded-2xl relative max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/10">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+                  Order Details #{selectedOrder.id.slice(-6)}
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Placed on {new Date(selectedOrder.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedOrder(null)}
+                className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
             
-            <div className="space-y-5">
-              <div className="bg-white/5 p-4 border border-white/10 text-sm">
-                <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Customer Info</p>
-                <p className="text-white font-medium">{selectedOrder.shippingName || selectedOrder.user?.name || 'Guest'}</p>
-                <p className="text-gray-400">{selectedOrder.user?.email || selectedOrder.userEmail}</p>
-                {selectedOrder.phone && (
-                  <p className="text-blue-400 font-mono mt-1">📞 {selectedOrder.phone}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column: Customer & Items */}
+              <div className="space-y-4">
+                <div className="bg-white/5 p-4 border border-white/10 rounded-lg text-sm">
+                  <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2 font-semibold">Customer Info</p>
+                  <p className="text-white font-medium">{selectedOrder.shippingName || selectedOrder.user?.name || 'Guest'}</p>
+                  <p className="text-gray-400">{selectedOrder.user?.email || selectedOrder.userEmail}</p>
+                  {selectedOrder.phone && (
+                    <p className="text-blue-400 font-mono mt-1">📞 {selectedOrder.phone}</p>
+                  )}
+                </div>
+
+                {selectedOrder.items && selectedOrder.items.length > 0 && (
+                  <div className="bg-white/5 p-4 border border-white/10 rounded-lg text-sm">
+                    <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2 font-semibold">Order Items</p>
+                    <ul className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {selectedOrder.items.map(item => (
+                        <li key={item.id} className="flex justify-between text-gray-300 py-1 border-b border-white/5 last:border-0">
+                          <span className="truncate pr-2">{item.quantity}x {item.product?.name || 'Unknown Product'}</span>
+                          <span className="text-white font-medium whitespace-nowrap">₹{item.price * item.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 pt-3 border-t border-white/10 flex justify-between font-bold text-white text-base">
+                      <span>Total</span>
+                      <span className="text-brand-orange">₹{selectedOrder.amount}</span>
+                    </div>
+                  </div>
+                )}
+
+                {selectedOrder.shippingAddress && (
+                  <div className="bg-white/5 p-4 border border-white/10 rounded-lg text-sm">
+                    <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2 font-semibold">Shipping Details</p>
+                    <p className="text-white mb-1 leading-relaxed">{selectedOrder.shippingAddress}</p>
+                    {selectedOrder.phone && (
+                      <p className="text-blue-400 font-mono">{selectedOrder.phone}</p>
+                    )}
+                  </div>
                 )}
               </div>
-              {selectedOrder.items && selectedOrder.items.length > 0 && (
-                <div className="bg-white/5 p-4 border border-white/10 text-sm">
-                  <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Order Items</p>
-                  <ul className="space-y-2">
-                    {selectedOrder.items.map(item => (
-                      <li key={item.id} className="flex justify-between text-gray-300">
-                        <span>{item.quantity}x {item.product?.name || 'Unknown Product'}</span>
-                        <span className="text-white">₹{item.price * item.quantity}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-3 pt-3 border-t border-white/10 flex justify-between font-bold text-white">
-                    <span>Total</span>
-                    <span>₹{selectedOrder.amount}</span>
+
+              {/* Right Column: Order Status & Fulfillment */}
+              <div className="space-y-4 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-400 mb-2">Order Status</label>
+                    <select 
+                      value={statusUpdate} 
+                      onChange={(e) => setStatusUpdate(e.target.value as Order['status'])}
+                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-brand-orange transition-all rounded-lg"
+                    >
+                      <option value="PENDING" className="bg-[#141414]">Pending</option>
+                      <option value="PAID" className="bg-[#141414]">Paid</option>
+                      <option value="PROCESSING" className="bg-[#141414]">Processing</option>
+                      <option value="SHIPPED" className="bg-[#141414]">Shipped</option>
+                      <option value="DELIVERED" className="bg-[#141414]">Delivered</option>
+                      <option value="CANCELLED" className="bg-[#141414]">Cancelled</option>
+                      <option value="FAILED" className="bg-[#141414]">Failed</option>
+                      <option value="REFUNDED" className="bg-[#141414]">Refunded</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-400 mb-2">Tracking ID</label>
+                    <input 
+                      type="text" 
+                      value={trackingId} 
+                      onChange={(e) => setTrackingId(e.target.value)} 
+                      placeholder="e.g. BLUDART12345"
+                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange transition-all rounded-lg" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-400 mb-2">Shipment Update / Notes</label>
+                    <textarea 
+                      value={shippingNotes} 
+                      onChange={(e) => setShippingNotes(e.target.value)} 
+                      placeholder="e.g. Package dispatched via courier partner"
+                      className="w-full px-4 py-2.5 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-orange transition-all rounded-lg resize-none"
+                      rows={3}
+                    />
                   </div>
                 </div>
-              )}
 
-              {selectedOrder.shippingAddress && (
-                <div className="bg-white/5 p-4 border border-white/10 text-sm">
-                  <p className="text-gray-500 uppercase text-[10px] tracking-widest mb-2">Shipping Details</p>
-                  <p className="text-white mb-1">{selectedOrder.shippingAddress}</p>
-                  <p className="text-blue-400 font-mono">{selectedOrder.phone}</p>
+                <div className="flex justify-end items-center gap-3 pt-4 border-t border-white/10 mt-auto">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setSelectedOrder(null)} 
+                    className="bg-transparent text-white border-white/20 hover:bg-white/10 rounded-lg px-5 py-2.5"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="button" 
+                    onClick={handleUpdateOrder} 
+                    className="bg-white text-black hover:bg-gray-200 rounded-lg px-6 py-2.5 font-medium transition-all"
+                  >
+                    Save Updates
+                  </Button>
                 </div>
-              )}
-
-              <div>
-                <label className="block text-xs uppercase tracking-wider font-medium text-gray-400 mb-2">Order Status</label>
-                <select 
-                  value={statusUpdate} 
-                  onChange={(e) => setStatusUpdate(e.target.value as Order['status'])}
-                  className="w-full px-4 py-2 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-white transition-all rounded-none appearance-none"
-                >
-                  <option value="PENDING" className="bg-[#141414]">Pending</option>
-                  <option value="PAID" className="bg-[#141414]">Paid</option>
-                  <option value="PROCESSING" className="bg-[#141414]">Processing</option>
-                  <option value="SHIPPED" className="bg-[#141414]">Shipped</option>
-                  <option value="DELIVERED" className="bg-[#141414]">Delivered</option>
-                  <option value="CANCELLED" className="bg-[#141414]">Cancelled</option>
-                  <option value="FAILED" className="bg-[#141414]">Failed</option>
-                  <option value="REFUNDED" className="bg-[#141414]">Refunded</option>
-                </select>
               </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-wider font-medium text-gray-400 mb-2">Tracking ID</label>
-                <input 
-                  type="text" 
-                  value={trackingId} 
-                  onChange={(e) => setTrackingId(e.target.value)} 
-                  placeholder="e.g. BLUDART12345"
-                  className="w-full px-4 py-2 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-white transition-all rounded-none" 
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-wider font-medium text-gray-400 mb-2">Shipment Update / Notes</label>
-                <textarea 
-                  value={shippingNotes} 
-                  onChange={(e) => setShippingNotes(e.target.value)} 
-                  placeholder="e.g. Package is out for delivery"
-                  className="w-full px-4 py-2 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-white transition-all rounded-none"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-4 mt-8 pt-4 border-t border-white/10">
-              <Button type="button" variant="outline" onClick={() => setSelectedOrder(null)} className="bg-transparent text-white border-white/20 hover:bg-white/10 rounded-none">Cancel</Button>
-              <Button type="button" onClick={handleUpdateOrder} className="bg-white text-black hover:bg-gray-200 rounded-none border border-white transition-all">Save Updates</Button>
             </div>
           </div>
         </div>

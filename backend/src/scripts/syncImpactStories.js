@@ -55,7 +55,7 @@ async function main() {
   const hasExternal =
     Array.isArray(photos) &&
     photos.some((p) => String(p.imageUrl || p.img || '').includes('unsplash'));
-  const tooFew = !Array.isArray(photos) || photos.length < 12;
+  const hasNoPhotos = !Array.isArray(photos) || photos.length === 0;
 
   if (!gallery) {
     await prisma.contributionsPageSection.create({
@@ -73,7 +73,7 @@ async function main() {
       },
     });
     console.log('  ✅ Created gallery section with defaults');
-  } else if (hasExternal || tooFew) {
+  } else if (hasExternal || hasNoPhotos) {
     const content = typeof gallery.content === 'object' && gallery.content ? { ...gallery.content } : {};
     await prisma.contributionsPageSection.update({
       where: { key: 'gallery' },
@@ -88,7 +88,7 @@ async function main() {
     });
     console.log('  ✅ Gallery photos synced to local Social Work defaults');
   } else {
-    console.log('  ⏭️ Gallery already looks good — left untouched');
+    console.log('  ⏭️ Gallery already has photos — left untouched');
   }
 
   console.log('✨ Done');

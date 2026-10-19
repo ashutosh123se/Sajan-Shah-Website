@@ -95,9 +95,14 @@ export default function AdminLegalPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Legal Pages</h1>
-        <p className="text-zinc-400 text-sm mt-1">Edit privacy policy, terms of service, and terms &amp; conditions stored in the database.</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Legal Pages</h1>
+          <p className="text-zinc-400 text-sm mt-1">Edit privacy policy, terms of service, refund policy, and terms &amp; conditions stored in the database.</p>
+        </div>
+        <Button variant="outline" onClick={fetchPages} disabled={loading}>
+          {loading ? 'Refreshing...' : '↻ Refresh'}
+        </Button>
       </div>
 
       {loading ? (
@@ -105,9 +110,19 @@ export default function AdminLegalPage() {
       ) : (
         <div className="space-y-4">
           {pages.map((page) => (
-            <div key={page.id} className="bg-[#141414] border border-white/10 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div key={page.id} className="bg-[#141414] border border-white/10 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-xl">
               <div>
-                <h3 className="text-white font-semibold">{page.title}</h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-white font-semibold">{page.title}</h3>
+                  <a
+                    href={`/${page.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-[#f26522] hover:underline"
+                  >
+                    View Live ↗
+                  </a>
+                </div>
                 <p className="text-zinc-500 text-sm">/{page.slug}</p>
                 <p className="text-zinc-600 text-xs mt-1">Last updated: {new Date(page.updatedAt).toLocaleString()}</p>
               </div>
@@ -115,7 +130,10 @@ export default function AdminLegalPage() {
             </div>
           ))}
           {pages.length === 0 && (
-            <p className="text-zinc-400">No legal pages found. Run the database seed to create default pages.</p>
+            <div className="text-center py-12 border border-dashed border-zinc-800 rounded-xl p-8">
+              <p className="text-zinc-400 mb-4">No legal pages found.</p>
+              <Button variant="outline" onClick={fetchPages}>Retry Fetch</Button>
+            </div>
           )}
         </div>
       )}

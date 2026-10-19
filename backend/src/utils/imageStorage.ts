@@ -9,7 +9,7 @@ export const uploadToLocal = async (
   originalName?: string
 ): Promise<string> => {
   const safeFolder = folder.replace(/[^a-zA-Z0-9/_-]/g, '').replace(/\.\./g, '') || 'uploads';
-  const uploadsRoot = path.join(process.cwd(), 'uploads');
+  const uploadsRoot = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
   const targetDir = path.join(uploadsRoot, ...safeFolder.split('/').filter(Boolean));
   fs.mkdirSync(targetDir, { recursive: true });
 
